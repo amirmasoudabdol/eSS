@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <math.h>
 
 #define DEBUG
 #define STATS
@@ -29,8 +31,8 @@
 typedef struct individual{
 	
 	double *params;
-	double *means;
-	double *stds;
+	double mean;
+	double std;
 	double cost;
 	double dist;
 
@@ -49,8 +51,8 @@ typedef struct Stats{
 
 
 
-	double **freq_matrix;
-	double **prob_matrix;
+	int **freqs_matrix;
+	double **probs_matrix;
 } Stats;
 
 
@@ -70,6 +72,7 @@ typedef struct eSSType{
 	int strategy;
 	int inter_save;
 	bool is_warmStart;
+	int n_subRegions;
 
 	/**
 	 * Global Options
@@ -78,19 +81,21 @@ typedef struct eSSType{
 	double *min_real_var;
 	double *max_real_var;
 	double **min_boundary_matrix;
-	double **max_boundary_martix;
+	double **max_boundary_matrix;
 	
 	int n_RefSet;
 	Set *refSet;
 	
-	int n_DiverseSet;
-	Set *diverseSet;
+	int n_scatterSet;
+	Set *scatterSet;
 
 	int n_childsSet;
 	Set *childsSet;
 
 	int n_candidateSet;
 	Set *candidateSet;
+
+	individual *best;
 
 	int init_RefSet_Type;
 	int combination_Type;
@@ -133,12 +138,12 @@ typedef struct eSSType{
 /**
  * Gloabl output files...
  */
-extern FILE *ref_set_history_file;
+extern FILE *refSet_history_file;
 extern FILE *best_sols_history_file;
 extern FILE *freqs_matrix_file;
 extern FILE *freq_mat_final_file;
 extern FILE *prob_mat_final_file;
-extern FILE *ref_set_final_file;
+extern FILE *refSet_final_file;
 extern FILE *stats_file;
 
 
@@ -173,6 +178,12 @@ void localSearch(eSSType*, individual*, void*, void*);
  */
 void recombine(eSSType*, individual*, individual*);
 
+/**
+ * essSort.c
+ */
+void quickSort_Set(eSSType*, Set*, int, int, char);
+void quickSort(eSSType*, Set*, double*, int, int);
+void insertionSort(eSSType*, Set*, int, char);
 
 /**
  * essAllocate.c
@@ -183,13 +194,16 @@ void allocate_Set(eSSType *, Set *);
 void deallocate_Set(eSSType *, Set *);
 void deallocate_eSSParams(eSSType *);
 
+
 /**
  * essTools.c
  */
-void euclidean_distance(eSSType*, individual*, individual*);
+double euclidean_distance(eSSType*, individual*, individual*);
 void isExist(eSSType*, individual*);
-void min(eSSType*, double*, double*, int*);
-void max(eSSType*, double*, double*, int*);
+double min(double*, int, int*);
+double max(double*, int, int*);
+void copy_Ind(eSSType *, individual *, individual *);
+void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_delete);
 
 /**
  * essRand.c
@@ -223,8 +237,8 @@ void run_eSS(eSSType*, void*, void*);
 void print_eSSParams(eSSType*);
 void print_Set(eSSType*, Set*);
 void print_Ind(eSSType*, individual*);
-void write_Set(eSSType*, Set*, FILE*, char *mode);
-void write_Ind(eSSType*, individual*, FILE*, char *mode);
+void write_Set(eSSType*, Set*, FILE*, int, char);
+void write_Ind(eSSType*, individual*, FILE*, int, char);
 
 /**
  * essMain.c

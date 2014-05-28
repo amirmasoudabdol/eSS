@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
 
 	run_eSS(&l_essParams, inp, out);
 
-	// deallocate_eSSParams(&l_essParams);
+	deallocate_eSSParams(&l_essParams);
 
 	return 0;
 }

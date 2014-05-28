@@ -42,8 +42,9 @@ void init_sampleParams(eSSType *eSSParams){
 		eSSParams->n_RefSet++;
 	eSSParams->n_RefSet = MAX(eSSParams->n_RefSet, 20);
 
+	eSSParams->n_subRegions = MIN(4, eSSParams->n_Params);
 
-	eSSParams->n_DiverseSet = MAX(10 * eSSParams->n_Params, 40);
+	eSSParams->n_scatterSet = MAX(10 * eSSParams->n_Params, 40);
 
 	eSSParams->n_childsSet = eSSParams->n_RefSet - 1;
 
@@ -94,5 +95,16 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 
 	cost = objfn(ind->params);
 
-	return cost + penalty;
+	return (cost + penalty);
 }
+
+
+
+
+
+
+
+
+
+
+
