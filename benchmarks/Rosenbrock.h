@@ -1,12 +1,12 @@
 /*Provide dimension of the problem.  Integer >= 1.*/
 #define TEST_PROBLEM
-#define N 2
+#define N 10
 /*Provide the diameter of the feasible region.*/
 /*Provide maximum number of iterations.*/
 #define MAXITER 100*N*N/*500*N */
 
 #define PI 3.14159265359
-#define SOL 3.0
+#define SOL 0 
 
 void bounds(double lb[], double ub[]);
 int feasible(double x[]);
@@ -16,10 +16,26 @@ void bounds(double lb[], double ub[])
 /*Provide lower and upper bounds for each of N variables.
  Number of bounds is equal to N.*/
 {
-  lb[0] = -2;
-  ub[0] = 2;
-  lb[1] = -2;
-  ub[1] = 2;
+  lb[0] = -30;
+  ub[0] = 30;
+  lb[1] = -30;
+  ub[1] = 30;
+  lb[2] = -30;
+  ub[2] = 30;
+  lb[3] = -30;
+  ub[3] = 30;
+  lb[4] = -30;
+  ub[4] = 30;
+  lb[5] = -30;
+  ub[5] = 30;
+  lb[6] = -30;
+  ub[6] = 30;
+  lb[7] = -30;
+  ub[7] = 30;
+  lb[8] = -30;
+  ub[8] = 30;
+  lb[9] = -30;
+  ub[9] = 30;
 
 }
 
@@ -33,11 +49,15 @@ int feasible(double x[])
 /*Calculate objective function value of x[].*/
 double objfn(double x[])
 {
-	double sum=0.;
+  int j;
+  double sum=0,a=0.,b=0.;
 
-    sum = (1+(x[0]+x[1]+1)*(x[0]+x[1]+1)*(19-14*x[0]+3*x[0]*x[0]-14*x[1]+6*x[0]*x[1]+3*x[1]*x[1]));
-	sum = sum*(30+(2*x[0]-3*x[1])*(2*x[0]-3*x[1])*(18-32*x[0]+12*x[0]*x[0]+48*x[1]-36*x[0]*x[1]+27*x[1]*x[1]));
-
-	return (sum);
-
+  for (j=0; j<N-1; j++)
+  { 
+	  a=x[j]*x[j]-x[j+1];
+	  b=1.-x[j];
+	  sum+=100.*a*a+b*b;	  
+  }
+  
+  return (sum);
 }

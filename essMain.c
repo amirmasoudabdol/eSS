@@ -1,10 +1,13 @@
 #include "ess.h"
+#include "time.h"
 
 int main(int argc, char const *argv[])
 {
 	eSSType l_essParams;
 	void *inp = NULL;
 	void *out = NULL;
+
+	// srand(time(NULL));
 
 	printf("eSS - Enhanced Scatter Search\n");
 	

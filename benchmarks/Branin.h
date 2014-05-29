@@ -6,7 +6,7 @@
 #define MAXITER 100*N*N/*500*N */
 
 #define PI 3.14159265359
-#define SOL 3.0
+#define SOL 0.3979
 
 void bounds(double lb[], double ub[]);
 int feasible(double x[]);
@@ -16,11 +16,11 @@ void bounds(double lb[], double ub[])
 /*Provide lower and upper bounds for each of N variables.
  Number of bounds is equal to N.*/
 {
-  lb[0] = -2;
-  ub[0] = 2;
-  lb[1] = -2;
-  ub[1] = 2;
-
+  lb[0] = -5;
+  ub[0] = 10;
+  lb[1] = 0;
+  ub[1] = 15;
+ 
 }
 
 /*Test feasibility of x.  Return 1 if feasible, 0 if not.*/
@@ -34,9 +34,10 @@ int feasible(double x[])
 double objfn(double x[])
 {
 	double sum=0.;
+	double a=1., b=5.1/(4*PI*PI), c=5/PI;
+	double d=6., e=10., f=1/(8*PI);
 
-    sum = (1+(x[0]+x[1]+1)*(x[0]+x[1]+1)*(19-14*x[0]+3*x[0]*x[0]-14*x[1]+6*x[0]*x[1]+3*x[1]*x[1]));
-	sum = sum*(30+(2*x[0]-3*x[1])*(2*x[0]-3*x[1])*(18-32*x[0]+12*x[0]*x[0]+48*x[1]-36*x[0]*x[1]+27*x[1]*x[1]));
+	sum = a*pow((x[1]-b*x[0]*x[0]+c*x[0]-d),2) + e*(1-f)*cos(x[0]) + e;
 
 	return (sum);
 

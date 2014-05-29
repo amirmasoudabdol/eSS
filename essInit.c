@@ -6,8 +6,16 @@
  */
 void init_essParams(eSSType *eSSParams){
 
+
+	eSSParams->stats->n_successful_goBeyond      = 0;   
+	eSSParams->stats->n_successful_localSearch   = 0;
+	eSSParams->stats->n_Stuck                    = 0;     
+	eSSParams->stats->n_successful_recombination = 0;            
+
+
+
 	eSSParams->refSet = (Set*)malloc(sizeof(Set));
-	eSSParams->refSet->size = eSSParams->n_RefSet;
+	eSSParams->refSet->size = eSSParams->n_refSet;
 	allocate_Set(eSSParams, eSSParams->refSet);
 
 	eSSParams->scatterSet = (Set*)malloc(sizeof(Set));

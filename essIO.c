@@ -43,3 +43,15 @@ void write_Ind(eSSType *eSSParams, individual *ind, FILE *fpt, int iter, char mo
 	
 	fprintf(fpt, "%lf\n", ind->cost);
 }
+
+
+void print_Stats(eSSType *eSSParams){
+
+	printf("%s\n", KGRN);
+	printf("n_successful_goBeyond: %d\n", eSSParams->stats->n_successful_goBeyond);
+	printf("n_successful_localSearch: %d\n", eSSParams->stats->n_successful_localSearch);
+	printf("n_Stuck: %d\n", eSSParams->stats->n_Stuck);
+	printf("n_successful_recombination: %d\n", eSSParams->stats->n_successful_recombination);
+	printf("%s\n", KNRM);
+
+}

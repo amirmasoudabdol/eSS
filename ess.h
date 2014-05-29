@@ -49,7 +49,10 @@ typedef struct Set{
 
 typedef struct Stats{
 
-
+	int n_successful_goBeyond;
+	int n_successful_localSearch;
+	int n_Stuck;
+	int n_successful_recombination;
 
 	int **freqs_matrix;
 	double **probs_matrix;
@@ -64,6 +67,7 @@ typedef struct eSSType{
 	double *log_bound;
 	int maxeval;
 	int maxtime;
+	int maxiter;
 	int iterprint;
 	bool plot;
 	double *weight;
@@ -83,17 +87,17 @@ typedef struct eSSType{
 	double **min_boundary_matrix;
 	double **max_boundary_matrix;
 	
-	int n_RefSet;
+	int n_refSet;
 	Set *refSet;
 	
 	int n_scatterSet;
 	Set *scatterSet;
 
 	int n_childsSet;
-	Set *childsSet;
+	Set *childsSet;						// Stores best members of recombinedSet for each refSet member, size: n_refSet
 
 	int n_candidateSet;
-	Set *candidateSet;
+	Set *candidateSet;					// Stores childs generated from each refSet in each generation, size: n_refSet - 1
 
 	individual *best;
 
@@ -106,7 +110,7 @@ typedef struct eSSType{
 	double cost_Tol;
 	double dist_Tol;
 	double param_Tol;
-	double stuck_Tol;
+	double maxStuck;
 
 	/**
 	 * Local Search Options
@@ -166,7 +170,7 @@ void compute_Std(eSSType*, individual*);
 /**
  * essGoBeyond
  */
-void goBeyond(eSSType*, individual*, void*, void*);
+void goBeyond(eSSType*, int, void*, void*);
 
 /**
  * essLocalSearch.c
@@ -176,7 +180,7 @@ void localSearch(eSSType*, individual*, void*, void*);
 /**
  * essRecombine.c
  */
-void recombine(eSSType*, individual*, individual*);
+int recombine(eSSType*, individual*, int, void*, void*);
 
 /**
  * essSort.c
@@ -209,8 +213,8 @@ void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_d
  * essRand.c
  */
 double rndreal(double, double);
-void random_Set(eSSType*, Set*, double, double );
-void random_Ind(eSSType*, individual*, double, double );
+void random_Set(eSSType*, Set*, double*, double* );
+void random_Ind(eSSType*, individual*, double*, double* );
 
 /**
  * essProblem.c
@@ -239,6 +243,7 @@ void print_Set(eSSType*, Set*);
 void print_Ind(eSSType*, individual*);
 void write_Set(eSSType*, Set*, FILE*, int, char);
 void write_Ind(eSSType*, individual*, FILE*, int, char);
+void print_Stats(eSSType *);
 
 /**
  * essMain.c
