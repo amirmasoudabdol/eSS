@@ -8,6 +8,7 @@
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
+#include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit_nlin.h>
 
 
@@ -123,6 +124,7 @@ typedef struct eSSType{
 	 * Local Search Options
 	 */
 	int perform_LocalSearch;
+	char local_method;
 	int local_Freqs;
 	int local_SolverMethod;
 	int local_Tol;
@@ -230,7 +232,7 @@ void random_Ind(eSSType*, individual*, double*, double* );
 double objectiveFunction(eSSType*, individual*, void*, void*);
 void init_sampleParams(eSSType*);
 
-// #define GSL_TESTFUNCTION
+#define GSL_TESTFUNCTION
 #ifdef GSL_TESTFUNCTION
 void bounds(double lb[], double ub[]);
 int feasible(double x[]);

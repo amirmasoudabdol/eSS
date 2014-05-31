@@ -1,8 +1,6 @@
 #include "ess.h"
 
 
-individual parent;
-individual child;
 
 void goBeyond(eSSType *eSSParams, int parent_index,
 						void *inp, void *out){
@@ -11,8 +9,14 @@ void goBeyond(eSSType *eSSParams, int parent_index,
 	int gamma       = 1;
 	int improvement = 1;
 
-	parent = eSSParams->refSet->members[parent_index];
-	child = eSSParams->childsSet->members[parent_index];
+	// parent = eSSParams->refSet->members[parent_index];
+	// child = eSSParams->childsSet->members[parent_index];
+	individual parent;
+	individual child;
+	allocate_Ind(eSSParams, &parent);
+	allocate_Ind(eSSParams, &child);
+	copy_Ind(eSSParams, &parent, &(eSSParams->refSet->members[parent_index]));
+	copy_Ind(eSSParams, &child, &(eSSParams->childsSet->members[parent_index]));
 
 	double c1, c2;
 
@@ -48,9 +52,12 @@ void goBeyond(eSSType *eSSParams, int parent_index,
 				gamma /= 2;
 			}
 			eSSParams->stats->n_successful_goBeyond++;
-		}else
+		}else{
 			break;
+		}
 
 	}
+	deallocate_Ind(eSSParams, &parent);
+	deallocate_Ind(eSSParams, &child);
 
 }

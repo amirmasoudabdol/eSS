@@ -41,9 +41,6 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	printf("Start...\n");
 	do
 	{
-		iter++;
-		status = gsl_multifit_fdfsolver_iterate (s);
-	
 		printf ("iter: %3u x = % 15.8f % 15.8f % 15.8f "
 		  "|f(x)| = %g\n",
 		  iter,
@@ -51,6 +48,10 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 		  gsl_vector_get (s->x, 1),
 		  gsl_vector_get (s->x, 2), 
 		  gsl_blas_dnrm2 (s->f));
+		
+		iter++;
+		status = gsl_multifit_fdfsolver_iterate (s);
+	
 
 		printf ("status = %s\n", gsl_strerror (status));
 

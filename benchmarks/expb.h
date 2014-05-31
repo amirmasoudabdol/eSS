@@ -37,7 +37,7 @@ int feasible(double x[])
 /*Calculate objective function value of x[].*/
 int objfn(const gsl_vector *x, void *data, gsl_vector *f)
 {
-	printf("hi, ");
+	// printf("hi, ");
 	const double y[] = {6.01339, 5.51538, 5.26109, 4.77746, 4.45135, 
 							3.9049, 3.50439, 3.415, 3.24274, 3.1222, 2.83763, 
 							2.5347, 2.43917, 2.38083, 2.31609, 2.06083, 1.94568,
@@ -66,7 +66,7 @@ int objfn(const gsl_vector *x, void *data, gsl_vector *f)
 		// sumq += gsl_vector_get (f, i)* gsl_vector_get (f, i);
 	}	
 
-  	printf("% 15.8f % 15.8f % 15.8f --> %g\n", A, lambda, b, gsl_blas_dnrm2(f));
+  	// printf("% 15.8f % 15.8f % 15.8f --> %g\n", A, lambda, b, gsl_blas_dnrm2(f));
 	// return sqrt(sumq/40);
 	return 0;
 }

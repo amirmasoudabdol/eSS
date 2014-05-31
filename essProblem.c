@@ -43,7 +43,7 @@
 // #include "benchmarks/Gulf.h"				// Accurate!
 // #include "benchmarks/Rosenbrock.h"		// Accurate!
 // #include "benchmarks/Beale.h"				// Accurate!
-#include "benchmarks/McCormic.h"			// Accurate!
+// #include "benchmarks/McCormic.h"			// Accurate!
 // #include "benchmarks/Hosaki.h"			// Accurate!
 // #include "benchmarks/Schwefel.h"			// Accurate!
 // #include "benchmarks/Griewank.h"			// Accurate!		// ...
@@ -58,7 +58,7 @@
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
-// #include "benchmarks/expb.h"
+#include "benchmarks/expb.h"
 
 
 /**
@@ -138,6 +138,7 @@ void init_sampleParams(eSSType *eSSParams){
 	 * Local Search Options
 	 */
 	// eSSParams->perform_LocalSearch;
+	eSSParams->local_method = 'l';
 	// eSSParams->local_Freqs;
 	// eSSParams->local_SolverMethod;
 	// eSSParams->local_Tol;
@@ -175,7 +176,7 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 		// 	printf("%lf, ", gsl_vector_get(ff, i));
 		// }
 		cost = gsl_blas_dnrm2(ff);
-		printf("%g\n", cost);
+		// printf("%g\n", cost);
 		gsl_vector_free(ff);
 		return cost;
 	#else

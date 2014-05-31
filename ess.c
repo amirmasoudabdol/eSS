@@ -66,21 +66,25 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			candidate_index = recombine(eSSParams, &(eSSParams->refSet->members[i]), i, inp, out);
 
 			if (-1 != candidate_index){
+				
 				eSSParams->stats->n_successful_recombination++;
 
 				label[i] = 1;
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
-				// goBeyond(eSSParams, i, inp, out);
+				goBeyond(eSSParams, i, inp, out);
 			}
 
 		}
+
+		// print_Set(eSSParams, eSSParams->childsSet);
 
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			if (label[i] == 1){
 				copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
 				eSSParams->refSet->members[i].nStuck = 0;
+				label[i] = 0;
 			}else{
 				eSSParams->refSet->members[i].nStuck++;
 				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck ){
