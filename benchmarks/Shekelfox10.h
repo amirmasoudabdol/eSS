@@ -6,7 +6,7 @@
 #define MAXITER 100*N*N/*500*N */
 
 #define PI 3.14159265359
-#define SOL 
+#define SOL 0
 
 void bounds(double lb[], double ub[]);
 int feasible(double x[]);

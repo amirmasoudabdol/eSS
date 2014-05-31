@@ -3,6 +3,7 @@
 void evaluate_Individual(eSSType *eSSParams, individual *ind, void *inp, void *out){
 
 	ind->cost = objectiveFunction(eSSParams, ind, inp, out);
+	// print_Ind(eSSParams, ind);
 }
 
 void evaluate_Set(eSSType *eSSParams, Set *set, void *inp, void *out){

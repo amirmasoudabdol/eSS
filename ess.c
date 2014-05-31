@@ -71,7 +71,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				label[i] = 1;
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
-				goBeyond(eSSParams, i, inp, out);
+				// goBeyond(eSSParams, i, inp, out);
 			}
 
 		}
@@ -104,7 +104,16 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	}
 
 	print_Set(eSSParams, eSSParams->refSet);
+	print_Ind(eSSParams, eSSParams->best);
 	print_Stats(eSSParams);
+
+	// evaluate_Individual(eSSParams, eSSParams->best, inp, out);
+
+#ifdef GSL_TESTFUNCTION
+	levmer_localSearch(eSSParams, eSSParams->best, inp, out);
+#endif
+	
+	// printf("%f\n", );
 }
 
 

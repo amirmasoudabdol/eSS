@@ -43,7 +43,7 @@
 // #include "benchmarks/Gulf.h"				// Accurate!
 // #include "benchmarks/Rosenbrock.h"		// Accurate!
 // #include "benchmarks/Beale.h"				// Accurate!
-// #include "benchmarks/McCormic.h"			// Accurate!
+#include "benchmarks/McCormic.h"			// Accurate!
 // #include "benchmarks/Hosaki.h"			// Accurate!
 // #include "benchmarks/Schwefel.h"			// Accurate!
 // #include "benchmarks/Griewank.h"			// Accurate!		// ...
@@ -56,6 +56,9 @@
 // #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate!
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
+// 
+
+// #include "benchmarks/expb.h"
 
 
 /**
@@ -92,7 +95,7 @@ void init_sampleParams(eSSType *eSSParams){
 	 */
 	// eSSParams->n_Params = 2;
 
-	eSSParams->maxiter = 500;
+	eSSParams->maxiter = 2;
 	eSSParams->maxStuck = 20;
 
 	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
@@ -163,16 +166,37 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 	double cost    = 0;
 	double penalty = 0;
 
-	cost = objfn(ind->params);
+	#ifdef GSL_TESTFUNCTION
+		gsl_vector *ff = gsl_vector_alloc(40);
+		gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
+		objfn(&x.vector, inp, ff);
+		// for (int i = 0; i < 40; ++i)
+		// {
+		// 	printf("%lf, ", gsl_vector_get(ff, i));
+		// }
+		cost = gsl_blas_dnrm2(ff);
+		printf("%g\n", cost);
+		gsl_vector_free(ff);
+		return cost;
+	#else
+		cost = objfn(ind->params);
+	#endif
 
 	return (cost + penalty);
 }
 
 
+// int gsl_objectiveFunction(const gsl_vector *x, void *data, gsl_vector *f){
+
+// 	double cost = 0;
+// 	double penalty = 0;
 
 
+// 	// Copy x to a new double variable;
+// 	// and call the objfn(d)
 
-
+// 	return GSL_SUCCESS;
+// }
 
 
 

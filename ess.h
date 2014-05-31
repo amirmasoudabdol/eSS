@@ -4,6 +4,13 @@
 #include <string.h>
 #include <math.h>
 
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_blas.h>
+#include <gsl/gsl_multifit_nlin.h>
+
+
 #define DEBUG
 #define STATS
 #define LOG
@@ -175,7 +182,8 @@ void goBeyond(eSSType*, int, void*, void*);
 /**
  * essLocalSearch.c
  */
-void localSearch(eSSType*, individual*, void*, void*);
+void localSearch(eSSType*, individual*, void*, void*, char method);
+int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out);
 
 /**
  * essRecombine.c
@@ -221,6 +229,13 @@ void random_Ind(eSSType*, individual*, double*, double* );
  */
 double objectiveFunction(eSSType*, individual*, void*, void*);
 void init_sampleParams(eSSType*);
+
+// #define GSL_TESTFUNCTION
+#ifdef GSL_TESTFUNCTION
+void bounds(double lb[], double ub[]);
+int feasible(double x[]);
+int objfn(const gsl_vector *x, void *data, gsl_vector *f);
+#endif
 
 /**
  * essEvaluate.c
