@@ -1,11 +1,8 @@
 #include <math.h>
 #include <gsl/gsl_vector.h>
-/*Provide dimension of the problem.  Integer >= 1.*/
+
 #define TEST_PROBLEM
 #define N 3
-/*Provide the diameter of the feasible region.*/
-/*Provide maximum number of iterations.*/
-#define MAXITER 100*N*N/*500*N */
 
 #define PI 3.14159265359
 #define SOL 0

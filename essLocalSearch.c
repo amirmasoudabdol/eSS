@@ -9,7 +9,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	int status;
 	unsigned int /*i,*/ iter = 0;
 	const size_t n = 40;
-	const size_t p = 3;
+	const size_t p = eSSParams->n_Params;
 
 
 	gsl_matrix *covar = gsl_matrix_alloc (p, p);
@@ -90,29 +90,27 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 
 }
 
-#elif defined NELDER
+#endif
+#endif
+// #elif defined NELDER
 
 int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out){
 
 	const gsl_multimin_fminimizer_type *T;
 	gsl_multimin_fminimizer *s;
 	int status;
-	unsigned int /*i,*/ iter = 0;
-	// const size_t n = 40;
-	const size_t p = 3;
+	unsigned int iter = 0;
+	const size_t p = eSSParams->n_Params;
 
 
-	// gsl_matrix *covar = gsl_matrix_alloc (p, p);
-	// gsl_multifit_function_fdf f;
 	gsl_multimin_function f;
-	print_Ind(eSSParams, ind);
-	// gsl_vector_view x = gsl_vector_view_array (x_init, p);
+	// print_Ind(eSSParams, ind);
 	gsl_vector_view x = gsl_vector_view_array (ind->params, p);
-	gsl_vector_fprintf(stdout, &x.vector, "%f");
+	// gsl_vector_fprintf(stdout, &x.vector, "%f");
 	const gsl_rng_type * type;
 	gsl_rng * r;
 
-	gsl_vector *ss = gsl_vector_alloc(3);
+	gsl_vector *ss = gsl_vector_alloc(p);
 	gsl_vector_set_all(ss, 0.1);
 
 	gsl_rng_env_setup();
@@ -120,31 +118,35 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 	type = gsl_rng_default;
 	r = gsl_rng_alloc (type);
 
-	f.f = &objfn;
+	f.f = &nelder_objfn;
 	// f.df = NULL; 
 	// f.fdf = NULL; 
-	f.n = 3;		
+	f.n = p;		
 	f.params = &x.vector;		
 
 	double size;
 
-	// T = gsl_multifit_fdfsolver_lmsder;
 	T = gsl_multimin_fminimizer_nmsimplex2;
 	s = gsl_multimin_fminimizer_alloc (T, p);
 	gsl_multimin_fminimizer_set(s, &f, &x.vector, ss);
 
+	for (int i = 0; i < s->x->size; ++i){
+		printf("%lf, ", gsl_vector_get(s->x, i));
+	}
+	printf("--> %lf\n ", s->fval);
 
-	printf("Start...\n");
+	// printf("Start...\n");
 	do
 	{
-		// printf ("iter: %3u x = % 15.8f % 15.8f % 15.8f "
+		// printf ("iter: %3u x = % 15.8f % 15.8f "
 		//   "|f(x)| = %g\n",
 		//   iter,
 		//   gsl_vector_get (s->x, 0), 
 		//   gsl_vector_get (s->x, 1),
-		//   gsl_vector_get (s->x, 2), 
-		//   gsl_blas_dnrm2 (s->fval));
-      printf("%f\n", s->fval);
+		//   // gsl_vector_get (s->x, 2), 
+		//   (s->fval));
+		  // gsl_vector_fprintf(stdout, s->x, "%f");
+	      // printf("---\n");
 
 
 		iter++;
@@ -152,7 +154,7 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		status = gsl_multimin_fminimizer_iterate(s);
 	
 
-		printf ("status = %s\n", gsl_strerror (status));
+		// printf ("status = %s\n", gsl_strerror (status));
 
 		if (status)
 			break;
@@ -160,7 +162,7 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		size = gsl_multimin_fminimizer_size(s);
 		// status = gsl_multifit_test_delta (s->dx, s->x,
 			// 1e-4, 1e-4);
-		status = gsl_multimin_test_size( size, 5e-2);
+		status = gsl_multimin_test_size( size, 1e-3);
 	}
 	while (status == GSL_CONTINUE && iter < 500);
 
@@ -185,13 +187,20 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 
 	// gsl_multif_fdfsolver_free (s);
 	// gsl_matrix_free (covar);
+
+	if (iter != 0){
+		// printf("%d\n", iter);
+		ind->params = s->x->data;
+		ind->cost = s->fval;
+	}
+
 	gsl_rng_free (r);
 	return 0;
 
 
 }
 
-#endif
-#endif
+// #endif
+// #endif
 
 

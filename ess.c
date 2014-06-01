@@ -77,7 +77,6 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 		}
 
-		// print_Set(eSSParams, eSSParams->childsSet);
 
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
@@ -112,6 +111,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	print_Stats(eSSParams);
 
 	// evaluate_Individual(eSSParams, eSSParams->best, inp, out);
+	printf("Perforimg the last local search\n");
+	neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+	print_Ind(eSSParams, eSSParams->best);
+	// print_Ind(eSSParams, eSSParams->best);
 
 #ifdef GSL_TESTFUNCTION
 	#ifdef LEVMER

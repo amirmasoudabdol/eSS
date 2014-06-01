@@ -232,9 +232,8 @@ void random_Ind(eSSType*, individual*, double*, double* );
  */
 double objectiveFunction(eSSType*, individual*, void*, void*);
 void init_sampleParams(eSSType*);
-
-#define GSL_TESTFUNCTION
-#define NELDER
+// #define GSL_TESTFUNCTION
+// #define NELDER
 // #define LEVMER
 #ifdef GSL_TESTFUNCTION 
 	void bounds(double lb[], double ub[]);
@@ -245,6 +244,16 @@ void init_sampleParams(eSSType*);
 		double objfn(const gsl_vector *x, void *data);
 	#endif
 #endif
+
+
+/**
+ * Benchmark functions prototype
+ */
+void bounds(double lb[], double ub[]);
+int feasible(double x[]);
+double objfn(double x[]);
+double nelder_objfn(const gsl_vector *x, void *data);
+
 
 /**
  * essEvaluate.c

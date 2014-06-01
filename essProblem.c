@@ -18,8 +18,8 @@
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
-// #include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/LM2n5.h"				// Accurate!
+// #include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/MeyerRoth.h"			// Accurate!
 // #include "benchmarks/MieleCantrell.h"		// Accurate!
 // #include "benchmarks/ModRosenbrock.h"		// Accurate!
@@ -53,12 +53,12 @@
 // #include "benchmarks/Salomon.h"			// Not accurate!	// not many subsituation
 // #include "benchmarks/STChebychev9.h"		// Not Accurate!		// ...
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
-// #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
+#include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate!
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
-#include "benchmarks/expb.h"
+// #include "benchmarks/expb.h"
 
 
 /**
@@ -71,6 +71,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->n_Params = N;
 	printf("%s", KCYN);
 	printf("\n---------------------------------");
+	printf("\n %s:", (const char*)TEST_PROBLEM);
 	printf("\n Analytic Solution: %lf \n", (double)SOL);
 	printf("---------------------------------\n\n");
 	printf("%s", KNRM);
@@ -95,7 +96,7 @@ void init_sampleParams(eSSType *eSSParams){
 	 */
 	// eSSParams->n_Params = 2;
 
-	eSSParams->maxiter = 2;
+	eSSParams->maxiter = 50;
 	eSSParams->maxStuck = 20;
 
 	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
