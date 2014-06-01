@@ -14,7 +14,7 @@
 // #include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
 // #include "benchmarks/GoldPrice.h"			// Accurate!
-// #include "benchmarks/Hartman3.h"			// Accurate!
+#include "benchmarks/Hartman3.h"			// Accurate!
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
@@ -53,7 +53,7 @@
 // #include "benchmarks/Salomon.h"			// Not accurate!	// not many subsituation
 // #include "benchmarks/STChebychev9.h"		// Not Accurate!		// ...
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
-#include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
+// #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate!
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 

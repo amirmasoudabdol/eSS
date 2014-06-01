@@ -105,8 +105,11 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 
 	gsl_multimin_function f;
 	// print_Ind(eSSParams, ind);
+	// print_Ind(eSSParams, eSSParams->best);
+
 	gsl_vector_view x = gsl_vector_view_array (ind->params, p);
 	// gsl_vector_fprintf(stdout, &x.vector, "%f");
+	// printf("---\n");
 	const gsl_rng_type * type;
 	gsl_rng * r;
 
@@ -130,38 +133,23 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 	s = gsl_multimin_fminimizer_alloc (T, p);
 	gsl_multimin_fminimizer_set(s, &f, &x.vector, ss);
 
-	for (int i = 0; i < s->x->size; ++i){
-		printf("%lf, ", gsl_vector_get(s->x, i));
-	}
-	printf("--> %lf\n ", s->fval);
-
-	// printf("Start...\n");
 	do
 	{
-		// printf ("iter: %3u x = % 15.8f % 15.8f "
-		//   "|f(x)| = %g\n",
-		//   iter,
-		//   gsl_vector_get (s->x, 0), 
-		//   gsl_vector_get (s->x, 1),
-		//   // gsl_vector_get (s->x, 2), 
-		//   (s->fval));
-		  // gsl_vector_fprintf(stdout, s->x, "%f");
-	      // printf("---\n");
-
 
 		iter++;
-		// status = gsl_multifit_fdfsolver_iterate (s);
 		status = gsl_multimin_fminimizer_iterate(s);
 	
-
-		// printf ("status = %s\n", gsl_strerror (status));
+	#ifdef DEBUG
+		for (int i = 0; i < s->x->size; ++i){
+			printf("%lf, ", gsl_vector_get(s->x, i));
+		}
+		printf("--> %lf\n ", s->fval);
+	#endif
 
 		if (status)
 			break;
 
 		size = gsl_multimin_fminimizer_size(s);
-		// status = gsl_multifit_test_delta (s->dx, s->x,
-			// 1e-4, 1e-4);
 		status = gsl_multimin_test_size( size, 1e-3);
 	}
 	while (status == GSL_CONTINUE && iter < 500);

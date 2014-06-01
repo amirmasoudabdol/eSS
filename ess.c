@@ -113,8 +113,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	// evaluate_Individual(eSSParams, eSSParams->best, inp, out);
 	printf("Perforimg the last local search\n");
 	neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+	printf("Final Result: \n");
 	print_Ind(eSSParams, eSSParams->best);
-	// print_Ind(eSSParams, eSSParams->best);
 
 #ifdef GSL_TESTFUNCTION
 	#ifdef LEVMER

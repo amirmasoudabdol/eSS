@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
 	void *inp = NULL;
 	void *out = NULL;
 
-	// srand(time(NULL));
+	srand(time(NULL));
 
 	printf("eSS - Enhanced Scatter Search\n");
 	

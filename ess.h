@@ -12,7 +12,7 @@
 #include <gsl/gsl_multifit_nlin.h>
 
 
-#define DEBUG
+// #define DEBUG
 #define STATS
 #define LOG
 
