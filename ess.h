@@ -186,6 +186,7 @@ void goBeyond(eSSType*, int, void*, void*);
  */
 void localSearch(eSSType*, individual*, void*, void*, char method);
 int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out);
+int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out);
 
 /**
  * essRecombine.c
@@ -233,10 +234,16 @@ double objectiveFunction(eSSType*, individual*, void*, void*);
 void init_sampleParams(eSSType*);
 
 #define GSL_TESTFUNCTION
-#ifdef GSL_TESTFUNCTION
-void bounds(double lb[], double ub[]);
-int feasible(double x[]);
-int objfn(const gsl_vector *x, void *data, gsl_vector *f);
+#define NELDER
+// #define LEVMER
+#ifdef GSL_TESTFUNCTION 
+	void bounds(double lb[], double ub[]);
+	int feasible(double x[]);
+	#ifdef LEVMER
+		int objfn(const gsl_vector *x, void *data, gsl_vector *f);
+	#elif defined(NELDER)
+		double objfn(const gsl_vector *x, void *data);
+	#endif
 #endif
 
 /**

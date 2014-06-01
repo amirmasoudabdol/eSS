@@ -168,17 +168,17 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 	double penalty = 0;
 
 	#ifdef GSL_TESTFUNCTION
-		gsl_vector *ff = gsl_vector_alloc(40);
-		gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
-		objfn(&x.vector, inp, ff);
-		// for (int i = 0; i < 40; ++i)
-		// {
-		// 	printf("%lf, ", gsl_vector_get(ff, i));
-		// }
-		cost = gsl_blas_dnrm2(ff);
-		// printf("%g\n", cost);
-		gsl_vector_free(ff);
-		return cost;
+		#ifdef LEVMER
+			gsl_vector *ff = gsl_vector_alloc(40);
+			gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
+			objfn(&x.vector, inp, ff);
+			cost = gsl_blas_dnrm2(ff);
+			gsl_vector_free(ff);
+			return cost;
+		#elif defined NELDER
+			gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
+			return objfn(&x.vector, inp);
+		#endif
 	#else
 		cost = objfn(ind->params);
 	#endif

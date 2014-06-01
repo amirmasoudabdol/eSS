@@ -114,7 +114,11 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	// evaluate_Individual(eSSParams, eSSParams->best, inp, out);
 
 #ifdef GSL_TESTFUNCTION
-	levmer_localSearch(eSSParams, eSSParams->best, inp, out);
+	#ifdef LEVMER
+		levmer_localSearch(eSSParams, eSSParams->best, inp, out);
+	#elif defined NELDER
+		neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+	#endif
 #endif
 	
 	// printf("%f\n", );

@@ -35,7 +35,11 @@ int feasible(double x[])
 }
 
 /*Calculate objective function value of x[].*/
+#ifdef LEVMER
 int objfn(const gsl_vector *x, void *data, gsl_vector *f)
+#elif defined NELDER
+double objfn(const gsl_vector *x, void *data)
+#endif
 {
 	// printf("hi, ");
 	const double y[] = {6.01339, 5.51538, 5.26109, 4.77746, 4.45135, 
@@ -56,6 +60,10 @@ int objfn(const gsl_vector *x, void *data, gsl_vector *f)
   double b = gsl_vector_get (x, 2);
 	// double sumq = 0;
 
+  	#ifdef NELDER
+  		gsl_vector *f  = gsl_vector_alloc(40);
+  	#endif
+
 	int i; int n = 40;
 	for (i = 0; i < n; i++)
 	{
@@ -65,6 +73,10 @@ int objfn(const gsl_vector *x, void *data, gsl_vector *f)
       	gsl_vector_set (f, i, (Yi - y[i])/sigma[i]);
 		// sumq += gsl_vector_get (f, i)* gsl_vector_get (f, i);
 	}	
+
+	#ifdef NELDER
+		return gsl_blas_dnrm2(f);
+	#endif
 
   	// printf("% 15.8f % 15.8f % 15.8f --> %g\n", A, lambda, b, gsl_blas_dnrm2(f));
 	// return sqrt(sumq/40);
