@@ -12,7 +12,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	const size_t p = eSSParams->n_Params;
 
 
-	gsl_matrix *covar = gsl_matrix_alloc (p, p);
+	// gsl_matrix *covar = gsl_matrix_alloc (p, p);
 	gsl_multifit_function_fdf f;
 	print_Ind(eSSParams, ind);
 	// gsl_vector_view x = gsl_vector_view_array (x_init, p);
@@ -64,7 +64,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	}
 	while (status == GSL_CONTINUE && iter < 500);
 
-	gsl_multifit_covar (s->J, 0.0, covar);
+	// gsl_multifit_covar (s->J, 0.0, covar);
 
 // #define FIT(i) gsl_vector_get(s->x, i)
 // #define ERR(i) sqrt(gsl_matrix_get(covar,i,i))
@@ -84,7 +84,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 // 	printf ("status = %s\n", gsl_strerror (status));
 
 	gsl_multifit_fdfsolver_free (s);
-	gsl_matrix_free (covar);
+	// gsl_matrix_free (covar);
 	gsl_rng_free (r);
 	return 0;
 
@@ -186,8 +186,8 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 	}
 
 
-	gsl_multimin_fminimizer_free(s);
-	gsl_vector_free(ss);
+	// gsl_multimin_fminimizer_free(s);
+	// gsl_vector_free(ss);
 	gsl_rng_free (r);
 	return 0;
 

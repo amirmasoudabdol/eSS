@@ -1,8 +1,8 @@
 
 RM=rm -f
-CC=gcc-4.8
+# CC=gcc-4.8
 # CFLAGS=-Wall -g -std=c99 -O2 
-#-fopenmp -fsanitize=address -fno-omit-frame-pointer
+# -fopenmp -fsanitize=address -fno-omit-frame-pointer
 CC=clang
 CFLAGS=-Wall -g -std=c99 -O2
 GSL_INCLUDES=-I/usr/local/include

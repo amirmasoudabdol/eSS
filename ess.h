@@ -74,7 +74,7 @@ typedef struct eSSType{
 	/**
 	 * User Options
 	 */
-	double *log_bound;
+	int logBound;
 	int maxeval;
 	int maxtime;
 	int maxiter;

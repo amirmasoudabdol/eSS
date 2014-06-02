@@ -110,9 +110,7 @@ double nelder_objfn(const gsl_vector *x, void *data){
   	gsl_vector *f  = gsl_vector_alloc(40);
 
   	levermed_objfn(x, data, f);
-  	double sumq = gsl_blas_dnrm2(f);
-  	free(f);
-  	return sumq;
+  	return gsl_blas_dnrm2(f);
 
 }
 

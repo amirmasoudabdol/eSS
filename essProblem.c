@@ -13,7 +13,7 @@
 // #include "benchmarks/Easom.h"				// Accurate!
 // #include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
-#include "benchmarks/GoldPrice.h"			// Accurate!
+// #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
@@ -44,7 +44,7 @@
 // #include "benchmarks/Rosenbrock.h"		// Accurate!
 // #include "benchmarks/Beale.h"				// Accurate!
 // #include "benchmarks/McCormic.h"			// Accurate!
-// #include "benchmarks/Hosaki.h"			// Accurate!
+#include "benchmarks/Hosaki.h"			// Accurate!
 // #include "benchmarks/Schwefel.h"			// Accurate!
 // #include "benchmarks/Griewank.h"			// Accurate!		// ...
 // #include "benchmarks/Helical.h"			// Accurate!	// not many subsituation // There was a problem in function definition
@@ -81,7 +81,7 @@ void init_sampleParams(eSSType *eSSParams){
 	/**
 	 * User Options
 	 */
-	// eSSParams->log_bound;
+	eSSParams->logBound = 0;
 	// eSSParams->maxeval;
 	// eSSParams->maxtime;
 	// eSSParams->iterprint;

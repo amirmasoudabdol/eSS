@@ -98,7 +98,7 @@ void print_Stats(eSSType *eSSParams){
 	printf("n_successful_goBeyond: %d\n", eSSParams->stats->n_successful_goBeyond);
 	printf("n_local_search_performed: %d\n", eSSParams->stats->n_local_search_performed);
 	printf("n_successful_localSearch: %d\n", eSSParams->stats->n_successful_localSearch);
-	printf("n_local_search_iterations: %d \t (avg: %lf)\n", eSSParams->stats->n_local_search_iterations, (double)eSSParams->stats->n_local_search_iterations / eSSParams->stats->n_successful_localSearch);
+	printf("n_local_search_iterations: %d \t (avg: %d)\n", eSSParams->stats->n_local_search_iterations, eSSParams->stats->n_local_search_iterations / eSSParams->stats->n_successful_localSearch);
 	printf("n_Stuck: %d\n", eSSParams->stats->n_Stuck);
 	printf("n_successful_recombination: %d\n", eSSParams->stats->n_successful_recombination);
 	printf("%s\n", KNRM);
