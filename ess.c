@@ -148,7 +148,11 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	if (eSSParams->perform_LocalSearch && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
 	{
 		printf("Perforimg the last local search\n");
-		neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+		if (eSSParams->local_method == 'l')
+			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+		else
+			levmer_localSearch(eSSParams, eSSParams->best, inp, out);
+	
 		printf("Final Result: \n");
 		print_Ind(eSSParams, eSSParams->best);
 	}
@@ -157,15 +161,14 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	write_Set(eSSParams, eSSParams->refSet, refSet_final_file, -1);
 	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->maxiter);	
 
-#ifdef GSL_TESTFUNCTION
-	#ifdef LEVMER
-		levmer_localSearch(eSSParams, eSSParams->best, inp, out);
-	#elif defined NELDER
-		neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
-	#endif
-#endif
-	
-	// printf("%f\n", );
+
+	fclose(refSet_final_file);
+	fclose(best_sols_history_file);
+	// fclose(freqs_matrix_file);
+	// fclose(file)
+
+
+
 }
 
 

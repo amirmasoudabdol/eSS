@@ -92,10 +92,6 @@ int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f)
   double b = gsl_vector_get (x, 2);
 	// double sumq = 0;
 
-  	#ifdef NELDER
-  		gsl_vector *f  = gsl_vector_alloc(40);
-  	#endif
-
 	int i; int n = 40;
 	for (i = 0; i < n; i++)
 	{
@@ -106,12 +102,6 @@ int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f)
 		// sumq += gsl_vector_get (f, i)* gsl_vector_get (f, i);
 	}	
 
-	#ifdef NELDER
-		return gsl_blas_dnrm2(f);
-	#endif
-
-  	// printf("% 15.8f % 15.8f % 15.8f --> %g\n", A, lambda, b, gsl_blas_dnrm2(f));
-	// return sqrt(sumq/40);
 	return 0;
 }
 
@@ -120,7 +110,9 @@ double nelder_objfn(const gsl_vector *x, void *data){
   	gsl_vector *f  = gsl_vector_alloc(40);
 
   	levermed_objfn(x, data, f);
-  	return gsl_blas_dnrm2(f);
+  	double sumq = gsl_blas_dnrm2(f);
+  	free(f);
+  	return sumq;
 
 }
 

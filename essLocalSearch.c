@@ -185,6 +185,9 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		eSSParams->stats->n_local_search_iterations += iter;
 	}
 
+
+	gsl_multimin_fminimizer_free(s);
+	gsl_vector_free(ss);
 	gsl_rng_free (r);
 	return 0;
 
