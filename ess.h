@@ -85,6 +85,7 @@ typedef struct eSSType{
 	int inter_save;
 	bool is_warmStart;
 	int n_subRegions;
+	int debug;
 
 	/**
 	 * Global Options
@@ -124,7 +125,7 @@ typedef struct eSSType{
 	 * Local Search Options
 	 */
 	int perform_LocalSearch;
-	char local_method;
+	char* local_method;
 	int local_Freqs;
 	int local_SolverMethod;
 	int local_Tol;
@@ -271,6 +272,7 @@ void run_eSS(eSSType*, void*, void*);
 /**
  * essIO.c
  */
+void read_cli_params(eSSType *, int, char **);
 void print_eSSParams(eSSType*);
 void print_Set(eSSType*, Set*);
 void print_Ind(eSSType*, individual*);

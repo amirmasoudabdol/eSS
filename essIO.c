@@ -1,5 +1,48 @@
 #include "ess.h"
+#include <ctype.h>
+#include <unistd.h>
 
+void read_cli_params(eSSType *eSSParams, int argc, char **argv){
+
+   // char *cvalue = NULL;
+   // int index;
+   int c;
+   printf("hi\n");
+	while ((c = getopt (argc, argv, "m:dlo:")) != -1)
+     switch (c)
+       {
+       case 'm':		// maxiter
+         eSSParams->maxiter = atoi(optarg);
+         printf("%d\n", eSSParams->maxiter);
+         break;
+       case 'd':
+         eSSParams->debug = 1;
+         printf("%d\n", eSSParams->debug);
+         break;
+       case 'l':
+         eSSParams->perform_LocalSearch = 1;
+         printf("%d\n", eSSParams->perform_LocalSearch);
+         break;
+       case 'o':
+         	eSSParams->local_method = (char*)optarg;
+         	printf("%s\n", eSSParams->local_method);
+         // 	printf("Use `l` for Levenberg-Marquardt or 'n' for Nelder-Mead Simplex method.");
+         break;
+       case '?':
+         if (optopt == 'c')
+           fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+         else if (isprint (optopt))
+           fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+         else
+           fprintf (stderr,
+                    "Unknown option character `\\x%x'.\n",
+                    optopt);
+         // return 1;
+       default:
+         abort ();
+       }
+
+}
 
 void print_Set(eSSType *eSSParams, Set *set){
 	printf("-----------------------------------\n");

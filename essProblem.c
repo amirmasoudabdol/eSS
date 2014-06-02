@@ -96,6 +96,11 @@ void init_sampleParams(eSSType *eSSParams){
 	 */
 	// eSSParams->n_Params = 2;
 
+	 if (eSSParams->maxiter == 0)
+	 {
+	 	printf("hi\n");
+	 }
+
 	eSSParams->maxiter = 50;
 	eSSParams->maxStuck = 20;
 
