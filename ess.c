@@ -26,21 +26,28 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	init_report_files(eSSParams);
 
-	init_scatterSet(eSSParams, inp, out);
+	if (!eSSParams->warmStart)
+	{
+		init_scatterSet(eSSParams, inp, out);
 
-	evaluate_Set(eSSParams, eSSParams->scatterSet, inp, out);
+		evaluate_Set(eSSParams, eSSParams->scatterSet, inp, out);
 
-	// print_Set(eSSParams, eSSParams->scatterSet);
+		init_refSet(eSSParams, inp, out);
 
-	init_refSet(eSSParams, inp, out);
+		quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->refSet->size - 1, 'c');
 
-	quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->refSet->size - 1, 'c');	
+		write_Set(eSSParams, eSSParams->refSet, refSet_history_file, 0);
 
-	eSSParams->best = &(eSSParams->refSet->members[0]);
+		eSSParams->best = &(eSSParams->refSet->members[0]);
 
-	print_Set(eSSParams, eSSParams->refSet);
+		print_Set(eSSParams, eSSParams->refSet);
 
-	// print_Ind(eSSParams, eSSParams->best);
+		write_Ind(eSSParams, eSSParams->best, best_sols_history_file, 0);
+	}else{
+		init_warmStart(eSSParams);
+	}
+
+
 }
 
 
@@ -73,6 +80,20 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
 				goBeyond(eSSParams, i, inp, out);
+
+				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
+					 && ( (iter > eSSParams->local_N1) || ( iter % eSSParams->local_N2 ) ) )
+				{
+					if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
+						if (eSSParams->local_method == 'n'){
+							neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+							eSSParams->stats->n_local_search_performed++;
+						}else if (eSSParams->local_method == 'l'){
+							levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+							eSSParams->stats->n_local_search_performed++;
+						}
+					}
+				}
 			}
 
 		}
@@ -99,6 +120,17 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		
 		quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->n_refSet - 1, 'c');
 
+		if (eSSParams->perform_LocalSearch && eSSParams->local_onBest_Only)
+		{
+			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+			eSSParams->stats->n_local_search_performed++;
+		}
+
+		if (iter % eSSParams->inter_save == 0){
+			write_Set(eSSParams, eSSParams->refSet, refSet_history_file, iter);
+			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, iter);
+		}
+
 		if ( fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < 0.0001 ){
 			printf("converged after %d iteration!\n", iter);
 			break;
@@ -106,15 +138,24 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	}
 
+	printf("Final refSet: \n");
 	print_Set(eSSParams, eSSParams->refSet);
+
+	printf("bestSol: \n");
 	print_Ind(eSSParams, eSSParams->best);
 	print_Stats(eSSParams);
 
-	// evaluate_Individual(eSSParams, eSSParams->best, inp, out);
-	printf("Perforimg the last local search\n");
-	neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
-	printf("Final Result: \n");
-	print_Ind(eSSParams, eSSParams->best);
+	if (eSSParams->perform_LocalSearch && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
+	{
+		printf("Perforimg the last local search\n");
+		neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
+		printf("Final Result: \n");
+		print_Ind(eSSParams, eSSParams->best);
+	}
+
+	refSet_final_file     = fopen("ref_set_final.csv", "w");
+	write_Set(eSSParams, eSSParams->refSet, refSet_final_file, -1);
+	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->maxiter);	
 
 #ifdef GSL_TESTFUNCTION
 	#ifdef LEVMER

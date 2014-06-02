@@ -53,3 +53,9 @@ double objfn(double x[])
   
   return (sum);
 }
+
+double nelder_objfn(const gsl_vector *x, void *data){
+  
+  return objfn(x->data);
+}
+

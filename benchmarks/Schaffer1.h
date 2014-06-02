@@ -42,6 +42,10 @@ double nelder_objfn(const gsl_vector *x, void *data){
 	return objfn(x->data);
 }
 
+int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f){
+	return 0;
+}
+
 
 // FIXME: Something fishy happening here, when I use this function,
 // although I don't compute the distance the distance property has value

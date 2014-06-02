@@ -1,0 +1,63 @@
+{
+	"log_bound": 0, 
+	"maxeval": 10000, 
+	"maxtime": 10000, 
+	"maxiter": 200, 
+	"iterprint": 50, 
+	"plot": 0, 
+	"weight": [], 
+	"tolc": 1e-3, 
+	"prob_bound": 0, 
+	"strategy": 0, 
+	"inter_save": 1, 
+	"is_warmStart": 0, 
+	"n_subRegions": 16, 
+	"debug": 0, 
+	"log": 1,
+	"sol": 0, 
+
+
+	"n_Params": 0, 
+	"min_real_var": [], 
+	"max_real_var": [], 
+	"min_boundary_matrix": [], 
+	"max_boundary_matrix": [], 
+	
+	"n_refSet": 20, 
+	
+	"n_scatterSet": 200, 
+
+	"n_childsSet": 20, 
+
+	"n_candidateSet": 19, 
+
+	"best": [], 
+
+	"init_RefSet_Type": , 
+	"combination_Type": , 
+	"regeneration_Type": , 
+	"delete": ,
+	"intensification_Freqs": , 
+	"diversification_Type": , 
+	"cost_Tol": , 
+	"dist_Tol": , 
+	"param_Tol": , 
+	"maxStuck": , 
+
+	"perform_LocalSearch": 1, 
+	"local_method": "n", 
+	"local_min_criteria": 1, 
+	"local_maxIter": 500, 				
+	"local_Tol": 1e-3, 					
+	"local_N1": 50, 					
+	"local_N2": 25, 					
+	"local_Balance": 0, 				
+	"local_atEnd": 1, 				
+	"local_onBest_Only": 0, 			
+	"local_merit_Filter": 0, 
+	"local_distance_Filter": 0, 
+	"local_th_merit_Factor": 0, 
+	"local_max_distance_Factor": 0, 
+	"local_wait_maxDist_limit": 0, 
+	"local_wait_th_limit": 0, 	
+}

@@ -13,8 +13,8 @@
 
 
 // #define DEBUG
-#define STATS
-#define LOG
+// #define STATS
+// #define LOG
 
 /**
  * Colors code for printing
@@ -58,7 +58,9 @@ typedef struct Set{
 typedef struct Stats{
 
 	int n_successful_goBeyond;
+	int n_local_search_performed;
 	int n_successful_localSearch;
+	int n_local_search_iterations;
 	int n_Stuck;
 	int n_successful_recombination;
 
@@ -83,9 +85,13 @@ typedef struct eSSType{
 	double prob_bound;
 	int strategy;
 	int inter_save;
-	bool is_warmStart;
+	int warmStart;
 	int n_subRegions;
 	int debug;
+	int log;
+	double sol;
+	int collectStats;
+	int saveOutput;
 
 	/**
 	 * Global Options
@@ -125,16 +131,18 @@ typedef struct eSSType{
 	 * Local Search Options
 	 */
 	int perform_LocalSearch;
-	char* local_method;
-	int local_Freqs;
-	int local_SolverMethod;
-	int local_Tol;
-	int local_IterPrint;
-	int local_N1;
-	int local_N2;
-	int local_Balance;
-	int local_atEnd;
-	int local_onBest_Only;
+	char local_method;
+	double local_min_criteria;
+	int local_maxIter;				// Maximum iterations of the local search
+	// int local_Freqs;
+	int local_SolverMethod;			// Local search method
+	double local_Tol;					// Local search convergence tolerance 
+	// int local_IterPrint;
+	int local_N1;					// Starting the local search after local_N1 iteration
+	int local_N2;					// Frequency of local search
+	int local_Balance;				// Balance between the diversity and quality for choosing the initial point
+	int local_atEnd;				// Applying the local search only at the end
+	int local_onBest_Only;			// Apply the local search only on the best solution
 	int local_merit_Filter;
 	int local_distance_Filter;
 	double local_th_merit_Factor;
@@ -169,6 +177,7 @@ void init_scatterSet(eSSType*, void*, void*);
 void init_refSet(eSSType*, void*, void*);
 void init_report_files(eSSType *);
 void init_stats(eSSType *);
+void init_warmStart(eSSType *);
 
 /**
  * essStats.c
@@ -236,15 +245,15 @@ void init_sampleParams(eSSType*);
 // #define GSL_TESTFUNCTION
 // #define NELDER
 // #define LEVMER
-#ifdef GSL_TESTFUNCTION 
+// #ifdef GSL_TESTFUNCTION 
 	void bounds(double lb[], double ub[]);
 	int feasible(double x[]);
-	#ifdef LEVMER
-		int objfn(const gsl_vector *x, void *data, gsl_vector *f);
-	#elif defined(NELDER)
-		double objfn(const gsl_vector *x, void *data);
-	#endif
-#endif
+	// #ifdef LEVMER
+		int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f);
+	// #elif defined(NELDER)
+		double nelder_objfn(const gsl_vector *x, void *data);
+	// #endif
+// #endif
 
 
 /**
@@ -276,9 +285,11 @@ void read_cli_params(eSSType *, int, char **);
 void print_eSSParams(eSSType*);
 void print_Set(eSSType*, Set*);
 void print_Ind(eSSType*, individual*);
-void write_Set(eSSType*, Set*, FILE*, int, char);
-void write_Ind(eSSType*, individual*, FILE*, int, char);
+void write_Set(eSSType*, Set*, FILE*, int);
+void write_Ind(eSSType*, individual*, FILE*, int);
 void print_Stats(eSSType *);
+void parse_double_row(eSSType *eSSParams, char *line, double *row);
+void parse_int_row(eSSType *eSSParams, char *line, int *row);
 
 /**
  * essMain.c

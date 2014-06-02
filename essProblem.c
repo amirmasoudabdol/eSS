@@ -13,8 +13,8 @@
 // #include "benchmarks/Easom.h"				// Accurate!
 // #include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
-// #include "benchmarks/GoldPrice.h"			// Accurate!
-#include "benchmarks/Hartman3.h"			// Accurate!
+#include "benchmarks/GoldPrice.h"			// Accurate!
+// #include "benchmarks/Hartman3.h"			// Accurate!
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
@@ -69,6 +69,7 @@ void init_sampleParams(eSSType *eSSParams){
 
 #ifdef TEST_PROBLEM
 	eSSParams->n_Params = N;
+	eSSParams->sol = (double)SOL;
 	printf("%s", KCYN);
 	printf("\n---------------------------------");
 	printf("\n %s:", (const char*)TEST_PROBLEM);
@@ -89,7 +90,8 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->tolc;
 	// eSSParams->prob_bound;
 	// eSSParams->strategy;
-	// eSSParams->inter_save;
+	eSSParams->inter_save = 1;
+	// eSSParams->warmStart = 1;
 
 	/**
 	 * Global Options
@@ -101,7 +103,7 @@ void init_sampleParams(eSSType *eSSParams){
 	 	printf("hi\n");
 	 }
 
-	eSSParams->maxiter = 50;
+	eSSParams->maxiter = 200;
 	eSSParams->maxStuck = 20;
 
 	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
@@ -143,17 +145,19 @@ void init_sampleParams(eSSType *eSSParams){
 	/**
 	 * Local Search Options
 	 */
-	// eSSParams->perform_LocalSearch;
-	eSSParams->local_method = 'l';
+	eSSParams->perform_LocalSearch = 1;
+	eSSParams->local_method = 'n';
+	eSSParams->local_min_criteria = ((double)SOL + 1) ;
+	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
 	// eSSParams->local_SolverMethod;
-	// eSSParams->local_Tol;
+	eSSParams->local_Tol = 1e-3;
 	// eSSParams->local_IterPrint;
-	// eSSParams->local_N1;
-	// eSSParams->local_N2;
+	eSSParams->local_N1 = 50;
+	eSSParams->local_N2 = 25;
 	// eSSParams->local_Balance;
-	// eSSParams->local_atEnd;
-	// eSSParams->local_onBest_Only;
+	eSSParams->local_atEnd = 1;
+	eSSParams->local_onBest_Only = 1;
 	// eSSParams->local_merit_Filter;
 	// eSSParams->local_distance_Filter;
 	// eSSParams->local_th_merit_Factor;
@@ -173,38 +177,32 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 	double cost    = 0;
 	double penalty = 0;
 
-	#ifdef GSL_TESTFUNCTION
-		#ifdef LEVMER
-			gsl_vector *ff = gsl_vector_alloc(40);
-			gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
-			objfn(&x.vector, inp, ff);
-			cost = gsl_blas_dnrm2(ff);
-			gsl_vector_free(ff);
-			return cost;
-		#elif defined NELDER
-			gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
-			return objfn(&x.vector, inp);
-		#endif
-	#else
+	// #ifdef GSL_TESTFUNCTION
+	// 	#ifdef LEVMER
+	if (eSSParams->perform_LocalSearch){
+		if (eSSParams->local_method == 'l'){
+				gsl_vector *ff = gsl_vector_alloc(40);
+				gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
+				levermed_objfn(&x.vector, inp, ff);
+				cost = gsl_blas_dnrm2(ff);
+				gsl_vector_free(ff);
+				return cost;
+			}
+		if (eSSParams->local_method == 'n'){
+			// #elif defined NELDER
+				gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
+				return nelder_objfn(&x.vector, inp);
+		}
+	}
+	else{
+	// 		return objfn(&x.vector, inp);
+	// 	#endif
+	// #else
 		cost = objfn(ind->params);
-	#endif
+	}
 
 	return (cost + penalty);
 }
-
-
-// int gsl_objectiveFunction(const gsl_vector *x, void *data, gsl_vector *f){
-
-// 	double cost = 0;
-// 	double penalty = 0;
-
-
-// 	// Copy x to a new double variable;
-// 	// and call the objfn(d)
-
-// 	return GSL_SUCCESS;
-// }
-
 
 
 

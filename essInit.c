@@ -7,8 +7,10 @@
 void init_essParams(eSSType *eSSParams){
 
 
-	eSSParams->stats->n_successful_goBeyond      = 0;   
+	eSSParams->stats->n_successful_goBeyond      = 0;  
+	eSSParams->stats->n_local_search_performed   = 0; 
 	eSSParams->stats->n_successful_localSearch   = 0;
+	eSSParams->stats->n_local_search_iterations  = 0;
 	eSSParams->stats->n_Stuck                    = 0;     
 	eSSParams->stats->n_successful_recombination = 0;            
 
@@ -67,9 +69,9 @@ void init_essParams(eSSType *eSSParams){
 
 void init_report_files(eSSType *eSSParams){
 	char mode = 'w';
-	if (eSSParams->is_warmStart)
+	if (eSSParams->warmStart)
 		mode = 'a';
-	refSet_history_file   = fopen("refSet_history_file.out", &mode);
+	refSet_history_file   = fopen("ref_set_history_file.out", &mode);
 	best_sols_history_file = fopen("best_sols_history_file.out", &mode);
 	freqs_matrix_file      = fopen("freqs_matrix_history.out", &mode);
 	stats_file			   = fopen("stats_file.csv", &mode);	
@@ -223,7 +225,60 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 
 
 
+void init_warmStart(eSSType *eSSParams){
+
+	int i;
+    char line[4098];
+    printf("Loading the data to perform warm start...\n");
+	
+	// Read refSet
+    i = 0;
+    FILE* refSetStream = fopen("ref_set_final.csv", "r");
+    while (fgets(line, 4098, refSetStream) && (i < eSSParams->n_refSet))
+    {
+    	double row[eSSParams->n_Params + 1];
+        char* tmp = strdup(line);
+        parse_double_row(eSSParams, tmp, row);
+        for (int j = 0; j < eSSParams->n_Params; ++j){
+        	eSSParams->refSet->members[i].params[j] = row[j];
+        }
+        eSSParams->refSet->members[i].cost = row[eSSParams->n_Params];
+        free(tmp);
+        i++;
+    }
+    eSSParams->best = (individual *)malloc(sizeof(individual));
+	eSSParams->best = &(eSSParams->refSet->members[0]);				// The first members of ref_set is always the best
+    print_Set(eSSParams, eSSParams->refSet);
+    print_Ind(eSSParams, eSSParams->best);
+
+	// Read freqMat
+ //    i = 0;
+ //    FILE* freqMatStream = fopen("freq_mat_final.csv", "r");
+ //    while (fgets(line, 4098, freqMatStream) && (i < eSSParams->n_Params ))
+ //    {
+ //    	int row[eSSParams->p];
+ //        char* tmp = strdup(line);
+ //        parse_int_row(eSSParams, tmp, row);
+ //        memcpy(eSSParams->freqs_matrix[i], (int*)row, eSSParams->p * sizeof(int));
+ //        free(tmp);
+ //        i++;
+ //    }
+ //    // print_int_matrix(eSSParams, eSSParams->freqs_matrix, eSSParams->n_Params, eSSParams->p);
+
+	// // Read probMat
+ //    i = 0;
+ //    FILE* probMatStream = fopen("prob_mat_final.csv", "r");
+ //    while (fgets(line, 4098, probMatStream))
+ //    {
+ //    	double row[eSSParams->p];
+ //        char* tmp = strdup(line);
+ //        parse_double_row(eSSParams, tmp, row);
+ //        memcpy(eSSParams->probs_matrix[i], row, eSSParams->p * sizeof(double));
+ //        free(tmp);
+ //        i++;
+ //    }
+    // print_double_matrix(eSSParams, eSSParams->probs_matrix, eSSParams->n_Params, eSSParams->p);
 
 
-
+}
 

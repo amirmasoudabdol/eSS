@@ -1,7 +1,7 @@
 #include "ess.h"
 
-#ifdef GSL_TESTFUNCTION
-#ifdef LEVMER
+// #ifdef GSL_TESTFUNCTION
+// #ifdef LEVMER
 int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out){
 
 	const gsl_multifit_fdfsolver_type *T;
@@ -27,7 +27,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	type = gsl_rng_default;
 	r = gsl_rng_alloc (type);
 
-	f.f = &objfn;
+	f.f = &levermed_objfn;
 	f.df = NULL; 
 	f.fdf = NULL; 
 	f.n = 40;		
@@ -90,8 +90,8 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 
 }
 
-#endif
-#endif
+// #endif
+// #endif
 // #elif defined NELDER
 
 int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out){
@@ -139,20 +139,21 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		iter++;
 		status = gsl_multimin_fminimizer_iterate(s);
 	
-	#ifdef DEBUG
-		for (int i = 0; i < s->x->size; ++i){
-			printf("%lf, ", gsl_vector_get(s->x, i));
+		if (eSSParams->debug)
+		{
+			for (int i = 0; i < s->x->size; ++i){
+				printf("%lf, ", gsl_vector_get(s->x, i));
+			}
+			printf("--> %lf\n ", s->fval);
 		}
-		printf("--> %lf\n ", s->fval);
-	#endif
 
 		if (status)
 			break;
 
 		size = gsl_multimin_fminimizer_size(s);
-		status = gsl_multimin_test_size( size, 1e-3);
+		status = gsl_multimin_test_size( size, eSSParams->local_Tol);
 	}
-	while (status == GSL_CONTINUE && iter < 500);
+	while (status == GSL_CONTINUE && iter < eSSParams->local_maxIter);
 
 	// gsl_multifit_covar (s->J, 0.0, covar);
 
@@ -180,6 +181,8 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		// printf("%d\n", iter);
 		ind->params = s->x->data;
 		ind->cost = s->fval;
+		eSSParams->stats->n_successful_localSearch++;
+		eSSParams->stats->n_local_search_iterations += iter;
 	}
 
 	gsl_rng_free (r);

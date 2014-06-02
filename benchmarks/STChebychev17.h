@@ -1,3 +1,4 @@
+#include <math.h>
 
 #define TEST_PROBLEM "STChebychev17"
 #define N 17
@@ -70,4 +71,8 @@ double objfn(double x[])
 double nelder_objfn(const gsl_vector *x, void *data){
 	
 	return objfn(x->data);
+}
+
+int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f){
+	return 0;
 }
