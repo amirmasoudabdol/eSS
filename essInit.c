@@ -1,11 +1,33 @@
 #include "ess.h"
 
+
+void init_defaultSettings(eSSType *eSSParams){
+
+	eSSParams->iter = 1;
+
+	eSSParams->debug = 0;
+	eSSParams->warmStart = 0;
+	eSSParams->collectStats = 0;
+	eSSParams->saveOutput = 1;
+	eSSParams->perform_LocalSearch = 0;
+	eSSParams->local_method = 'n';
+	eSSParams->maxiter = 0;
+	eSSParams->maxeval = 0;
+	eSSParams->maxtime = 0;
+
+	eSSParams->local_method = '0';
+}
+
 /**
  * Request heap memory for all the variables needed based on their size.
  * So, the init_sampleParams should be called before.
  */
 void init_essParams(eSSType *eSSParams){
 
+	/**
+	 * Initializing stats matrices and boundary matrices
+	 */
+	eSSParams->stats = (Stats *)malloc(sizeof(Stats));
 
 	eSSParams->stats->n_successful_goBeyond      = 0;  
 	eSSParams->stats->n_local_search_performed   = 0; 
@@ -32,15 +54,11 @@ void init_essParams(eSSType *eSSParams){
 
 	eSSParams->best = (individual*)malloc(sizeof(individual));
 
-	/**
-	 * Initializing stats matrices and boundary matrices
-	 */
-	eSSParams->stats = (Stats *)malloc(sizeof(Stats));
 
 	eSSParams->stats->freqs_matrix = (int **)malloc(eSSParams->n_Params * sizeof(int *));
 	eSSParams->stats->probs_matrix = (double **)malloc(eSSParams->n_Params * sizeof(double *));
 	
-	// Generating the sub regions matrixes
+	// Generating the sub regions matrices
 	eSSParams->min_boundary_matrix = (double **)malloc( eSSParams->n_Params * sizeof(double *));
 	eSSParams->max_boundary_matrix = (double **)malloc( eSSParams->n_Params * sizeof(double *));
 
@@ -54,7 +72,7 @@ void init_essParams(eSSType *eSSParams){
 
 		for (int j = 1; j <= eSSParams->n_subRegions; ++j)
 		{
-			/* Building the sub region matrixes */	// One matrix would be enough but for clarity I use two.
+			/* Building the sub region matrices */	// One matrix would be enough but for clarity I use two.
 			eSSParams->min_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_subRegions) * (j - 1);
 			eSSParams->max_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_subRegions) * j; 
 			
@@ -93,7 +111,7 @@ void init_stats(eSSType *eSSParams){
 void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 
 	// Generating Scatter Set with the size of p
-	// The first `p` members are uniformy selected from all subRegions
+	// The first `p` members are uniformly selected from all subRegions
 	for (int k = 0; k < eSSParams->n_subRegions; ++k)
 		for (int i = 0; i < eSSParams->n_Params; ++i)
 			eSSParams->scatterSet->members[k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][k], eSSParams->max_boundary_matrix[i][k]);
@@ -138,11 +156,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 			eSSParams->scatterSet->members[eSSParams->n_subRegions + k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][a], eSSParams->max_boundary_matrix[i][a] );
 		}
 
-	}	// Scatter Set is now extented...
-
-	// #ifdef STATS
-	// 	write_int_matrix(eSSParams, eSSParams->freqs_matrix, eSSParams->n_Params, eSSParams->p, freqs_matrix_file, 0, 'w');
-	// #endif
+	}	// Scatter Set is now extended...
 
 }
 

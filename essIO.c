@@ -1,12 +1,13 @@
 #include "ess.h"
 #include <unistd.h>
+#include <ctype.h>
 
 void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 
    // char *cvalue = NULL;
    // int index;
    int c;
-   printf("hi\n");
+   printf("Reading the command line paremters...\n");
 	while ((c = getopt (argc, argv, "m:drwslo:")) != -1)
      switch (c)
        {
@@ -35,7 +36,7 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
          printf("%d\n", eSSParams->perform_LocalSearch);
          break;
        case 'o':
-         	// eSSParams->local_method = (char*)optarg;
+         	eSSParams->local_method = optarg[0];
          	printf("%c\n", eSSParams->local_method);
          // 	printf("Use `l` for Levenberg-Marquardt or 'n' for Nelder-Mead Simplex method.");
          break;
@@ -105,6 +106,19 @@ void print_Stats(eSSType *eSSParams){
 
 }
 
+void write_Stats(eSSType *eSSParams, FILE *fpt){
+
+	fprintf(fpt, "%d\t", eSSParams->iter);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_goBeyond);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_local_search_performed);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_localSearch);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_local_search_iterations);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_Stuck);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_recombination);
+	fprintf(fpt, "\n");
+
+}
+
 
 void parse_double_row(eSSType *eSSParams, char *line, double *row){
 
@@ -126,3 +140,26 @@ void parse_int_row(eSSType *eSSParams, char *line, int *row){
         row[i] = atoi(tok);
     }
 }
+
+void print_Inputs(eSSType *eSSParams){
+		printf("Maximum Iterations: % d\n", eSSParams->maxiter);
+		printf("Debug: % d\n", eSSParams->debug);
+		printf("Warm Start: % d\n", eSSParams->warmStart);
+		printf("# of Sub Regions: % d\n", eSSParams->n_subRegions);
+		printf("# of Parameters: % d\n", eSSParams->n_Params);
+		printf("Reference Set Size: % d\n", eSSParams->n_refSet);
+		printf("Candidate Set Size: % d\n", eSSParams->n_candidateSet);
+		printf("Children Set Size: % d\n", eSSParams->n_childsSet);
+		printf("Stuck Tolerance: % d\n", eSSParams->maxStuck);
+		printf("Local Search Activated: %s\n", eSSParams->perform_LocalSearch == 1 ? "Yes" : "NO");
+		printf("Local Search Method: %s\n", eSSParams->local_method == 'l' ? "Levenberg-Marquardt" : "Nelder-Mead");
+		printf("Local Search Tolerance: %e\n", eSSParams->local_Tol);
+		printf("Local Search Max Iters: %d\n", eSSParams->local_maxIter);
+		printf("Local Search only on Best Sol: %s\n", eSSParams->local_onBest_Only == 1 ? "True" : "False");
+		printf("\n");
+}
+
+
+
+
+

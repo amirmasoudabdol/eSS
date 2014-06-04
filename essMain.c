@@ -7,6 +7,8 @@ int main(int argc, char **argv)
 	void *inp = NULL;
 	void *out = NULL;
 
+	init_defaultSettings(&l_essParams);
+
 	read_cli_params(&l_essParams, argc, argv);
 
 	srand(time(NULL));

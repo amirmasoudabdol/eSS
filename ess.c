@@ -26,6 +26,8 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	init_report_files(eSSParams);
 
+	print_Inputs(eSSParams);
+
 	if (!eSSParams->warmStart)
 	{
 		init_scatterSet(eSSParams, inp, out);
@@ -64,7 +66,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	
 	int candidate_index;
 
-	for (int iter = 0; iter < eSSParams->maxiter; ++iter)
+	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
@@ -82,7 +84,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				goBeyond(eSSParams, i, inp, out);
 
 				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
-					 && ( (iter > eSSParams->local_N1) || ( iter % eSSParams->local_N2 ) ) )
+					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 ) ) )
 				{
 					if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
 						if (eSSParams->local_method == 'n'){
@@ -126,16 +128,18 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			eSSParams->stats->n_local_search_performed++;
 		}
 
-		if (iter % eSSParams->inter_save == 0){
-			write_Set(eSSParams, eSSParams->refSet, refSet_history_file, iter);
-			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, iter);
+		if (eSSParams->iter % eSSParams->inter_save == 0){
+			write_Set(eSSParams, eSSParams->refSet, refSet_history_file, eSSParams->iter);
+			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->iter);
 		}
 
 		if ( fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < 0.0001 ){
-			printf("converged after %d iteration!\n", iter);
+			printf("converged after %d iteration!\n", eSSParams->iter);
 			break;
 		}
 
+
+		write_Stats(eSSParams, stats_file);
 	}
 
 	printf("Final refSet: \n");
@@ -164,7 +168,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	fclose(refSet_final_file);
 	fclose(best_sols_history_file);
-	// fclose(freqs_matrix_file);
+	fclose(stats_file);
 	// fclose(file)
 
 

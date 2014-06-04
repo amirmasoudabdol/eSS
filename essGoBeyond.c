@@ -5,7 +5,7 @@
 void goBeyond(eSSType *eSSParams, int parent_index,
 						void *inp, void *out){
 
-	bool improved   = false;
+	bool improved;
 	int gamma       = 1;
 	int improvement = 1;
 
@@ -20,6 +20,7 @@ void goBeyond(eSSType *eSSParams, int parent_index,
 
 	double c1, c2;
 
+	improved = false;
 	for(;;) {
 
 		for (int k = 0; k < eSSParams->n_Params; ++k){

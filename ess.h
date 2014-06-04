@@ -11,11 +11,6 @@
 #include <gsl/gsl_multimin.h>
 #include <gsl/gsl_multifit_nlin.h>
 
-
-// #define DEBUG
-// #define STATS
-// #define LOG
-
 /**
  * Colors code for printing
  */
@@ -93,6 +88,8 @@ typedef struct eSSType{
 	int collectStats;
 	int saveOutput;
 
+	int iter;
+
 	/**
 	 * Global Options
 	 */
@@ -109,7 +106,7 @@ typedef struct eSSType{
 	Set *scatterSet;
 
 	int n_childsSet;
-	Set *childsSet;						// Stores best members of recombinedSet for each refSet member, size: n_refSet
+	Set *childsSet;						/* Stores best members of recombinedSet for each refSet member, size: n_refSet */
 
 	int n_candidateSet;
 	Set *candidateSet;					// Stores childs generated from each refSet in each generation, size: n_refSet - 1
@@ -125,7 +122,7 @@ typedef struct eSSType{
 	double cost_Tol;
 	double dist_Tol;
 	double param_Tol;
-	double maxStuck;
+	int maxStuck;
 
 	/**
 	 * Local Search Options
@@ -172,6 +169,7 @@ extern FILE *stats_file;
 /**
  * essInit.c
  */
+void init_defaultSettings(eSSType *eSSParams);
 void init_essParams(eSSType*);
 void init_scatterSet(eSSType*, void*, void*);
 void init_refSet(eSSType*, void*, void*);
@@ -242,18 +240,12 @@ void random_Ind(eSSType*, individual*, double*, double* );
  */
 double objectiveFunction(eSSType*, individual*, void*, void*);
 void init_sampleParams(eSSType*);
-// #define GSL_TESTFUNCTION
-// #define NELDER
-// #define LEVMER
-// #ifdef GSL_TESTFUNCTION 
-	void bounds(double lb[], double ub[]);
-	int feasible(double x[]);
-	// #ifdef LEVMER
-		int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f);
-	// #elif defined(NELDER)
-		double nelder_objfn(const gsl_vector *x, void *data);
-	// #endif
-// #endif
+
+double objfn(double []);
+void bounds(double lb[], double ub[]);
+int feasible(double x[]);
+int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f);
+double nelder_objfn(const gsl_vector *x, void *data);
 
 
 /**
@@ -288,8 +280,10 @@ void print_Ind(eSSType*, individual*);
 void write_Set(eSSType*, Set*, FILE*, int);
 void write_Ind(eSSType*, individual*, FILE*, int);
 void print_Stats(eSSType *);
+void write_Stats(eSSType *, FILE *);
 void parse_double_row(eSSType *eSSParams, char *line, double *row);
 void parse_int_row(eSSType *eSSParams, char *line, int *row);
+void print_Inputs(eSSType *);
 
 /**
  * essMain.c

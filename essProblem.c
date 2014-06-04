@@ -6,7 +6,7 @@
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
 // #include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
-// #include "benchmarks/Camel6.h"			// Accurate!
+#include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
 // #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
@@ -44,7 +44,7 @@
 // #include "benchmarks/Rosenbrock.h"		// Accurate!
 // #include "benchmarks/Beale.h"				// Accurate!
 // #include "benchmarks/McCormic.h"			// Accurate!
-#include "benchmarks/Hosaki.h"			// Accurate!
+// #include "benchmarks/Hosaki.h"			// Accurate!
 // #include "benchmarks/Schwefel.h"			// Accurate!
 // #include "benchmarks/Griewank.h"			// Accurate!		// ...
 // #include "benchmarks/Helical.h"			// Accurate!	// not many subsituation // There was a problem in function definition
@@ -91,20 +91,16 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->prob_bound;
 	// eSSParams->strategy;
 	eSSParams->inter_save = 1;
-	// eSSParams->warmStart = 1;
+	eSSParams->warmStart = 0;
 
 	/**
 	 * Global Options
 	 */
 	// eSSParams->n_Params = 2;
 
-	 if (eSSParams->maxiter == 0)
-	 {
-	 	printf("hi\n");
-	 }
-
-	eSSParams->maxiter = 200;
+	if (eSSParams->maxiter == 0) eSSParams->maxiter = 200;
 	eSSParams->maxStuck = 20;
+
 
 	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
 	eSSParams->max_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
@@ -146,7 +142,7 @@ void init_sampleParams(eSSType *eSSParams){
 	 * Local Search Options
 	 */
 	eSSParams->perform_LocalSearch = 1;
-	eSSParams->local_method = 'n';
+	if (eSSParams->local_method == '0') eSSParams->local_method = 'n';
 	eSSParams->local_min_criteria = ((double)SOL + 1) ;
 	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
