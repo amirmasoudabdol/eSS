@@ -18,7 +18,7 @@
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
-// #include "benchmarks/LM2n5.h"				// Accurate!
+#include "benchmarks/LM2n5.h"				// Accurate!
 // #include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/MeyerRoth.h"			// Accurate!
 // #include "benchmarks/MieleCantrell.h"		// Accurate!
@@ -58,7 +58,7 @@
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
-#include "benchmarks/expb.h"				// Accurate
+// #include "benchmarks/expb.h"				// Accurate
 
 
 /**
@@ -92,6 +92,7 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->strategy;
 	eSSParams->inter_save = 1;
 	// eSSParams->warmStart = 0;
+	eSSParams->perform_refSet_randomization = 1;
 
 	/**
 	 * Global Options
@@ -160,6 +161,9 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->local_max_distance_Factor;
 	// eSSParams->local_wait_maxDist_limit;
 	// eSSParams->local_wait_th_limit;
+
+	eSSParams->compute_Ind_Stats = 1;
+	eSSParams->compute_Set_Stats = 1;
 
 }
 

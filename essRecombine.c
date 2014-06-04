@@ -43,8 +43,8 @@ int recombine(eSSType *eSSParams, individual *ind, int ind_index,/* individual *
 
 			evaluate_Individual(eSSParams, &(eSSParams->candidateSet->members[p]), inp, out);
 			eSSParams->candidateSet->members[p].dist   = 0;
-			eSSParams->candidateSet->members[p].mean   = 0;
-			eSSParams->candidateSet->members[p].std    = 0;
+			eSSParams->candidateSet->members[p].mean_cost   = 0;
+			eSSParams->candidateSet->members[p].var_cost    = 0;
 			eSSParams->candidateSet->members[p].nStuck = 0;
 
 			if ( eSSParams->candidateSet->members[p].cost < eSSParams->refSet->members[ind_index].cost )

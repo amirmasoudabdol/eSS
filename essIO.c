@@ -94,6 +94,8 @@ void print_Stats(eSSType *eSSParams){
 	printf("n_local_search_iterations: %d \t (avg: %d)\n", eSSParams->stats->n_local_search_iterations, eSSParams->stats->n_local_search_iterations / eSSParams->stats->n_successful_localSearch);
 	printf("n_Stuck: %d\n", eSSParams->stats->n_Stuck);
 	printf("n_successful_recombination: %d\n", eSSParams->stats->n_successful_recombination);
+	printf("-------------------\n");
+	printf("RefSet Mean Cost: %lf+/-%lf\n", eSSParams->refSet->mean_cost, eSSParams->refSet->std_cost);
 	printf("%s\n", KNRM);
 
 }

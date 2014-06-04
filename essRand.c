@@ -9,13 +9,13 @@ double rndreal(double low, double high){
 void random_Set(eSSType *eSSParams, Set *set, double *low, double *high){
 	for (int i = 0; i < set->size; ++i)
 	{
-			random_Ind(eSSParams, &(set->members[i]), low, high);
+		random_Ind(eSSParams, &(set->members[i]), low, high);
 	}
 }
 
 void random_Ind(eSSType *eSSParams, individual *ind, double *low, double *high){
 
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_Params; ++i){
 		if (!eSSParams->logBound)
 			ind->params[i] = rndreal(low[i], high[i]);
 		else{
@@ -35,4 +35,7 @@ void random_Ind(eSSType *eSSParams, individual *ind, double *low, double *high){
                 ind->params[i] = pow(10.0, log10(mn)) + la * rndreal(0, 1);
             }
 		}
+
+		ind->n_notRandomized = 0;
+	}
 }

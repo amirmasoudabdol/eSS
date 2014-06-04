@@ -8,8 +8,8 @@ void copy_Ind(eSSType *eSSParams, individual *dest, individual *src){
 	memcpy(dest->params, src->params, eSSParams->n_Params*sizeof(double));
 	// memcpy(dest->means, src->means, eSSParams->n_Params*sizeof(double));
 	// memcpy(dest->stds, src->stds, eSSParams->n_Params*sizeof(double));
-	dest->mean   = src->mean;
-	dest->std    = src->std;
+	dest->mean_cost   = src->mean_cost;
+	dest->var_cost    = src->var_cost;
 	dest->cost   = src->cost;
 	dest->dist   = src->dist;
 	dest->nStuck = src->nStuck;

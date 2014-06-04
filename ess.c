@@ -47,7 +47,7 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 		write_Ind(eSSParams, eSSParams->best, best_sols_history_file, 0);
 	}else{
 		printf("Perform Warm Start...\n");
-		
+
 		init_warmStart(eSSParams);
 	}
 
@@ -68,8 +68,11 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	
 	int candidate_index;
 
+	int n_currentUpdated;
+
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
+		n_currentUpdated = 0;
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			// This will generate a new recombinedSet around the refSet[i] and put it into the recombinedSet
@@ -80,6 +83,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				eSSParams->stats->n_successful_recombination++;
 
 				label[i] = 1;
+				n_currentUpdated++;
+
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
 				goBeyond(eSSParams, i, inp, out);
@@ -105,6 +110,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			if (label[i] == 1){
+				eSSParams->refSet->members[i].n_notRandomized++;
+
 				copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
 				eSSParams->refSet->members[i].nStuck = 0;
 				label[i] = 0;
@@ -116,7 +123,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
 
-					eSSParams->stats->n_Stuck++;
+					eSSParams->stats->n_Stuck = 0;
+					eSSParams->refSet->members[i].n_notRandomized = 0;
+					label[i] = 0;
 				}
 			}
 		}
@@ -147,6 +156,27 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			break;
 		}
 
+		/**
+		 * Compute the mean and standard deviation of the set in order to decide if the 
+		 * randomization should be applied or not.
+		 */
+		
+		if (eSSParams->compute_Set_Stats){
+
+			compute_SetStats(eSSParams, eSSParams->refSet);
+
+			if (eSSParams->perform_refSet_randomization && 
+					eSSParams->refSet->std_cost < 1e-3 && n_currentUpdated < (eSSParams->n_refSet / 4)){
+				/**
+				 * Check if the standard deviation of the set is small and the number of updatedMembers is
+				 * less than 1/4 of the n_refSet then randomize the refSet.
+				 */
+				random_Set(eSSParams, eSSParams->refSet, eSSParams->min_real_var, eSSParams->max_real_var);
+				printf("refSet Randomized\n");
+			}
+		}	
+
+		update_SetStats(eSSParams, eSSParams->refSet);
 
 		write_Stats(eSSParams, stats_file);
 	}

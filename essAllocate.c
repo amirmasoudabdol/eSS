@@ -6,13 +6,14 @@
 void allocate_Ind(eSSType *eSSParams, individual *ind){
 
 	ind->params = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	// ind->means  = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	// ind->stds   = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	ind->mean   = 0;
-	ind->std    = 0;
+	// ind->params_means  = (double *)malloc(eSSParams->n_Params * sizeof(double));
+	// ind->params_vars   = (double *)malloc(eSSParams->n_Params * sizeof(double));
+	ind->mean_cost   = 0;
+	ind->var_cost    = 0;
 	ind->cost   = 0;
 	ind->dist   = 0;
 
+	ind->n_notRandomized = 0;
 	ind->nStuck = 0;
 }
 

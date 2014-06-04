@@ -34,19 +34,21 @@
 typedef struct individual{
 	
 	double *params;
-	double mean;
-	double std;
+	double mean_cost;					/* Store the average cost value of an individual until it's randomized.*/
+	double var_cost;					/* Store the variance of the cost of an individual until it's randomized.*/
 	double cost;
 	double dist;
 
-	int nStuck;
+	int n_notRandomized;				/* Store the number of times that the specific individual updates but not randomize. It will be used to update the stats*/
+	int nStuck;							/* Store the number of times tat the specific individual didn't update during the optimization process. */
 
 } individual;
 
 typedef struct Set{
 	
 	individual *members;
-	double cost_mean;
+	double mean_cost;
+	double std_cost;
 	double *params_means;
 	int size;
 
@@ -92,6 +94,9 @@ typedef struct eSSType{
 
 	int iter;
 
+	int perform_refSet_randomization;	/* Randomize the refSet if the standard deviation of the set's cost is below some threshold.
+	NOTE: The compute_Set_Stats flag should be ON to compute the neccessary information for this operation. */
+	double set_std_Tol;					/* Tolerance value for the standard deviation of a set to perform the randomization */
 	/**
 	 * Global Options
 	 */
@@ -151,6 +156,8 @@ typedef struct eSSType{
 
 
 	Stats *stats;
+	int compute_Ind_Stats;
+	int compute_Set_Stats;
 
 } eSSType;
 
@@ -185,6 +192,9 @@ void init_warmStart(eSSType *);
 void updateFrequencyMatrix(eSSType*);
 void compute_Mean(eSSType*, individual*);
 void compute_Std(eSSType*, individual*);
+void compute_SetStats(eSSType*, Set*);
+void update_SetStats(eSSType *eSSParams, Set *set);
+void update_IndStats(eSSType *, individual *);
 
 /**
  * essGoBeyond
