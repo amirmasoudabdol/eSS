@@ -8,43 +8,35 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
    // int index;
    int c;
    printf("Reading the command line paremters...\n");
-	while ((c = getopt (argc, argv, "m:drwslo:")) != -1)
-     switch (c)
-       {
-       case 'm':		// maxiter
-         eSSParams->maxiter = atoi(optarg);
-         printf("%d\n", eSSParams->maxiter);
-         break;
-       case 'd':
-         eSSParams->debug = 1;
-         printf("%d\n", eSSParams->debug);
-         break;
-       case 'w':
-         eSSParams->warmStart = 1;
-         printf("%d\n", eSSParams->warmStart);
-         break;
-       case 's':
-         eSSParams->collectStats = 1;
-         printf("%d\n", eSSParams->collectStats);
-         break;
-       case 'r':
-         eSSParams->saveOutput = 1;
-         printf("%d\n", eSSParams->saveOutput);
-         break;
-       case 'l':
-         eSSParams->perform_LocalSearch = 1;
-         printf("%d\n", eSSParams->perform_LocalSearch);
-         break;
-       case 'o':
-         	eSSParams->local_method = optarg[0];
-         	printf("%c\n", eSSParams->local_method);
-         // 	printf("Use `l` for Levenberg-Marquardt or 'n' for Nelder-Mead Simplex method.");
-         break;
-       case '?':
-       	  break;
-       default:
-         abort ();
-       }
+		while ((c = getopt (argc, argv, "m:drwslo:")) != -1)
+	     switch (c)
+	       {
+	       case 'm':		// maxiter
+	         eSSParams->maxiter = atoi(optarg);
+	         break;
+	       case 'd':
+	         eSSParams->debug = 1;
+	         break;
+	       case 'w':
+	         eSSParams->warmStart = 1;
+	         break;
+	       case 's':
+	         eSSParams->collectStats = 1;
+	         break;
+	       case 'r':
+	         eSSParams->saveOutput = 1;
+	         break;
+	       case 'l':
+	         eSSParams->perform_LocalSearch = 1;
+	         break;
+	       case 'o':
+	         	eSSParams->local_method = optarg[0];
+	         break;
+	       case '?':
+	       	  break;
+	       default:
+	         abort ();
+	       }
 
 }
 
@@ -95,7 +87,7 @@ void write_Ind(eSSType *eSSParams, individual *ind, FILE *fpt, int iter){
 void print_Stats(eSSType *eSSParams){
 
 	printf("%s\n", KGRN);
-	printf("n_iter: %d\n", eSSParams->maxiter);
+	printf("n_iter: %d\n", eSSParams->iter);
 	printf("n_successful_goBeyond: %d\n", eSSParams->stats->n_successful_goBeyond);
 	printf("n_local_search_performed: %d\n", eSSParams->stats->n_local_search_performed);
 	printf("n_successful_localSearch: %d\n", eSSParams->stats->n_successful_localSearch);

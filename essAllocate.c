@@ -35,7 +35,8 @@ void allocate_Set(eSSType *eSSParams, Set *set){
 	set->members = (individual *)malloc(set->size * sizeof(individual));
 	for (int i = 0; i < set->size; ++i)
 		allocate_Ind(eSSParams, &(set->members[i]));
-	
+
+	set->params_means = (double *)malloc(eSSParams->n_Params * sizeof(double));
 }
 
 /**
@@ -47,6 +48,7 @@ void deallocate_Set(eSSType *eSSParams, Set *set){
 		deallocate_Ind(eSSParams, &(set->members[i]));
 
 	free(set->members);
+	free(set->params_means);
 }
 
 

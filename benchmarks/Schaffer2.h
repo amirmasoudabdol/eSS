@@ -1,3 +1,4 @@
+#include <math.h>
 
 #define TEST_PROBLEM "Schaffer2"
 #define N 2

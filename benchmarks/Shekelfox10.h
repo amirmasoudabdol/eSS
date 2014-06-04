@@ -3,7 +3,7 @@
 #define N 10
 
 #define PI 3.14159265359
-#define SOL 0
+#define SOL -10.2087
 
 
 void bounds(double lb[], double ub[])

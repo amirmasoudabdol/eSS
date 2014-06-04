@@ -6,7 +6,7 @@
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
 // #include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
-#include "benchmarks/Camel6.h"			// Accurate!
+// #include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
 // #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
@@ -34,9 +34,9 @@
 // #include "benchmarks/Schubert.h"			// Accurate!
 // #include "benchmarks/Shekel10.h"			// Accurate!
 // #include "benchmarks/Shekel5.h"			// Accurate!
-// #include "benchmarks/Shekel7.h"			// Accurate!
-// #include "benchmarks/Shekelfox10.h"		// Accurate!
-// #include "benchmarks/Shekelfox5.h"		// Accurate!
+// #include "benchmarks/Shekel7.h"			// Accurate! More iterations needed
+// #include "benchmarks/Shekelfox10.h"		// NOT Accurate!
+// #include "benchmarks/Shekelfox5.h"		// Accurate! More Iteration needed
 // #include "benchmarks/Wood.h"				// Accurate!
 // #include "benchmarks/Zeldasine10.h"		// Accurate!
 // #include "benchmarks/Zeldasine20.h"		// Accurate!
@@ -58,7 +58,7 @@
 // #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
-// #include "benchmarks/expb.h"
+#include "benchmarks/expb.h"				// Accurate
 
 
 /**
@@ -91,7 +91,7 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->prob_bound;
 	// eSSParams->strategy;
 	eSSParams->inter_save = 1;
-	eSSParams->warmStart = 0;
+	// eSSParams->warmStart = 0;
 
 	/**
 	 * Global Options
@@ -130,10 +130,10 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->init_RefSet_Type;
 	// eSSParams->combination_Type;
 	// eSSParams->regeneration_Type;
-	// eSSParams->int delete;
+	// eSSParams->delete;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
-	// eSSParams->cost_Tol;
+	eSSParams->cost_Tol = 1e-3;;
 	// eSSParams->dist_Tol;
 	// eSSParams->param_Tol;
 	// eSSParams->stuck_Tol;

@@ -1,6 +1,6 @@
 #include <math.h>
 
-#define TEST_PROBLEM Zeldasine20
+#define TEST_PROBLEM "Zeldasine20"
 #define N 20
 
 #define PI 3.14159265359

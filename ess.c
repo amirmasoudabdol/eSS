@@ -46,6 +46,8 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 
 		write_Ind(eSSParams, eSSParams->best, best_sols_history_file, 0);
 	}else{
+		printf("Perform Warm Start...\n");
+		
 		init_warmStart(eSSParams);
 	}
 
@@ -71,7 +73,6 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			// This will generate a new recombinedSet around the refSet[i] and put it into the recombinedSet
-			// IMP: It could also send the best one only!
 			candidate_index = recombine(eSSParams, &(eSSParams->refSet->members[i]), i, inp, out);
 
 			if (-1 != candidate_index){
@@ -133,6 +134,14 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->iter);
 		}
 
+
+		if ( fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
+			printf("%s\n", KRED);
+			printf("Best Solutions converged after %d iterations\n", eSSParams->iter);
+			printf("%s\n", KNRM);
+			break;
+		}
+
 		if ( fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < 0.0001 ){
 			printf("converged after %d iteration!\n", eSSParams->iter);
 			break;
@@ -164,6 +173,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	refSet_final_file     = fopen("ref_set_final.csv", "w");
 	write_Set(eSSParams, eSSParams->refSet, refSet_final_file, -1);
 	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->maxiter);	
+	printf("ref_set_final.csv, ref_set_history_file.out, best_sols_history_file.out, and stats_file is generated. \n");
 
 
 	fclose(refSet_final_file);

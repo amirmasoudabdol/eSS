@@ -67,3 +67,6 @@ double nelder_objfn(const gsl_vector *x, void *data){
   return objfn(x->data);
 }
 
+int levermed_objfn(const gsl_vector *x, void *data, gsl_vector *f){
+  return 0;
+}

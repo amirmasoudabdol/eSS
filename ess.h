@@ -46,6 +46,8 @@ typedef struct individual{
 typedef struct Set{
 	
 	individual *members;
+	double cost_mean;
+	double *params_means;
 	int size;
 
 } Set;
