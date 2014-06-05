@@ -228,7 +228,7 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 		// Adding the vector in max_index to the refSet
 		copy_Ind(eSSParams, &(eSSParams->refSet->members[k]), &(eSSParams->scatterSet->members[h + max_index]));
 
-		// After assigment, the rest of should be shift into the left form the position that the 
+		// After assignment, the rest of should be shift into the left form the position that the 
 		// vector is selected
 		
 		// It could be done more complicated!
@@ -236,6 +236,10 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 
 	}
 
+	/**
+	 * It checks if the user initial guesses are available, if so, then add them to the
+	 * end of the refSet.
+	 */
 	if (eSSParams->user_guesses){
 		FILE *user_initial_guesses_file = fopen("init_guesses.csv", "r");
 		int i = 15 ;
@@ -256,11 +260,6 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 	        i++;
 	    }
 	}
-
-	print_Set(eSSParams, eSSParams->refSet);
-	// #ifdef STATS
-	// 	write_int_matrix(eSSParams, eSSParams->stats->freqs_matrix, eSSParams->n_Params, eSSParams->n_subRegions, freqs_matrix_file, 0, 'w');
-	// #endif
 
 	free(min_dists);
 	for (int i = 0; i < (eSSParams->n_scatterSet - b/2); ++i){

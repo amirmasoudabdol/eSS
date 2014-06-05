@@ -6,7 +6,11 @@ void updateFrequencyMatrix(eSSType *eSSParams){
 	
 }
 
-
+/**
+ * Compute the statistics of the set like the mean and standard deviation of individuals cost.
+ * @param eSSParams 
+ * @param set       
+ */
 void compute_SetStats(eSSType *eSSParams, Set *set ){
 
     // souble n = 0
@@ -43,6 +47,11 @@ void update_SetStats(eSSType *eSSParams, Set *set){
 	}
 }
 
+/**
+ * Update or reset the statistics of an individual consisting its mean and variance.
+ * @param eSSParams 
+ * @param ind       
+ */
 void update_IndStats(eSSType *eSSParams, individual *ind){
 	
 	if (ind->n_notRandomized == 0){

@@ -4,7 +4,7 @@
 // #include "benchmarks/BeckerLago.h"		// Accurate!
 // #include "benchmarks/Bohachevsky1.h"		// Accurate!
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
-// #include "benchmarks/Branin.h"			// Accurate!
+#include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
 // #include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
@@ -18,7 +18,7 @@
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
-#include "benchmarks/LM2n5.h"				// Accurate!
+// #include "benchmarks/LM2n5.h"				// Accurate!
 // #include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/MeyerRoth.h"			// Accurate!
 // #include "benchmarks/MieleCantrell.h"		// Accurate!
@@ -98,6 +98,9 @@ void init_sampleParams(eSSType *eSSParams){
 
 	eSSParams->n_archiveSet = 100;
 
+	eSSParams->set_std_Tol = 1e-3;
+
+	eSSParams->equality_type = 0;
 	// eSSParams->user_guesses = 1;
 
 	/**
@@ -144,8 +147,8 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->diversification_Type;
 	eSSParams->perform_cost_tol_stopping = 1;
 	eSSParams->cost_Tol = 1e-3;
-	eSSParams->dist_Tol= 1e-1;
-	eSSParams->param_Tol = 1e-2;
+	eSSParams->dist_Tol= 1e-3;
+	eSSParams->param_Tol = 1e-4;
 	// eSSParams->stuck_Tol;
 	eSSParams->perform_refSet_convergence_stopping = 1;
 	eSSParams->refSet_convergence_Tol = 1e-4;
@@ -165,7 +168,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->local_N2 = 25;
 	// eSSParams->local_Balance;
 	eSSParams->local_atEnd = 1;
-	eSSParams->local_onBest_Only = 1;
+	eSSParams->local_onBest_Only = 0;
 	// eSSParams->local_merit_Filter;
 	// eSSParams->local_distance_Filter;
 	// eSSParams->local_th_merit_Factor;

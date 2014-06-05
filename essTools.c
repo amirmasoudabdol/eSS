@@ -69,7 +69,15 @@ void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_d
 
 }
 
-
+/**
+ * Find the closest memeber of a set to `ind` and return it's index
+ * @param  eSSParams 
+ * @param  set       Set to look for a closest member in it
+ * @param  set_size  Size of the set, it can be smaller than the actuall set size
+ * @param  ind       `individual` that we are interested in its closest member to it
+ * @param  ind_index Index of the `ind` if it is already in the set.
+ * @return           index of the closest member of a set to `ind`
+ */
 int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, int ind_index){
 	double dist;
 	double min;
@@ -121,4 +129,28 @@ bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2){
 		}
 	}
 	return false;
+}
+
+/*
+	Check if the individual exist in the set
+ */
+int is_exist(eSSType *eSSParams, Set *set, individual *ind){
+
+	int index = -1;
+	for (int i = 0; i < set->size; ++i)
+	{
+		/**
+		 * Check the value of eSSParams->equality_type, if its 0 then consider the euclidean_distance as a measurment
+		 * otherwise, check the pairwise equality of parameters.
+		 */
+		if ( true == (eSSParams->equality_type == 0 ? 
+				is_equal_dist(eSSParams, &(set->members[i]), ind) : is_equal_pairwise(eSSParams, &(set->members[i]), ind)))
+		{
+			index = i;
+			break;
+		}
+
+	}
+
+	return index;
 }

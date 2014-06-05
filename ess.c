@@ -73,6 +73,12 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	int archive_index = 0;
 
+	/**
+	 * It sets to 0 at first, and then increments until it hits the 100. Because we don't wanted
+	 * to spend time and checking archive members that are not already assigned!
+	 */
+	eSSParams->archiveSet->size = 0;
+
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
 		n_currentUpdated = 0;
@@ -81,6 +87,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			/**
 			 * Generate a candidate set by combining the `i` member of the refSet and returning
 			 * the best candidate with respect to it's cost.
+			 */
+			/**
+			 * TODO: Implement the flatzone and diversity detection routines.
 			 */
 			candidate_index = recombine(eSSParams, &(eSSParams->refSet->members[i]), i, inp, out);
 
@@ -111,17 +120,28 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 */
 				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
 					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 ) ) )
-				{
-					if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
-						if (eSSParams->local_method == 'n'){
-							neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
-							eSSParams->stats->n_local_search_performed++;
-						}else if (eSSParams->local_method == 'l'){
-							levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
-							eSSParams->stats->n_local_search_performed++;
+					{
+						/**
+						 * This check will prevent the local search operation if the cost of the individual
+						 * is greater than some value.
+						 */
+						if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
+							/**
+							 * Check if the selected child is close to the area that already the 
+							 * local search applied on it or not
+							 */
+							if ( -1 == is_exist(eSSParams, eSSParams->archiveSet, &(eSSParams->childsSet->members[i])) )
+							 {
+								if (eSSParams->local_method == 'n'){
+									neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+									eSSParams->stats->n_local_search_performed++;
+								}else if (eSSParams->local_method == 'l'){
+									levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+									eSSParams->stats->n_local_search_performed++;
+								}
+							}
 						}
 					}
-				}
 			}
 
 		}
@@ -133,6 +153,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 */
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
+			/**
+			 * If the individual marked, it will replaced by its improved child
+			 */
 			if (label[i] == 1){
 				eSSParams->refSet->members[i].n_notRandomized++;
 
@@ -140,12 +163,19 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				eSSParams->refSet->members[i].nStuck = 0;
 				label[i] = 0;
 			}else{
+				/**
+				 * Otherwise, the individual randomzies and all of it's stats and counters set
+				 * to 0.
+				 */
 				eSSParams->refSet->members[i].nStuck++;
 				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck ){
 					/* Add the stuck individual to the archiveSet */
 
 					if (archive_index == 100)
 						archive_index = 0;
+
+					if (archive_index < 100 && eSSParams->archiveSet->size < 100)
+						eSSParams->archiveSet->size++;
 
 					copy_Ind(eSSParams, &(eSSParams->archiveSet->members[archive_index]), &(eSSParams->refSet->members[i]));
 					archive_index++;
@@ -215,14 +245,14 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 			fprintf(ref_set_stats_history_file, "%lf\t%lf\n", eSSParams->refSet->mean_cost, eSSParams->refSet->std_cost);
 
+			/**
+			 * Check if the standard deviation of the set is small and the number of 
+			 * updatedMembers is less than 1/4 of the n_refSet then randomize the refSet.
+			 * After randomization all the n_notRandomized values of refSet individual will
+			 * set to 0.
+			 */
 			if (eSSParams->perform_refSet_randomization && 
-					eSSParams->refSet->std_cost < 1e-3 && n_currentUpdated < (eSSParams->n_refSet / 4)){
-				/**
-				 * Check if the standard deviation of the set is small and the number of 
-				 * updatedMembers is less than 1/4 of the n_refSet then randomize the refSet.
-				 * After randomization all the n_notRandomized values of refSet individual will
-				 * set to 0.
-				 */
+					eSSParams->refSet->std_cost < eSSParams->set_std_Tol && n_currentUpdated < (eSSParams->n_refSet / 4)){
 				for (int i = eSSParams->refSet->size - 1; i > eSSParams->refSet->size - eSSParams->n_delete; --i)
 				{
 					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), eSSParams->min_real_var, eSSParams->max_real_var);
