@@ -94,12 +94,20 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->warmStart = 0;
 	eSSParams->perform_refSet_randomization = 1;
 
+	eSSParams->goBeyond_Freqs = 10;
+
+	eSSParams->n_archiveSet = 100;
+
+	// eSSParams->user_guesses = 1;
+
 	/**
 	 * Global Options
 	 */
 	// eSSParams->n_Params = 2;
 
-	if (eSSParams->maxiter == 0) eSSParams->maxiter = 200;
+	if (eSSParams->maxiter == 0)
+		eSSParams->maxiter = 200;
+	
 	eSSParams->maxStuck = 20;
 
 
@@ -131,13 +139,13 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->init_RefSet_Type;
 	// eSSParams->combination_Type;
 	// eSSParams->regeneration_Type;
-	eSSParams->n_delete = eSSParams->refSet->size / 4;
+	eSSParams->n_delete = eSSParams->n_refSet / 4;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
 	eSSParams->perform_cost_tol_stopping = 1;
 	eSSParams->cost_Tol = 1e-3;
-	// eSSParams->dist_Tol;
-	// eSSParams->param_Tol;
+	eSSParams->dist_Tol= 1e-1;
+	eSSParams->param_Tol = 1e-2;
 	// eSSParams->stuck_Tol;
 	eSSParams->perform_refSet_convergence_stopping = 1;
 	eSSParams->refSet_convergence_Tol = 1e-4;

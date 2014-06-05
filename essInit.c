@@ -3,19 +3,19 @@
 
 void init_defaultSettings(eSSType *eSSParams){
 
-	eSSParams->iter = 1;
-
-	eSSParams->debug = 0;
-	eSSParams->warmStart = 0;
-	eSSParams->collectStats = 0;
-	eSSParams->saveOutput = 1;
+	eSSParams->iter                = 1;
+	
+	eSSParams->debug               = 0;
+	eSSParams->warmStart           = 0;
+	eSSParams->user_guesses        = 0;
+	eSSParams->collectStats        = 0;
+	eSSParams->saveOutput          = 1;
 	eSSParams->perform_LocalSearch = 0;
-	eSSParams->local_method = 'n';
-	eSSParams->maxiter = 0;
-	eSSParams->maxeval = 0;
-	eSSParams->maxtime = 0;
-
-	eSSParams->local_method = '0';
+	eSSParams->maxiter             = 0;
+	eSSParams->maxeval             = 0;
+	eSSParams->maxtime             = 0;
+	
+	eSSParams->local_method        = '0';
 }
 
 /**
@@ -52,7 +52,6 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->candidateSet->size = eSSParams->n_candidateSet;
 	allocate_Set(eSSParams, eSSParams->candidateSet);
 
-	eSSParams->n_archiveSet = 100;
 	eSSParams->archiveSet = (Set *)malloc(sizeof(Set));
 	eSSParams->archiveSet->size = eSSParams->n_archiveSet;
 	allocate_Set(eSSParams, eSSParams->archiveSet);
@@ -165,6 +164,13 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 
 }
 
+/**
+ * Initialize the refSet using the diversity selection routine. Note that all the individual 
+ * are selecting from the scatterSet which is already evaluated.
+ * @param eSSParams 
+ * @param inp       
+ * @param out       
+ */
 void init_refSet(eSSType *eSSParams, void* inp, void *out){
 
 	printf("Forming the refSet...\n");
@@ -230,6 +236,28 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 
 	}
 
+	if (eSSParams->user_guesses){
+		FILE *user_initial_guesses_file = fopen("init_guesses.csv", "r");
+		int i = 15 ;
+		char line[4098];
+		/**
+		 * Read the `init_guesses` file and import 5 entries from it to the refSet
+		 */
+	    while (fgets(line, 4098, user_initial_guesses_file) && (i < eSSParams->n_refSet))
+	    {
+	    	double row[eSSParams->n_Params];
+	        char* tmp = strdup(line);
+	        parse_double_row(eSSParams, tmp, row);
+	        for (int j = 0; j < eSSParams->n_Params; ++j){
+	        	eSSParams->refSet->members[i].params[j] = row[j];
+	        }
+	        evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
+	        free(tmp);
+	        i++;
+	    }
+	}
+
+	print_Set(eSSParams, eSSParams->refSet);
 	// #ifdef STATS
 	// 	write_int_matrix(eSSParams, eSSParams->stats->freqs_matrix, eSSParams->n_Params, eSSParams->n_subRegions, freqs_matrix_file, 0, 'w');
 	// #endif

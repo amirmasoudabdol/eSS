@@ -102,3 +102,23 @@ int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, 
 	}
 	return min_index;
 }
+
+bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2){
+
+	bool isEqual = false;
+	if ( euclidean_distance(eSSParams, ind1, ind2) < eSSParams->dist_Tol )
+		isEqual |= 1;	
+
+	return isEqual;
+}
+	
+bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2){
+
+	for (int i = 0; i < eSSParams->n_Params; ++i)
+	{
+		if (fabs(ind1->params[i] - ind2->params[i]) < eSSParams->param_Tol){
+			return true;
+		}
+	}
+	return false;
+}

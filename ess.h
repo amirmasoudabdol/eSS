@@ -94,6 +94,8 @@ typedef struct eSSType{
 
 	int user_guesses;
 
+	int goBeyond_Freqs;
+
 	int iter;
 
 	int perform_refSet_randomization;	/* Randomize the refSet if the standard deviation of the set's cost is below some threshold.

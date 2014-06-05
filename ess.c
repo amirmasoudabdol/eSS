@@ -78,7 +78,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		n_currentUpdated = 0;
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
-			// This will generate a new recombinedSet around the refSet[i] and put it into the recombinedSet
+			/**
+			 * Generate a candidate set by combining the `i` member of the refSet and returning
+			 * the best candidate with respect to it's cost.
+			 */
 			candidate_index = recombine(eSSParams, &(eSSParams->refSet->members[i]), i, inp, out);
 
 			if (-1 != candidate_index){
@@ -95,7 +98,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * the childsSet too. Note that the goBeyond function works with childsSet so it 
 				 * need the `i` as a index not the `candidate_index`
 				 */
-				goBeyond(eSSParams, i, inp, out);
+				if (eSSParams->goBeyond_Freqs != 0 && (eSSParams->iter % eSSParams->goBeyond_Freqs == 0))
+					goBeyond(eSSParams, i, inp, out);
 
 
 				/**
