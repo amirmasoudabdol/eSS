@@ -180,29 +180,29 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->iter);
 		}
 
-		/**
-		 * Check if the best solution found is enough to the predicted solution. Usually this is
-		 * not a good way to check the convergence of stochastic method but it the problem wasn't
-		 * a multi-models problem then it saves a lot of unnecessary iterations.
-		 */
-		if (eSSParams->perform_cost_tol_stopping && 
-			 	fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
-			printf("%s\n", KRED);
-			printf("Best Solutions converged after %d iterations\n", eSSParams->iter);
-			printf("%s\n", KNRM);
-			break;
-		}
+		// /**
+		//  * Check if the best solution found is enough to the predicted solution. Usually this is
+		//  * not a good way to check the convergence of stochastic method but it the problem wasn't
+		//  * a multi-models problem then it saves a lot of unnecessary iterations.
+		//  */
+		// if (eSSParams->perform_cost_tol_stopping && 
+		// 	 	fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
+		// 	printf("%s\n", KRED);
+		// 	printf("Best Solutions converged after %d iterations\n", eSSParams->iter);
+		// 	printf("%s\n", KNRM);
+		// 	break;
+		// }
 
-		/**
-		 * Check the difference between the cost of best solution and worst solution in the 
-		 * refSet. This might not always be the indication of the convergence but it might be 
-		 * the indication of saturated referenceSet.
-		 */
-		if ( eSSParams->perform_refSet_convergence_stopping && 
-				fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < eSSParams->refSet_convergence_Tol ){
-			printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
-			break;
-		}
+		// /**
+		//  * Check the difference between the cost of best solution and worst solution in the 
+		//  * refSet. This might not always be the indication of the convergence but it might be 
+		//  * the indication of saturated referenceSet.
+		//  */
+		// if ( eSSParams->perform_refSet_convergence_stopping && 
+		// 		fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < eSSParams->refSet_convergence_Tol ){
+		// 	printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
+		// 	break;
+		// }
 
 		/**
 		 * Compute the mean and standard deviation of the set in order to decide if the 
