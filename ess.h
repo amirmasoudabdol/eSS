@@ -62,6 +62,7 @@ typedef struct Stats{
 	int n_local_search_iterations;
 	int n_Stuck;
 	int n_successful_recombination;
+	int n_refSet_randomized;
 
 	int **freqs_matrix;
 	double **probs_matrix;

@@ -253,13 +253,17 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			 */
 			if (eSSParams->perform_refSet_randomization && 
 					eSSParams->refSet->std_cost < eSSParams->set_std_Tol && n_currentUpdated < (eSSParams->n_refSet / 4)){
+				/**
+				 * Replace the last n_delete members of the refSet with the newly 
+				 * randomized solutions in and sort the refSet at the end of the replacement.
+				 */
 				for (int i = eSSParams->refSet->size - 1; i > eSSParams->refSet->size - eSSParams->n_delete; --i)
 				{
 					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), eSSParams->min_real_var, eSSParams->max_real_var);
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
 				}
 				quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->refSet->size - 1, 'c');
-				printf("refSet Randomized\n");
+				eSSParams->stats->n_refSet_randomized++;
 			}
 		}	
 
