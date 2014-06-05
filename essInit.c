@@ -34,7 +34,7 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->stats->n_successful_localSearch   = 0;
 	eSSParams->stats->n_local_search_iterations  = 0;
 	eSSParams->stats->n_Stuck                    = 0;     
-	eSSParams->stats->n_successful_recombination = 0;            
+	eSSParams->stats->n_successful_recombination = 0;
 
 	eSSParams->refSet = (Set*)malloc(sizeof(Set));
 	eSSParams->refSet->size = eSSParams->n_refSet;
@@ -52,8 +52,12 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->candidateSet->size = eSSParams->n_candidateSet;
 	allocate_Set(eSSParams, eSSParams->candidateSet);
 
-	eSSParams->best = (individual*)malloc(sizeof(individual));
+	eSSParams->n_archiveSet = 100;
+	eSSParams->archiveSet = (Set *)malloc(sizeof(Set));
+	eSSParams->archiveSet->size = eSSParams->n_archiveSet;
+	allocate_Set(eSSParams, eSSParams->archiveSet);
 
+	eSSParams->best = (individual*)malloc(sizeof(individual));
 
 	eSSParams->stats->freqs_matrix = (int **)malloc(eSSParams->n_Params * sizeof(int *));
 	eSSParams->stats->probs_matrix = (double **)malloc(eSSParams->n_Params * sizeof(double *));
@@ -93,6 +97,7 @@ void init_report_files(eSSType *eSSParams){
 	best_sols_history_file = fopen("best_sols_history_file.out", &mode);
 	freqs_matrix_file      = fopen("freqs_matrix_history.out", &mode);
 	stats_file			   = fopen("stats_file.csv", &mode);	
+	ref_set_stats_history_file = fopen("ref_set_stats_history_file.csv", &mode);
 	// TODO: Check the mode
 }
 

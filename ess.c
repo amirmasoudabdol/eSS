@@ -9,6 +9,7 @@ FILE *freq_mat_final_file;
 FILE *prob_mat_final_file;
 FILE *refSet_final_file;
 FILE *stats_file;
+FILE *ref_set_stats_history_file;
 
 
 /**
@@ -70,6 +71,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	int n_currentUpdated;
 
+	int archive_index = 0;
+
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
 		n_currentUpdated = 0;
@@ -87,8 +90,21 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
+				/**
+				 * goBeyond for already selected candidate from recombinedSet which is copied to 
+				 * the childsSet too. Note that the goBeyond function works with childsSet so it 
+				 * need the `i` as a index not the `candidate_index`
+				 */
 				goBeyond(eSSParams, i, inp, out);
 
+
+				/**
+				 * Check if the local search is activated and it is not activated only for best
+				 * sol, if so, then check if it's a right moment to run the local search based on
+				 * n1, and n2 values.
+				 * Note that the local search won't apply here if it meant to apply only on best
+				 * sol.
+				 */
 				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
 					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 ) ) )
 				{
@@ -107,6 +123,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		}
 
 
+		/**
+		 * Update the refSet individual based on the indexes flagged in `label`, if the nStuck is
+		 * greater than the n_Stuck then the individual will add to the archiveSet and then randomizes and n_notRandomized and all it's statistics will set to zero.
+		 */
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			if (label[i] == 1){
@@ -118,13 +138,23 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			}else{
 				eSSParams->refSet->members[i].nStuck++;
 				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck ){
+					/* Add the stuck individual to the archiveSet */
+
+					if (archive_index == 100)
+						archive_index = 0;
+
+					copy_Ind(eSSParams, &(eSSParams->archiveSet->members[archive_index]), &(eSSParams->refSet->members[i]));
+					archive_index++;
+
 					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), 
 										eSSParams->min_real_var, eSSParams->max_real_var);
 
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
 
-					eSSParams->stats->n_Stuck = 0;
+					/* Store number of all the stuck parameters. */
+					eSSParams->stats->n_Stuck++;
 					eSSParams->refSet->members[i].n_notRandomized = 0;
+					eSSParams->refSet->members[i].nStuck = 0;
 					label[i] = 0;
 				}
 			}
@@ -132,6 +162,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		
 		quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->n_refSet - 1, 'c');
 
+		/**
+		 * Apply the local search on the best solution
+		 */
 		if (eSSParams->perform_LocalSearch && eSSParams->local_onBest_Only)
 		{
 			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
@@ -143,16 +176,27 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->iter);
 		}
 
-
-		if ( fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
+		/**
+		 * Check if the best solution found is enough to the predicted solution. Usually this is
+		 * not a good way to check the convergence of stochastic method but it the problem wasn't
+		 * a multi-models problem then it saves a lot of unnecessary iterations.
+		 */
+		if (eSSParams->perform_cost_tol_stopping && 
+			 	fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
 			printf("%s\n", KRED);
 			printf("Best Solutions converged after %d iterations\n", eSSParams->iter);
 			printf("%s\n", KNRM);
 			break;
 		}
 
-		if ( fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < 0.0001 ){
-			printf("converged after %d iteration!\n", eSSParams->iter);
+		/**
+		 * Check the difference between the cost of best solution and worst solution in the 
+		 * refSet. This might not always be the indication of the convergence but it might be 
+		 * the indication of saturated referenceSet.
+		 */
+		if ( eSSParams->perform_refSet_convergence_stopping && 
+				fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < eSSParams->refSet_convergence_Tol ){
+			printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
 			break;
 		}
 
@@ -165,11 +209,15 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 			compute_SetStats(eSSParams, eSSParams->refSet);
 
+			fprintf(ref_set_stats_history_file, "%lf\t%lf\n", eSSParams->refSet->mean_cost, eSSParams->refSet->std_cost);
+
 			if (eSSParams->perform_refSet_randomization && 
 					eSSParams->refSet->std_cost < 1e-3 && n_currentUpdated < (eSSParams->n_refSet / 4)){
 				/**
-				 * Check if the standard deviation of the set is small and the number of updatedMembers is
-				 * less than 1/4 of the n_refSet then randomize the refSet.
+				 * Check if the standard deviation of the set is small and the number of 
+				 * updatedMembers is less than 1/4 of the n_refSet then randomize the refSet.
+				 * After randomization all the n_notRandomized values of refSet individual will
+				 * set to 0.
 				 */
 				random_Set(eSSParams, eSSParams->refSet, eSSParams->min_real_var, eSSParams->max_real_var);
 				printf("refSet Randomized\n");

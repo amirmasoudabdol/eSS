@@ -101,22 +101,27 @@ typedef struct eSSType{
 	 * Global Options
 	 */
 	int n_Params;
+	int n_DataPoints;					/* Stores the number of datapoints for perfoming the efficient least-square optimizations. */
 	double *min_real_var;
 	double *max_real_var;
 	double **min_boundary_matrix;
 	double **max_boundary_matrix;
 	
-	int n_refSet;
+	int n_refSet;						/* Reference Set size, can be set or computed automacitally. */
 	Set *refSet;
 	
-	int n_scatterSet;
+	int n_scatterSet;					/* Scatter Set size, computed automaticall. */
 	Set *scatterSet;
 
 	int n_childsSet;
-	Set *childsSet;						/* Stores best members of recombinedSet for each refSet member, size: n_refSet */
+	Set *childsSet;						/* Stores best members of recombinedSet for each refSet member, size: n_refSet.
+	`label` variable indidcates indices that has a new values during the iterations. */
 
 	int n_candidateSet;
 	Set *candidateSet;					// Stores childs generated from each refSet in each generation, size: n_refSet - 1
+
+	int n_archiveSet;
+	Set *archiveSet;
 
 	individual *best;
 
@@ -126,10 +131,14 @@ typedef struct eSSType{
 	// int delete;
 	int intensification_Freqs;
 	int diversification_Type;
+	int perform_cost_tol_stopping;
 	double cost_Tol;
 	double dist_Tol;
 	double param_Tol;
 	int maxStuck;
+
+	int perform_refSet_convergence_stopping;
+	double refSet_convergence_Tol;
 
 	/**
 	 * Local Search Options
@@ -173,6 +182,7 @@ extern FILE *freq_mat_final_file;
 extern FILE *prob_mat_final_file;
 extern FILE *refSet_final_file;
 extern FILE *stats_file;
+extern FILE *ref_set_stats_history_file;
 
 
 /**
@@ -239,6 +249,7 @@ double min(double*, int, int*);
 double max(double*, int, int*);
 void copy_Ind(eSSType *, individual *, individual *);
 void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_delete);
+int closest_member(eSSType *, Set *, int , individual *, int );
 
 /**
  * essRand.c

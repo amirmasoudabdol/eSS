@@ -134,10 +134,13 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->delete;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
-	eSSParams->cost_Tol = 1e-3;;
+	eSSParams->perform_cost_tol_stopping = 1;
+	eSSParams->cost_Tol = 1e-3;
 	// eSSParams->dist_Tol;
 	// eSSParams->param_Tol;
 	// eSSParams->stuck_Tol;
+	eSSParams->perform_refSet_convergence_stopping = 1;
+	eSSParams->refSet_convergence_Tol = 1e-4;
 
 	/**
 	 * Local Search Options

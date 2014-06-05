@@ -68,3 +68,37 @@ void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_d
 	}
 
 }
+
+
+int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, int ind_index){
+	double dist;
+	double min;
+	int min_index;
+
+	if (ind_index == set_size - 1 ){
+		min = euclidean_distance(eSSParams, ind, &(set->members[set_size - 2]));
+		min_index = set_size - 2;
+	}
+	else if (ind_index == 0){
+		min = euclidean_distance(eSSParams, ind, &(set->members[1]));
+		min_index = 1;		
+	}
+	else{
+		min = euclidean_distance(eSSParams, ind, &(set->members[ind_index - 1]));
+		min_index = ind_index - 1;		
+	}
+
+
+	for (int i = 0; i < set_size; ++i)
+	{
+		if ( i != ind_index ){
+			
+			dist = euclidean_distance(eSSParams, ind, &(set->members[i]));
+			if (dist < min ){
+				min = dist;
+				min_index = i;
+			}
+		}
+	}
+	return min_index;
+}
