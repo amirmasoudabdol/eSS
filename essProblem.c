@@ -11,7 +11,7 @@
 // #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
 // #include "benchmarks/Easom.h"				// Accurate!
-#include "benchmarks/EMichalewicz.h"		// Accurate!
+// #include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
 // #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!
@@ -19,7 +19,7 @@
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
 // #include "benchmarks/LM2n5.h"				// Accurate!
-// #include "benchmarks/LM2n10.h"			// Accurate!
+#include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/MeyerRoth.h"			// Accurate!
 // #include "benchmarks/MieleCantrell.h"		// Accurate!
 // #include "benchmarks/ModRosenbrock.h"		// Accurate!
