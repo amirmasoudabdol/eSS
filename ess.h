@@ -92,6 +92,8 @@ typedef struct eSSType{
 	int collectStats;
 	int saveOutput;
 
+	int user_guesses;
+
 	int iter;
 
 	int perform_refSet_randomization;	/* Randomize the refSet if the standard deviation of the set's cost is below some threshold.
@@ -128,7 +130,7 @@ typedef struct eSSType{
 	int init_RefSet_Type;
 	int combination_Type;
 	int regeneration_Type;
-	// int delete;
+	int n_delete;					/* Specify the number of individual that should be deleted during the randomization of the refSet. */
 	int intensification_Freqs;
 	int diversification_Type;
 	int perform_cost_tol_stopping;
@@ -183,6 +185,7 @@ extern FILE *prob_mat_final_file;
 extern FILE *refSet_final_file;
 extern FILE *stats_file;
 extern FILE *ref_set_stats_history_file;
+extern FILE *user_initial_guesses_file;
 
 
 /**

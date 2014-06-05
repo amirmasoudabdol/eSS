@@ -131,7 +131,7 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->init_RefSet_Type;
 	// eSSParams->combination_Type;
 	// eSSParams->regeneration_Type;
-	// eSSParams->delete;
+	eSSParams->n_delete = eSSParams->refSet->size / 4;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
 	eSSParams->perform_cost_tol_stopping = 1;

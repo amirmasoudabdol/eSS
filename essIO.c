@@ -8,7 +8,7 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
    // int index;
    int c;
    printf("Reading the command line paremters...\n");
-		while ((c = getopt (argc, argv, "m:drwslo:")) != -1)
+		while ((c = getopt (argc, argv, "m:drwuslo:")) != -1)
 	     switch (c)
 	       {
 	       case 'm':		// maxiter
@@ -16,6 +16,9 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 	         break;
 	       case 'd':
 	         eSSParams->debug = 1;
+	         break;
+	       case 'u':
+	         eSSParams->user_guesses = 1;
 	         break;
 	       case 'w':
 	         eSSParams->warmStart = 1;

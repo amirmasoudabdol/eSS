@@ -10,7 +10,7 @@ FILE *prob_mat_final_file;
 FILE *refSet_final_file;
 FILE *stats_file;
 FILE *ref_set_stats_history_file;
-
+FILE *user_initial_guesses_file;
 
 /**
  * Initialize all the neccessary variable including the scatterSet and refSet formation.
@@ -219,7 +219,12 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * After randomization all the n_notRandomized values of refSet individual will
 				 * set to 0.
 				 */
-				random_Set(eSSParams, eSSParams->refSet, eSSParams->min_real_var, eSSParams->max_real_var);
+				for (int i = eSSParams->refSet->size - 1; i > eSSParams->refSet->size - eSSParams->n_delete; --i)
+				{
+					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), eSSParams->min_real_var, eSSParams->max_real_var);
+					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
+				}
+				quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->refSet->size - 1, 'c');
 				printf("refSet Randomized\n");
 			}
 		}	
