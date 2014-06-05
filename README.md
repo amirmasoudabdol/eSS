@@ -27,14 +27,17 @@ This is the basic structure of an scatter search algorithm which can be divided 
 The local search algorithms (Nelder-Mead and Levenberg-Marquardt) are provided using the GNU Scientific Library (GSL). So, you need to install GSL in order to use local search algorithms. To install the gsl follows the procedure below for your OS:
 
 OS X:
+	
 	’brew install gsl’
 
 Linux (Ubuntu):
+
 	’sudo apt-get install gnu-gsl’
 
 ### Make
 
 In order to make the program just run the
+	
 	make clean; make
 
 ### Running the optimization

@@ -53,9 +53,15 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->candidateSet->size = eSSParams->n_candidateSet;
 	allocate_Set(eSSParams, eSSParams->candidateSet);
 
+	eSSParams->localSearchCandidateSet = (Set *)malloc(sizeof(Set));
+	eSSParams->localSearchCandidateSet->size = eSSParams->n_refSet;
+	allocate_Set(eSSParams, eSSParams->localSearchCandidateSet);
+
 	eSSParams->archiveSet = (Set *)malloc(sizeof(Set));
 	eSSParams->archiveSet->size = eSSParams->n_archiveSet;
 	allocate_Set(eSSParams, eSSParams->archiveSet);
+
+
 
 	eSSParams->best = (individual*)malloc(sizeof(individual));
 

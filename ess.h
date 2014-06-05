@@ -125,6 +125,9 @@ typedef struct eSSType{
 	int n_candidateSet;
 	Set *candidateSet;					// Stores childs generated from each refSet in each generation, size: n_refSet - 1
 
+	int n_localSearch_Candidate;
+	Set *localSearchCandidateSet;
+
 	int n_archiveSet;
 	Set *archiveSet;
 

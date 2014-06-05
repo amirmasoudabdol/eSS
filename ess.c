@@ -82,6 +82,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
 		n_currentUpdated = 0;
+		// int i_lCandidate = 0;
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			/**
@@ -110,6 +111,12 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				if (eSSParams->goBeyond_Freqs != 0 && (eSSParams->iter % eSSParams->goBeyond_Freqs == 0))
 					goBeyond(eSSParams, i, inp, out);
 
+				/**
+				 * TODO: Implement the local search selection routine
+				 */
+				// copy_Ind(eSSParams, &(eSSParams->localSearchCandidateSet->members[i_lCandidate]), &(eSSParams->childsSet->members[i]));
+				// i_lCandidate++;
+				// eSSParams->localSearchCandidateSet->size = i_lCandidate;
 
 				/**
 				 * Check if the local search is activated and it is not activated only for best

@@ -67,6 +67,13 @@ void deallocate_eSSParams(eSSType *eSSParams){
 	deallocate_Set(eSSParams, eSSParams->candidateSet);
 	free(eSSParams->candidateSet);
 
+	eSSParams->archiveSet->size = 100;
+	deallocate_Set(eSSParams, eSSParams->archiveSet);
+	free(eSSParams->archiveSet);
+
+	deallocate_Set(eSSParams, eSSParams->localSearchCandidateSet);
+	free(eSSParams->localSearchCandidateSet);
+
 	free(eSSParams->min_real_var);
 	free(eSSParams->max_real_var);
 
