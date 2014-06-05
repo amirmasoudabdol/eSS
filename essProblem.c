@@ -4,14 +4,14 @@
 // #include "benchmarks/BeckerLago.h"		// Accurate!
 // #include "benchmarks/Bohachevsky1.h"		// Accurate!
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
-#include "benchmarks/Branin.h"			// Accurate!
+// #include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
 // #include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
 // #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
 // #include "benchmarks/Easom.h"				// Accurate!
-// #include "benchmarks/EMichalewicz.h"		// Accurate!
+#include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
 // #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!

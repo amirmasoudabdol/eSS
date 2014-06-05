@@ -42,20 +42,19 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 	printf("Start...\n");
 	do
 	{
-		printf ("iter: %3u x = % 15.8f % 15.8f % 15.8f "
-		  "|f(x)| = %g\n",
-		  iter,
-		  gsl_vector_get (s->x, 0), 
-		  gsl_vector_get (s->x, 1),
-		  gsl_vector_get (s->x, 2), 
-		  gsl_blas_dnrm2 (s->f));
+		if (eSSParams->debug){
+			printf ("iter: %3u x = % 15.8f % 15.8f % 15.8f "
+			  "|f(x)| = %g\n",
+			  iter,
+			  gsl_vector_get (s->x, 0), 
+			  gsl_vector_get (s->x, 1),
+			  gsl_vector_get (s->x, 2), 
+			  gsl_blas_dnrm2 (s->f));
+		}
 
 		iter++;
 		status = gsl_multifit_fdfsolver_iterate (s);
 	
-
-		printf ("status = %s\n", gsl_strerror (status));
-
 		if (status)
 			break;
 
@@ -139,7 +138,7 @@ int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void 
 		iter++;
 		status = gsl_multimin_fminimizer_iterate(s);
 	
-		if (eSSParams->debug)
+		if (eSSParams->debug == 1)
 		{
 			for (int i = 0; i < s->x->size; ++i){
 				printf("%lf, ", gsl_vector_get(s->x, i));
