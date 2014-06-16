@@ -11,6 +11,7 @@ FILE *refSet_final_file;
 FILE *stats_file;
 FILE *ref_set_stats_history_file;
 FILE *user_initial_guesses_file;
+FILE *archive_set_file;
 
 /**
  * Initialize all the neccessary variable including the scatterSet and refSet formation.
@@ -52,6 +53,7 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 		init_warmStart(eSSParams);
 	}
 
+		// print_Set(eSSParams, eSSParams->refSet);
 
 }
 
@@ -112,7 +114,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 					goBeyond(eSSParams, i, inp, out);
 
 				/**
-				 * TODO: Implement the local search selection routine
+				 * TODO: Implement the local search selection routine as described in the paper
 				 */
 				// copy_Ind(eSSParams, &(eSSParams->localSearchCandidateSet->members[i_lCandidate]), &(eSSParams->childsSet->members[i]));
 				// i_lCandidate++;
@@ -126,7 +128,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * sol.
 				 */
 				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
-					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 ) ) )
+					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 == 0 ) ) )
 					{
 						/**
 						 * This check will prevent the local search operation if the cost of the individual
@@ -146,6 +148,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 									levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
 									eSSParams->stats->n_local_search_performed++;
 								}
+							}else{
+								eSSParams->stats->n_duplicate_found++;
 							}
 						}
 					}
@@ -164,8 +168,20 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			 * If the individual marked, it will replaced by its improved child
 			 */
 			if (label[i] == 1){
-				eSSParams->refSet->members[i].n_notRandomized++;
+				/**
+				 * Check if the candidate is very close to a member of a refSet, if so, then randomize the 
+				 * duplicated members in refSet.
+				 */
+				int duplicate_index = is_exist(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i]));
+				if ((duplicate_index != -1) && (duplicate_index != i) && (duplicate_index != 0)){
+					eSSParams->stats->n_duplicate_found++;
+					random_Ind(eSSParams, &(eSSParams->refSet->members[duplicate_index]), eSSParams->min_real_var, eSSParams->max_real_var);
+				}
 
+				/**
+				 * Replace the parent with its better child!
+				 */
+				eSSParams->refSet->members[i].n_notRandomized++;
 				copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
 				eSSParams->refSet->members[i].nStuck = 0;
 				label[i] = 0;
@@ -175,18 +191,24 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * to 0.
 				 */
 				eSSParams->refSet->members[i].nStuck++;
-				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck ){
-					/* Add the stuck individual to the archiveSet */
+				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck
+						&& (eSSParams->iter % eSSParams->n_randomization_Freqs == 0 )
+							&& (i != 0) ){
 
-					if (archive_index == 100)
+					/* Add the stuck individual to the archiveSet */
+					if (archive_index == eSSParams->n_archiveSet)
 						archive_index = 0;
 
-					if (archive_index < 100 && eSSParams->archiveSet->size < 100)
+					if ((archive_index < eSSParams->n_archiveSet) 
+							&& (eSSParams->archiveSet->size < eSSParams->n_archiveSet))
 						eSSParams->archiveSet->size++;
-
+					
 					copy_Ind(eSSParams, &(eSSParams->archiveSet->members[archive_index]), &(eSSParams->refSet->members[i]));
 					archive_index++;
 
+					/**
+					 * Randomize the stuck refSet member.
+					 */
 					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), 
 										eSSParams->min_real_var, eSSParams->max_real_var);
 
@@ -274,6 +296,11 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			}
 		}	
 
+
+		if (eSSParams->iter % eSSParams->iterprint == 0){
+			print_Stats(eSSParams);
+		}
+
 		update_SetStats(eSSParams, eSSParams->refSet);
 
 		write_Stats(eSSParams, stats_file);
@@ -286,6 +313,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	print_Ind(eSSParams, eSSParams->best);
 	print_Stats(eSSParams);
 
+	/**
+	 * Performing the local search on the bestSol.
+	 */
 	if (eSSParams->perform_LocalSearch && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
 	{
 		printf("Perforimg the last local search\n");
@@ -300,6 +330,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	refSet_final_file     = fopen("ref_set_final.csv", "w");
 	write_Set(eSSParams, eSSParams->refSet, refSet_final_file, -1);
+	write_Set(eSSParams, eSSParams->archiveSet, archive_set_file, -1);
 	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->maxiter);	
 	printf("ref_set_final.csv, ref_set_history_file.out, best_sols_history_file.out, and stats_file is generated. \n");
 

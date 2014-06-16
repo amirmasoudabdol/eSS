@@ -35,7 +35,8 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->stats->n_local_search_iterations  = 0;
 	eSSParams->stats->n_Stuck                    = 0;     
 	eSSParams->stats->n_successful_recombination = 0;
-	eSSParams->stats->n_refSet_randomized = 0;
+	eSSParams->stats->n_refSet_randomized        = 0;
+	eSSParams->stats->n_duplicate_found          = 0;
 
 	eSSParams->refSet = (Set*)malloc(sizeof(Set));
 	eSSParams->refSet->size = eSSParams->n_refSet;
@@ -99,11 +100,12 @@ void init_report_files(eSSType *eSSParams){
 	char mode = 'w';
 	if (eSSParams->warmStart)
 		mode = 'a';
-	refSet_history_file   = fopen("ref_set_history_file.out", &mode);
-	best_sols_history_file = fopen("best_sols_history_file.out", &mode);
-	freqs_matrix_file      = fopen("freqs_matrix_history.out", &mode);
-	stats_file			   = fopen("stats_file.csv", &mode);	
+	refSet_history_file        = fopen("ref_set_history_file.out", &mode);
+	best_sols_history_file     = fopen("best_sols_history_file.out", &mode);
+	freqs_matrix_file          = fopen("freqs_matrix_history.out", &mode);
+	stats_file                 = fopen("stats_file.csv", &mode);	
 	ref_set_stats_history_file = fopen("ref_set_stats_history_file.csv", &mode);
+	archive_set_file           = fopen("archive_set_file.csv", &mode);
 	// TODO: Check the mode
 }
 

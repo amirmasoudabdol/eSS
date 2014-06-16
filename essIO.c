@@ -6,40 +6,40 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 
    // char *cvalue = NULL;
    // int index;
-   int c;
-   printf("Reading the command line paremters...\n");
-		while ((c = getopt (argc, argv, "m:drwuslo:")) != -1)
-	     switch (c)
-	       {
+	int c;
+	printf("Reading the command line paremters...\n");
+	while ((c = getopt (argc, argv, "m:drwuslo:")) != -1)
+		switch (c)
+	{
 	       case 'm':		// maxiter
-	         eSSParams->maxiter = atoi(optarg);
-	         break;
+	       eSSParams->maxiter = atoi(optarg);
+	       break;
 	       case 'd':
-	         eSSParams->debug = 1;
-	         break;
+	       eSSParams->debug = 1;
+	       break;
 	       case 'u':
-	         eSSParams->user_guesses = 1;
-	         break;
+	       eSSParams->user_guesses = 1;
+	       break;
 	       case 'w':
-	         eSSParams->warmStart = 1;
-	         break;
+	       eSSParams->warmStart = 1;
+	       break;
 	       case 's':
-	         eSSParams->collectStats = 1;
-	         break;
+	       eSSParams->collectStats = 1;
+	       break;
 	       case 'r':
-	         eSSParams->saveOutput = 1;
-	         break;
+	       eSSParams->saveOutput = 1;
+	       break;
 	       case 'l':
-	         eSSParams->perform_LocalSearch = 1;
-	         break;
+	       eSSParams->perform_LocalSearch = 1;
+	       break;
 	       case 'o':
-	         	eSSParams->local_method = optarg[0];
-	         break;
+	       eSSParams->local_method = optarg[0];
+	       break;
 	       case '?':
-	       	  break;
+	       break;
 	       default:
-	         abort ();
-	       }
+	       abort ();
+	   }
 
 }
 
@@ -47,7 +47,7 @@ void print_Set(eSSType *eSSParams, Set *set){
 	printf("-----------------------------------\n");
 	for (int i = 0; i < set->size; ++i)
 	{
-		printf("%d: ", i); print_Ind(eSSParams, &(set->members[i]));
+		printf("% d: ", i); print_Ind(eSSParams, &(set->members[i]));
 	}
 	printf("\n");
 
@@ -57,10 +57,10 @@ void print_Ind(eSSType *eSSParams, individual *ind){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
-		printf("%.5lf, ", ind->params[i]);
+		printf("% 10.5lf, ", ind->params[i]);
 	}	
 	// printf("\t (cost: %lf)\t(dist: %lf)\n", ind->cost, ind->dist);
-	printf("\t (cost: %lf)\n", ind->cost/*, ind->dist*/);
+	printf("\t (cost: % lf) - %d\n", ind->cost, ind->nStuck);
 
 }
 
@@ -80,7 +80,7 @@ void write_Ind(eSSType *eSSParams, individual *ind, FILE *fpt, int iter){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
-		fprintf(fpt, "%.5lf\t", ind->params[i]);
+		fprintf(fpt, "% 10.5lf\t", ind->params[i]);
 	}
 	
 	fprintf(fpt, "%lf\n", ind->cost);

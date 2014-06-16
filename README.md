@@ -32,7 +32,7 @@ OS X:
 
 Linux (Ubuntu):
 
-	’sudo apt-get install gnu-gsl’
+	’sudo apt-get install libgsl0-dev’
 
 ### Make
 
@@ -43,3 +43,17 @@ In order to make the program just run the
 ### Running the optimization
 
 The `_ess.o` executable file will be generated after the compilation. To run the optimization just execute the file using `./_ess.o` in the command line. *In order to test different benchmark function, uncomment different `#include` statement in `essProblem.c` file. Note that the Levenberg-Marquardt algorithm is only can be set for `expo.h` test problem.*
+
+### Defining the objective function
+
+In order to perform the optimization you need a objective function to compute the cost of each individual during the optimization process. The functions `eval_Ind` and `eval_Set` are defined to call user defined objective function independent from the actual objective function definition. In each run, they call `objectiveFunction`; this function decides how to call the user defined objective function. Since the local search routines are implemented using `gel` library, you need to define special function pointer to pass to the `gsl_` functions.
+
+If you look at the code of one of the benchmark functions, you see that there are 3 similar functions are defined. I recommend you define your cost function inside the `objfn` and leave the `nelder_objfn` and `levermed_objfn` function untouched since as you see they are just translating an array to `gsl_vector`. 
+
+The last thing that you should do is to modify `objectiveFunction` in such a way that it sends a `double` array to `objfn` or other objective functions.
+
+### Role of `inp` and `out`
+
+### TODO:
+[ ] Implement the local search candidate selection routine
+[ ] Test it on more sophosticated functions

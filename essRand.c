@@ -19,10 +19,11 @@ void random_Ind(eSSType *eSSParams, individual *ind, double *low, double *high){
 		if (!eSSParams->logBound)
 			ind->params[i] = rndreal(low[i], high[i]);
 		else{
+			// TODO: Still very buggy!
 			double mx, mn, la;
 			mn = low[i];
 			mx = high[i];
-			la = log10(mx) - log10(mn);
+			la = log10(mx) - log10(MIN(mn, -RAND_MAX));
 
           // determine if linear or log scale
           if ((mn < 0.0) || (mx <= 0.0))

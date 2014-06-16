@@ -143,8 +143,9 @@ int is_exist(eSSType *eSSParams, Set *set, individual *ind){
 		 * Check the value of eSSParams->equality_type, if its 0 then consider the euclidean_distance as a measurment
 		 * otherwise, check the pairwise equality of parameters.
 		 */
-		if ( true == (eSSParams->equality_type == 0 ? 
-				is_equal_dist(eSSParams, &(set->members[i]), ind) : is_equal_pairwise(eSSParams, &(set->members[i]), ind)))
+		if ( true == 
+				(eSSParams->equality_type == 0 ? 
+					is_equal_dist(eSSParams, &(set->members[i]), ind) : is_equal_pairwise(eSSParams, &(set->members[i]), ind)))
 		{
 			index = i;
 			break;

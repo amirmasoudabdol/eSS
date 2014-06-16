@@ -13,7 +13,7 @@
 // #include "benchmarks/Easom.h"				// Accurate!
 // #include "benchmarks/EMichalewicz.h"		// Accurate!
 // #include "benchmarks/Expo.h"				// Accurate!
-#include "benchmarks/GoldPrice.h"			// Accurate!
+// #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!
 // #include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
@@ -55,7 +55,7 @@
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
 // #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate!
-// #include "benchmarks/Oddsquare.h"			// Not accurate!
+#include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
 // #include "benchmarks/expb.h"				// Accurate
@@ -84,7 +84,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->logBound = 0;
 	// eSSParams->maxeval;
 	// eSSParams->maxtime;
-	// eSSParams->iterprint;
+	eSSParams->iterprint = 500;
 	// eSSParams->plot;
 	// eSSParams->weight;
 	// eSSParams->tolc;
@@ -93,6 +93,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->inter_save = 1;
 	// eSSParams->warmStart = 0;
 	eSSParams->perform_refSet_randomization = 1;
+	eSSParams->n_randomization_Freqs = 25;
 
 	eSSParams->goBeyond_Freqs = 10;
 
@@ -100,7 +101,7 @@ void init_sampleParams(eSSType *eSSParams){
 
 	eSSParams->set_std_Tol = 1e-3;
 
-	eSSParams->equality_type = 0;
+	eSSParams->equality_type = 1;
 	// eSSParams->user_guesses = 1;
 
 	/**
@@ -145,18 +146,18 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->n_delete = eSSParams->n_refSet / 4;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
-	eSSParams->perform_cost_tol_stopping = 1;
+	eSSParams->perform_cost_tol_stopping = 0;
 	eSSParams->cost_Tol = 1e-3;
 	eSSParams->dist_Tol= 1e-3;
 	eSSParams->param_Tol = 1e-4;
 	// eSSParams->stuck_Tol;
-	eSSParams->perform_refSet_convergence_stopping = 1;
+	eSSParams->perform_refSet_convergence_stopping = 0;
 	eSSParams->refSet_convergence_Tol = 1e-4;
 
 	/**
 	 * Local Search Options
 	 */
-	eSSParams->perform_LocalSearch = 1;
+	eSSParams->perform_LocalSearch = 0;
 	if (eSSParams->local_method == '0') eSSParams->local_method = 'n';
 	eSSParams->local_min_criteria = ((double)SOL + 1) ;
 	eSSParams->local_maxIter = 500; 

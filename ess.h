@@ -28,29 +28,31 @@
 
 #ifndef MAX
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#endif
+#ifndef MIN
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #endif
 
 typedef struct individual{
 	
-	double *params;
-	double mean_cost;					/* Store the average cost value of an individual until it's randomized.*/
-	double var_cost;					/* Store the variance of the cost of an individual until it's randomized.*/
-	double cost;
-	double dist;
+	double *params;						/*!< Stores inidividual's parameters */
+	double mean_cost;					/*!< Stores the mean of current individual's cost until its randomization */
+	double var_cost;					/*!< Stores the variance of current individual's cost until its randomization */
+	double cost;						/*!< Stores the cost of current individual */
+	double dist;						/*!< Stores the distance of current individual to a set of other individuals */
 
-	int n_notRandomized;				/* Store the number of times that the specific individual updates but not randomize. It will be used to update the stats*/
-	int nStuck;							/* Store the number of times tat the specific individual didn't update during the optimization process. */
+	int n_notRandomized;				/*!< Stores the number of times that the specific individual updates but not randomize. It will be used to update the stats */
+	int nStuck;							/*!< Stores the number of times that the specific individual hasn't updated during the optimization process */
 
 } individual;
 
 typedef struct Set{
 	
-	individual *members;
-	double mean_cost;
-	double std_cost;
-	double *params_means;
-	int size;
+	individual *members;				/*!< Array of individuals */
+	double mean_cost;					/*!< mean cost of all the individual in the current set */
+	double std_cost;					/*!< standard deviation of cost of all individuals in the current set */
+	double *params_means;				/*!< Stores the mean values of each parameters in the set among all the individuals */
+	int size;							/*!< Size of the set */
 
 } Set;
 
@@ -63,6 +65,7 @@ typedef struct Stats{
 	int n_Stuck;
 	int n_successful_recombination;
 	int n_refSet_randomized;
+	int n_duplicate_found;
 
 	int **freqs_matrix;
 	double **probs_matrix;
@@ -75,13 +78,13 @@ typedef struct eSSType{
 	 * User Options
 	 */
 	int logBound;
-	int maxeval;
-	int maxtime;
-	int maxiter;
-	int iterprint;
-	bool plot;
-	double *weight;
-	double tolc;
+	int maxeval;						/*!< Maxiumum number of function evaluation before stop */
+	int maxtime;						/*!< Maximum CPU time before stop */
+	int maxiter;						/*!< Maximum iteration before stop */
+	int iterprint;						/*!< Frequency of printing the output including the stats, refSet, and bestSol. */
+	bool plot;							/*!< Indicates if the result should be plotted or not. */
+	double *weight;						/*!< Parameters importance weights to be used by Levenberg method. */
+	double tolc;						
 	double prob_bound;
 	int strategy;
 	int inter_save;
@@ -99,9 +102,9 @@ typedef struct eSSType{
 
 	int iter;
 
-	int perform_refSet_randomization;	/* Randomize the refSet if the standard deviation of the set's cost is below some threshold.
-	NOTE: The compute_Set_Stats flag should be ON to compute the neccessary information for this operation. */
-	double set_std_Tol;					/* Tolerance value for the standard deviation of a set to perform the randomization */
+	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the neccessary information for this operation. */
+	int n_randomization_Freqs;			/*!< The frequency of randomzing stuck refSet memebers, this somehow increase the maxStuck value and give some solution some extra chance to escape the local minima. */
+	double set_std_Tol;					/*!< Tolerance value for the standard deviation of a set to perform the randomization */
 	/**
 	 * Global Options
 	 */
@@ -136,13 +139,13 @@ typedef struct eSSType{
 	int init_RefSet_Type;
 	int combination_Type;
 	int regeneration_Type;
-	int n_delete;					/* Specify the number of individual that should be deleted during the randomization of the refSet. */
+	int n_delete;					/*<! Specify the number of individual that should be deleted during the randomization of the refSet. */
 	int intensification_Freqs;
 	int diversification_Type;
 	int perform_cost_tol_stopping;
 	double cost_Tol;
 
-	int equality_type;				/* Specify how the equality of two individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two individuals (0)*/
+	int equality_type;				/*<! Specify how the equality of two individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two individuals (0) */
 	double dist_Tol;
 	double param_Tol;
 	int maxStuck;
@@ -194,6 +197,7 @@ extern FILE *refSet_final_file;
 extern FILE *stats_file;
 extern FILE *ref_set_stats_history_file;
 extern FILE *user_initial_guesses_file;
+extern FILE *archive_set_file;
 
 
 /**
