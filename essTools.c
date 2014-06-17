@@ -155,3 +155,32 @@ int is_exist(eSSType *eSSParams, Set *set, individual *ind){
 
 	return index;
 }
+
+/**
+ * Check to see if the individual is located in the flatzone or not! Is there any individual available in the set with similar cost.
+ * @param  eSSParams 
+ * @param  set       
+ * @param  ind       
+ * @return           `true` if the individual located in the flatzone
+ */
+bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind){
+
+	bool isInFlatzone = false;
+
+	/**
+	 * 	The loop doesn't check the last item since it is the best sol and 
+	 * 	every good solution in comparison to that is in flatzone coverd by that!
+	 */
+	for (int i = 0; i < set->size; ++i)
+	{
+		if (ind->cost < set->members[i].cost + ( set->members[i].cost * eSSParams->flatzone_Tol) 
+				&& ind->cost > set->members[i].cost - (set->members[i].cost * eSSParams->flatzone_Tol))
+		{
+			eSSParams->stats->n_flatzone_detected++;
+			isInFlatzone = true;
+			break;
+		}
+
+	}
+	return isInFlatzone;
+}

@@ -15,7 +15,7 @@
 // #include "benchmarks/Expo.h"				// Accurate!
 // #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!
-// #include "benchmarks/Hartman6.h"			// Accurate!
+#include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
 // #include "benchmarks/LM2n5.h"				// Accurate!
@@ -53,12 +53,12 @@
 // #include "benchmarks/Salomon.h"			// Not accurate!	// not many subsituation
 // #include "benchmarks/STChebychev9.h"		// Not Accurate!		// ...
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
-// #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
-// #include "benchmarks/Modlangerman.h"		// Not accurate!
-// #include "benchmarks/Oddsquare.h"			// Not accurate!
+// #include "benchmarks/Rastrigin.h"			// Accurate!		// I got it with performing warm start in a good solutions set
+// #include "benchmarks/Modlangerman.h"		// Not accurate! Stuck!
+// #include "benchmarks/Oddsquare.h"			// Not accurate! Stuck!
 // 
 
-#include "benchmarks/expb.h"				// Accurate
+// #include "benchmarks/expb.h"				// Accurate
 
 
 /**
@@ -93,7 +93,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->inter_save = 1;
 	// eSSParams->warmStart = 0;
 	eSSParams->perform_refSet_randomization = 1;
-	eSSParams->n_randomization_Freqs = 25;
+	eSSParams->n_randomization_Freqs = 1;
 
 	eSSParams->goBeyond_Freqs = 10;
 
@@ -114,6 +114,8 @@ void init_sampleParams(eSSType *eSSParams){
 	
 	eSSParams->maxStuck = 20;
 
+	eSSParams->perform_flatzone_check = 0;
+	eSSParams->flatzone_Tol = 0.0001; 
 
 	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
 	eSSParams->max_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
@@ -149,7 +151,7 @@ void init_sampleParams(eSSType *eSSParams){
 	eSSParams->perform_cost_tol_stopping = 0;
 	eSSParams->cost_Tol = 1e-3;
 	eSSParams->dist_Tol= 1e-3;
-	eSSParams->param_Tol = 1e-4;
+	eSSParams->param_Tol = 5e-4;
 	// eSSParams->stuck_Tol;
 	eSSParams->perform_refSet_convergence_stopping = 0;
 	eSSParams->refSet_convergence_Tol = 1e-4;
@@ -158,8 +160,9 @@ void init_sampleParams(eSSType *eSSParams){
 	 * Local Search Options
 	 */
 	// eSSParams->perform_LocalSearch = 1;
-	if (eSSParams->local_method == '0') eSSParams->local_method = 'l';
-	eSSParams->local_min_criteria = ((double)SOL + 1) ;
+	if (eSSParams->local_method == '0') eSSParams->local_method = 'n';
+	// eSSParams->local_min_criteria = ((double)SOL + 1) ;
+	eSSParams->local_min_criteria = 30 ;
 	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
 	// eSSParams->local_SolverMethod;

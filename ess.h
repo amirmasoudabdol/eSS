@@ -66,6 +66,7 @@ typedef struct Stats{
 	int n_successful_recombination;
 	int n_refSet_randomized;
 	int n_duplicate_found;
+	int n_flatzone_detected;
 
 	int **freqs_matrix;
 	double **probs_matrix;
@@ -144,6 +145,8 @@ typedef struct eSSType{
 	int diversification_Type;
 	int perform_cost_tol_stopping;
 	double cost_Tol;
+	int perform_flatzone_check;
+	double flatzone_Tol;
 
 	int equality_type;				/*<! Specify how the equality of two individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two individuals (0) */
 	double dist_Tol;
@@ -268,6 +271,7 @@ int closest_member(eSSType *, Set *, int , individual *, int );
 int is_exist(eSSType *eSSParams, Set *set, individual *ind);
 bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2);
 bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2);
+bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind);
 
 /**
  * essRand.c

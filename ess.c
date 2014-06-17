@@ -87,8 +87,6 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
-printf("a, %d\n", eSSParams->iter);
-print_Set(eSSParams, eSSParams->refSet);
 		n_currentUpdated = 0;
 		// int i_lCandidate = 0;
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
@@ -141,38 +139,42 @@ print_Set(eSSParams, eSSParams->refSet);
 						 * is greater than some value.
 						 */
 						if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
-							/**
-							 * Check if the selected child is close to the area that already the 
-							 * local search applied on it or not
-							 */
-							if ( -1 == is_exist(eSSParams, eSSParams->archiveSet, &(eSSParams->childsSet->members[i])) )
-							 {
-								if (eSSParams->local_method == 'n'){
-									neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
-									eSSParams->stats->n_local_search_performed++;
-								}else if (eSSParams->local_method == 'l'){
-									levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
-									eSSParams->stats->n_local_search_performed++;
+							if (eSSParams->perform_flatzone_check){
+								if ( !is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])) ){
+								/**
+								 * Check if the selected child is close to the area that already the 
+								 * local search applied on it or not
+								 */
+									goto local_search;
+
+									local_search:
+										if ( -1 == is_exist(eSSParams, eSSParams->archiveSet, &(eSSParams->childsSet->members[i])) )
+										 {
+											if (eSSParams->local_method == 'n'){
+												neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+												eSSParams->stats->n_local_search_performed++;
+											}else if (eSSParams->local_method == 'l'){
+												levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
+												eSSParams->stats->n_local_search_performed++;
+											}
+										}else{
+											eSSParams->stats->n_duplicate_found++;
+										}
 								}
-							}else{
-								eSSParams->stats->n_duplicate_found++;
-							}
+							}else
+								goto local_search;
 						}
 					}
 			}
 
 		}
-printf("b, %d\n", eSSParams->iter);
-
- print_Set(eSSParams, eSSParams->refSet);
 
 		/**
 		 * Update the refSet individual based on the indexes flagged in `label`, if the nStuck is
-		 * greater than the n_Stuck then the individual will add to the archiveSet and then randomizes and n_notRandomized and all it's statistics will set to zero.
+		 * greater than the maxStuck then the individual will add to the archiveSet and then randomizes and n_notRandomized and all it's statistics will set to zero.
 		 */
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
-			printf("%d, ", label[i]);
 			/**
 			 * If the individual marked, it will replaced by its improved child
 			 */
@@ -191,9 +193,20 @@ printf("b, %d\n", eSSParams->iter);
 				/**
 				 * Replace the parent with its better child!
 				 */
-				eSSParams->refSet->members[i].n_notRandomized++;
-				copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
-				eSSParams->refSet->members[i].nStuck = 0;
+				// I can perform the flatzone test here:
+				if (eSSParams->perform_flatzone_check){
+					if (!is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])))
+					{
+						goto replace;
+
+						replace:
+							eSSParams->refSet->members[i].n_notRandomized++;
+							copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
+							eSSParams->refSet->members[i].nStuck = 0;
+					}
+				}else
+					goto replace;
+
 				label[i] = 0;
 			}else{
 				/**
@@ -203,7 +216,7 @@ printf("b, %d\n", eSSParams->iter);
 				eSSParams->refSet->members[i].nStuck++;
 				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck
 						&& (eSSParams->iter % eSSParams->n_randomization_Freqs == 0 )
-							&& (i != 0) ){
+							&& (i > 3) ){	// I decided to keep 3 best sols in the refSet.
 
 					/* Add the stuck individual to the archiveSet */
 					if (archive_index == eSSParams->n_archiveSet)
@@ -232,9 +245,6 @@ printf("b, %d\n", eSSParams->iter);
 				}
 			}
 		}
-printf("c, %d\n", eSSParams->iter);
-	
- print_Set(eSSParams, eSSParams->refSet);
 
 		quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->n_refSet - 1, 'c');
 
@@ -275,10 +285,6 @@ printf("c, %d\n", eSSParams->iter);
 			printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
 			break;
 		}
-
-printf("d, %d\n", eSSParams->iter);
-
- print_Set(eSSParams, eSSParams->refSet);
 
 		/**
 		 * Compute the mean and standard deviation of the set in order to decide if the 

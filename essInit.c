@@ -37,6 +37,7 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->stats->n_successful_recombination = 0;
 	eSSParams->stats->n_refSet_randomized        = 0;
 	eSSParams->stats->n_duplicate_found          = 0;
+	eSSParams->stats->n_flatzone_detected		 = 0;
 
 	eSSParams->refSet = (Set*)malloc(sizeof(Set));
 	eSSParams->refSet->size = eSSParams->n_refSet;
