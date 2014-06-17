@@ -139,12 +139,12 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 						 * is greater than some value.
 						 */
 						if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
+							/**
+							 * Check if the selected child is close to the area that already the 
+							 * local search applied on it or not
+							 */
 							if (eSSParams->perform_flatzone_check){
 								if ( !is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])) ){
-								/**
-								 * Check if the selected child is close to the area that already the 
-								 * local search applied on it or not
-								 */
 									goto local_search;
 
 									local_search:
@@ -191,9 +191,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				}
 
 				/**
-				 * Replace the parent with its better child!
+				 * Replace the parent with its better child! If it does pass the flatzone_detection_test
 				 */
-				// I can perform the flatzone test here:
 				if (eSSParams->perform_flatzone_check){
 					if (!is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])))
 					{

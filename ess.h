@@ -162,16 +162,16 @@ typedef struct eSSType{
 	int perform_LocalSearch;
 	char local_method;
 	double local_min_criteria;
-	int local_maxIter;				// Maximum iterations of the local search
+	int local_maxIter;				/*<! Maximum iterations of the local search algorithm */
 	// int local_Freqs;
-	int local_SolverMethod;			// Local search method
-	double local_Tol;					// Local search convergence tolerance 
+	int local_SolverMethod;			/*<! Local search method, `l`: Levenberg, 'n': Nelder */
+	double local_Tol;				/*<! Local search convergence tolerance */
 	// int local_IterPrint;
-	int local_N1;					// Starting the local search after local_N1 iteration
-	int local_N2;					// Frequency of local search
-	int local_Balance;				// Balance between the diversity and quality for choosing the initial point
-	int local_atEnd;				// Applying the local search only at the end
-	int local_onBest_Only;			// Apply the local search only on the best solution
+	int local_N1;					/*<! Starting the local search after local_N1 iterations */
+	int local_N2;					/*<! Frequency of local search after first local_N1 iterations */
+	int local_Balance;				/*<! Balance between the diversity and quality for choosing the initial point for local search, NOTE: It's not implemented yet! */
+	int local_atEnd;				/*<! Indicates if the local_search should only be applied at the end of the search */
+	int local_onBest_Only;			/*<! Indicates if the local search should be only applied on the bestSol during the search */
 	int local_merit_Filter;
 	int local_distance_Filter;
 	double local_th_merit_Factor;
@@ -180,9 +180,9 @@ typedef struct eSSType{
 	int local_wait_th_limit;
 
 
-	Stats *stats;
-	int compute_Ind_Stats;
-	int compute_Set_Stats;
+	Stats *stats;					/*<! Storing different statistics durig the running, check `struct Stats` */
+	int compute_Ind_Stats;			/*<! Flag that indicates if individuals should compute and store their statistics */ 
+	int compute_Set_Stats;			/*<! Flag that indicates if a set should computes and stores its statistics */
 
 } eSSType;
 
