@@ -285,6 +285,7 @@ void init_warmStart(eSSType *eSSParams){
 	int i;
     char line[4098];
     printf("Loading the data to perform warm start...\n");
+    printf("Loaded refSet: \n");
 	
 	// Read refSet
     i = 0;

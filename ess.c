@@ -68,12 +68,16 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 
 	int label[eSSParams->n_refSet];
+	for (int i = 0; i < eSSParams->refSet->size; ++i)
+		label[i] = 0;
 	
 	int candidate_index;
 
 	int n_currentUpdated;
 
 	int archive_index = 0;
+
+
 
 	/**
 	 * It sets to 0 at first, and then increments until it hits the 100. Because we don't wanted
@@ -83,6 +87,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
 	{
+printf("a, %d\n", eSSParams->iter);
+print_Set(eSSParams, eSSParams->refSet);
 		n_currentUpdated = 0;
 		// int i_lCandidate = 0;
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
@@ -156,7 +162,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			}
 
 		}
+printf("b, %d\n", eSSParams->iter);
 
+ print_Set(eSSParams, eSSParams->refSet);
 
 		/**
 		 * Update the refSet individual based on the indexes flagged in `label`, if the nStuck is
@@ -164,6 +172,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 */
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
+			printf("%d, ", label[i]);
 			/**
 			 * If the individual marked, it will replaced by its improved child
 			 */
@@ -176,6 +185,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				if ((duplicate_index != -1) && (duplicate_index != i) && (duplicate_index != 0)){
 					eSSParams->stats->n_duplicate_found++;
 					random_Ind(eSSParams, &(eSSParams->refSet->members[duplicate_index]), eSSParams->min_real_var, eSSParams->max_real_var);
+					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[duplicate_index]), inp, out);
 				}
 
 				/**
@@ -222,7 +232,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				}
 			}
 		}
-		
+printf("c, %d\n", eSSParams->iter);
+	
+ print_Set(eSSParams, eSSParams->refSet);
+
 		quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->n_refSet - 1, 'c');
 
 		/**
@@ -262,6 +275,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
 			break;
 		}
+
+printf("d, %d\n", eSSParams->iter);
+
+ print_Set(eSSParams, eSSParams->refSet);
 
 		/**
 		 * Compute the mean and standard deviation of the set in order to decide if the 

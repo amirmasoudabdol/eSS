@@ -55,10 +55,10 @@
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
 // #include "benchmarks/Rastrigin.h"			// Not Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate!
-#include "benchmarks/Oddsquare.h"			// Not accurate!
+// #include "benchmarks/Oddsquare.h"			// Not accurate!
 // 
 
-// #include "benchmarks/expb.h"				// Accurate
+#include "benchmarks/expb.h"				// Accurate
 
 
 /**
@@ -157,8 +157,8 @@ void init_sampleParams(eSSType *eSSParams){
 	/**
 	 * Local Search Options
 	 */
-	eSSParams->perform_LocalSearch = 0;
-	if (eSSParams->local_method == '0') eSSParams->local_method = 'n';
+	// eSSParams->perform_LocalSearch = 1;
+	if (eSSParams->local_method == '0') eSSParams->local_method = 'l';
 	eSSParams->local_min_criteria = ((double)SOL + 1) ;
 	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
