@@ -63,7 +63,7 @@ double objfn(double x[]){
 		sumq += f * f;
 	}	
 
-	return sumq;
+	return sqrt(sumq);
 }
 
 /*Calculate objective function value of x[].*/
