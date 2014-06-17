@@ -113,6 +113,7 @@ void write_Stats(eSSType *eSSParams, FILE *fpt){
 	fprintf(fpt, "%d\t", eSSParams->stats->n_local_search_iterations);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_Stuck);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_recombination);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_flatzone_detected);
 	fprintf(fpt, "\n");
 
 }
