@@ -1,6 +1,6 @@
 ## Enhanced Scatter Search In C
 
-This repository contains a C implementation of derivation of a Scatter Search algorithm developed by Mario .... The first implementation was in matlab in a so called “eSS” package which is not supported anymore; in fact, the improved and parallelise matlab version is now included in the package called AMIGO. The source code for improved eSS implementation is available in form of M-packages. The C version presented here is based on the latest changes to the algorithm but not provide the parallize algorithm yet. 
+This repository contains a C implementation of derivation of a Scatter Search algorithm developed by Mario Rodriguez-Fernandez et al. 2006. [1] The first implementation was in matlab in a so called “eSS” package which is not supported anymore; in fact, the improved and parallelise matlab version is now included in the package called AMIGO. The source code for improved eSS implementation is available in form of M-packages. The C version presented here is based on the latest changes to the algorithm in a  publication by Jose a. Egea et al, 2010. [2]
 
 ### Enhanced Scatter Search Algorithm 
 
@@ -54,6 +54,16 @@ The last thing that you should do is to modify `objectiveFunction` in such a way
 
 ### Role of `inp` and `out`
 
+The `inp` and `out` are two void pointers parameters in some of the functions. The purpose of those is to pass your problem specific input or output parameters. In most cases, you only need to use them in `objectiveFunction`, `objfn` or `evaluate_Ind`. If we assume that you are going to call `init_eSS` and then `run_eSS` from your simulator or your project `main()` function. Then, what you might want to do to pass your model information between function is to send them using `inp` and `out` pointers and cast them when it is necessary. 
+
+In order to make your code portable and eSS updating process seamless, I recommend you to cast your `inp` parameters in  `objectiveFunction` only for sending the right `double[]` to `objfn`. What happens is that the only file that depend on your simulator is `essProblemdef.c` which can be kept unchanged even if you wanted to update or change your eSS version.
+
 ### TODO:
 [ ] Implement the local search candidate selection routine
 [ ] Test it on more sophosticated functions
+
+
+### References:
+
+1. Rodriguez-Fernandez, M., Egea, J. a, & Banga, J. R. (2006). Novel metaheuristic for parameter estimation in nonlinear dynamic biological systems. BMC Bioinformatics, 7, 483. doi:10.1186/1471-2105-7-483
+2. Egea, J. a., Martí, R., & Banga, J. R. (2010). An evolutionary method for complex-process optimization. Computers & Operations Research, 37(2), 315–324. doi:10.1016/j.cor.2009.05.003

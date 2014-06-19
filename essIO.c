@@ -80,7 +80,7 @@ void write_Ind(eSSType *eSSParams, individual *ind, FILE *fpt, int iter){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
-		fprintf(fpt, "% 10.5lf\t", ind->params[i]);
+		fprintf(fpt, "%.5lf\t", ind->params[i]);
 	}
 	
 	fprintf(fpt, "%lf\n", ind->cost);
@@ -98,8 +98,10 @@ void print_Stats(eSSType *eSSParams){
 	printf("n_refSet_randomized: %d\n", eSSParams->stats->n_refSet_randomized);
 	printf("n_Stuck: %d\n", eSSParams->stats->n_Stuck);
 	printf("n_successful_recombination: %d\n", eSSParams->stats->n_successful_recombination);
-	printf("-------------------\n");
-	printf("RefSet Mean Cost: %lf+/-%lf\n", eSSParams->refSet->mean_cost, eSSParams->refSet->std_cost);
+	if (eSSParams->compute_Set_Stats){
+		printf("-------------------\n");
+		printf("RefSet Mean Cost: %lf+/-%lf\n", eSSParams->refSet->mean_cost, eSSParams->refSet->std_cost);
+	}
 	printf("%s\n", KNRM);
 
 }

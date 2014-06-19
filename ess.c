@@ -249,8 +249,14 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 		/**
 		 * Apply the local search on the best solution
+		 * The last condition avoid performing local search on solutions that are stuck, since
+		 * the local search algorithm couldn't keep the parameters in boundary so, we have to stop
+		 * over-applying it on solutions before make them really far from defined box constratins.
 		 */
-		if (eSSParams->perform_LocalSearch && eSSParams->local_onBest_Only)
+		if (eSSParams->perform_LocalSearch 
+				&& eSSParams->local_onBest_Only 
+					&& (eSSParams->best->cost < eSSParams->local_min_criteria)
+						&& eSSParams->best->nStuck < eSSParams->maxStuck)		
 		{
 			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
 			eSSParams->stats->n_local_search_performed++;
@@ -316,6 +322,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				quickSort_Set(eSSParams, eSSParams->refSet, 0, eSSParams->refSet->size - 1, 'c');
 				eSSParams->stats->n_refSet_randomized++;
 			}
+			
+			update_SetStats(eSSParams, eSSParams->refSet);
 		}	
 
 
@@ -323,7 +331,6 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			print_Stats(eSSParams);
 		}
 
-		update_SetStats(eSSParams, eSSParams->refSet);
 
 		write_Stats(eSSParams, stats_file);
 	}
