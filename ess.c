@@ -67,9 +67,8 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 
-	int label[eSSParams->n_refSet];
-	for (int i = 0; i < eSSParams->refSet->size; ++i)
-		label[i] = 0;
+	int label[eSSParams->n_refSet];				/*<! Uses to store the index of individuals that should be replaced with their children. */
+	memset(label, 0, eSSParams->n_refSet * sizeof(int));
 	
 	int candidate_index;
 
