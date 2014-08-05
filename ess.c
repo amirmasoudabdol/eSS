@@ -101,6 +101,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				label[i] = 1;
 				n_currentUpdated++;
 
+				/**
+				 * Copy the selected candidate into the childSet
+				 */
 				copy_Ind(eSSParams, &(eSSParams->childsSet->members[i]), &(eSSParams->candidateSet->members[candidate_index]));
 
 				/**
@@ -158,8 +161,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 											eSSParams->stats->n_duplicate_found++;
 										}
 								}
-							}else
+							}else{
 								goto local_search;
+							}
 						}
 					}
 			}
@@ -192,6 +196,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * Replace the parent with its better child! If it does pass the flatzone_detection_test
 				 */
 				if (eSSParams->perform_flatzone_check){
+                  // todo: maybe i dont need to check this again since i already did it above then i wanted to perform the local search but if the local search is not active the i have to do it.
 					if (!is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])))
 					{
 						goto replace;
@@ -201,8 +206,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 							copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
 							eSSParams->refSet->members[i].nStuck = 0;
 					}
-				}else
+				}else{
 					goto replace;
+				}
 
 				label[i] = 0;
 			}else{

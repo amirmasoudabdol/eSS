@@ -111,15 +111,24 @@ int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, 
 	return min_index;
 }
 
+
 bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2){
 
-	bool isEqual = false;
+	// bool isEqual = false;
 	if ( euclidean_distance(eSSParams, ind1, ind2) < eSSParams->dist_Tol )
-		isEqual |= 1;	
+		// isEqual |= 1;	
+		return true;
 
-	return isEqual;
+	return false;
 }
 	
+/**
+ * It returns `true` if the difference between paired parameters of and individual is less than certain amount
+ * @param  eSSParams 
+ * @param  ind1      
+ * @param  ind2      
+ * @return           `true` or `false`
+ */
 bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
@@ -140,8 +149,8 @@ int is_exist(eSSType *eSSParams, Set *set, individual *ind){
 	for (int i = 0; i < set->size; ++i)
 	{
 		/**
-		 * Check the value of eSSParams->equality_type, if its 0 then consider the euclidean_distance as a measurment
-		 * otherwise, check the pairwise equality of parameters.
+		 * Check the value of eSSParams->equality_type, if its 0 then consider the euclidean_distance as a measurement
+		 * otherwise, check the pairwise distances of parameters.
 		 */
 		if ( true == 
 				(eSSParams->equality_type == 0 ? 
@@ -165,7 +174,7 @@ int is_exist(eSSType *eSSParams, Set *set, individual *ind){
  */
 bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind){
 
-	bool isInFlatzone = false;
+	// bool isInFlatzone = false;
 
 	/**
 	 * 	The loop doesn't check the last item since it is the best sol and 
@@ -177,10 +186,12 @@ bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind){
 				&& ind->cost > set->members[i].cost - (set->members[i].cost * eSSParams->flatzone_Tol))
 		{
 			eSSParams->stats->n_flatzone_detected++;
-			isInFlatzone = true;
-			break;
+			// isInFlatzone = true;
+			// break;
+			return true;
 		}
 
 	}
-	return isInFlatzone;
+	// return isInFlatzone;
+	return false;
 }
