@@ -3,7 +3,7 @@
 /**
  * Recombined `ind` with `ind_index` in the refSet with all the other members of refSet
  * and return the index of the best recombined solution that outperform its parent.
- * `-1` means there was not such a solutino exist.
+ * `-1` means there was not such a solution exist.
  * @param  eSSParams 
  * @param  ind       parent individual
  * @param  ind_index index of the parent individual

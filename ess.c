@@ -70,11 +70,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	int label[eSSParams->n_refSet];				/*<! Uses to store the index of individuals that should be replaced with their children. */
 	memset(label, 0, eSSParams->n_refSet * sizeof(int));
 	
-	int candidate_index;
-
-	int n_currentUpdated;
-
-	int archive_index = 0;
+	int candidate_index;						/*<! Store the index of candidate for replacement after recombination. */
+	int n_currentUpdated;						/*<! Counter for all updated solutions either from recombination or goBeyond procedure. */
+	int archive_index = 0;						/*<! Track the index of `archiveSet` for storing the best solutions found. */				
 
 
 
@@ -91,11 +89,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			/**
-			 * Generate a candidate set by combining the `i` member of the refSet and returning
+			 * Generate a candidate set by combining the `i`th member of the refSet and returning
 			 * the best candidate with respect to it's cost.
-			 */
-			/**
-			 * TODO: Implement the flatzone and diversity detection routines.
 			 */
 			candidate_index = recombine(eSSParams, &(eSSParams->refSet->members[i]), i, inp, out);
 
@@ -142,6 +137,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 							 * Check if the selected child is close to the area that already the 
 							 * local search applied on it or not
 							 */
+							///////////////////////////////////////
+							///		  Flatzone Detection 	///
+							///////////////////////////////////////	
 							if (eSSParams->perform_flatzone_check){
 								if ( !is_in_flatzone(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i])) ){
 									goto local_search;
@@ -175,7 +173,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			/**
-			 * If the individual marked, it will replaced by its improved child
+			 * If an individual marked, it will replace by its improved child
 			 */
 			if (label[i] == 1){
 				/**
@@ -185,6 +183,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				int duplicate_index = is_exist(eSSParams, eSSParams->refSet, &(eSSParams->childsSet->members[i]));
 				if ((duplicate_index != -1) && (duplicate_index != i) && (duplicate_index != 0)){
 					eSSParams->stats->n_duplicate_found++;
+					// TODO: I can do this better by picking a random value based on the frequency matrix; then I can promote areas that are not discovered enough yet.
 					random_Ind(eSSParams, &(eSSParams->refSet->members[duplicate_index]), eSSParams->min_real_var, eSSParams->max_real_var);
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[duplicate_index]), inp, out);
 				}

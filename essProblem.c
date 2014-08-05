@@ -31,7 +31,7 @@
 // #include "benchmarks/PowellQ.h"			// Accurate!
 // #include "benchmarks/Schaffer1.h"			// Accurate!
 // #include "benchmarks/Schaffer2.h"			// Accurate!
-// #include "benchmarks/Schubert.h"			// Accurate!
+#include "benchmarks/Schubert.h"			// Accurate!
 // #include "benchmarks/Shekel10.h"			// Accurate!
 // #include "benchmarks/Shekel5.h"			// Accurate!
 // #include "benchmarks/Shekel7.h"			// Accurate! More iterations needed
@@ -51,7 +51,7 @@
 // #include "benchmarks/PriceTransistor.h"	// Not accurate enough!
 
 // #include "benchmarks/Salomon.h"			// Not accurate!	// not many subsituation
-#include "benchmarks/STChebychev9.h"		// Not Accurate!		// ...
+// #include "benchmarks/STChebychev9.h"		// Not Accurate!		// ...
 // #include "benchmarks/STChebychev17.h"		// Not Accurate!		// ...
 // #include "benchmarks/Rastrigin.h"			// Accurate!		// I got it with performing warm start in a good solutions set
 // #include "benchmarks/Modlangerman.h"		// Not accurate! Stuck!

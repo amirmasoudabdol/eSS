@@ -132,14 +132,14 @@ typedef struct eSSType{
 	int n_localSearch_Candidate;
 	Set *localSearchCandidateSet;
 
-	int n_archiveSet;
-	Set *archiveSet;
+	int n_archiveSet;					/*<! Store the size of archiveSet */
+	Set *archiveSet;					/*<! Use for storing the stuck solutions in the refSet. */
 
-	individual *best;
+	individual *best;					/*<! Pointer to the first member of refSet which is always the best sol */
 
-	int init_RefSet_Type;
-	int combination_Type;
-	int regeneration_Type;
+	int RefSet_Initialization_Method;		/*<! */
+	int combination_Method;					/*<! */
+	int regeneration_Method;				/*<! */
 	int n_delete;					/*<! Specify the number of individual that should be deleted during the randomization of the refSet. */
 	int intensification_Freqs;
 	int diversification_Type;
