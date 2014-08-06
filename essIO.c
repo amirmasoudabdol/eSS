@@ -11,8 +11,8 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 	while ((c = getopt (argc, argv, "m:drwuslo:")) != -1){
 		switch (c)
 		{
-	       case 'm':		// maxiter
-		       eSSParams->maxiter = atoi(optarg);
+	       case 'm':		// max_iter
+		       eSSParams->max_iter = atoi(optarg);
 		       break;
 	       case 'd':
 		       eSSParams->debug = 1;
@@ -30,7 +30,7 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 		       eSSParams->save_output = 1;
 		       break;
 	       case 'l':
-		       eSSParams->perform_LocalSearch = 1;
+		       eSSParams->perform_local_search = 1;
 		       break;
 	       case 'o':
 		       eSSParams->local_SolverMethod = optarg[0];
@@ -56,7 +56,7 @@ void print_Set(eSSType *eSSParams, Set *set){
 
 void print_Ind(eSSType *eSSParams, Individual *ind){
 
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		printf("% 10.5lf, ", ind->params[i]);
 	}	
@@ -79,7 +79,7 @@ void write_Ind(eSSType *eSSParams, Individual *ind, FILE *fpt, int iter){
 	if (iter != -1)
 		fprintf(fpt, "%d\t", iter);
 
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		fprintf(fpt, "%.5lf\t", ind->params[i]);
 	}
@@ -144,18 +144,18 @@ void parse_int_row(eSSType *eSSParams, char *line, int *row){
 }
 
 void print_Inputs(eSSType *eSSParams){
-		printf("Maximum Iterations: % d\n", eSSParams->maxiter);
+		printf("Maximum Iterations: % d\n", eSSParams->max_iter);
 		printf("Debug: % d\n", eSSParams->debug);
 		printf("Warm Start: % d\n", eSSParams->perform_warm_start);
 		printf("# of Sub Regions: % d\n", eSSParams->n_sub_regions);
-		printf("# of Parameters: % d\n", eSSParams->n_Params);
+		printf("# of Parameters: % d\n", eSSParams->n_params);
 		printf("Reference Set Size: % d\n", eSSParams->n_refSet);
 		printf("Candidate Set Size: % d\n", eSSParams->n_candidateSet);
 		printf("Children Set Size: % d\n", eSSParams->n_childsSet);
 		printf("Stuck Tolerance: % d\n", eSSParams->max_stuck);
-		printf("Local Search Activated: %s\n", eSSParams->perform_LocalSearch == 1 ? "Yes" : "NO");
+		printf("Local Search Activated: %s\n", eSSParams->perform_local_search == 1 ? "Yes" : "NO");
 		printf("Local Search Method: %s\n", eSSParams->local_SolverMethod == 'l' ? "Levenberg-Marquardt" : "Nelder-Mead");
-		printf("Local Search Tolerance: %e\n", eSSParams->local_Tol);
+		printf("Local Search Tolerance: %e\n", eSSParams->local_tol);
 		printf("Local Search Max Iters: %d\n", eSSParams->local_maxIter);
 		printf("Local Search only on Best Sol: %s\n", eSSParams->local_onBest_Only == 1 ? "True" : "False");
 		printf("\n");

@@ -5,9 +5,9 @@
  */
 void copy_Ind(eSSType *eSSParams, Individual *dest, Individual *src){
 	
-	memcpy(dest->params, src->params, eSSParams->n_Params*sizeof(double));
-	// memcpy(dest->means, src->means, eSSParams->n_Params*sizeof(double));
-	// memcpy(dest->stds, src->stds, eSSParams->n_Params*sizeof(double));
+	memcpy(dest->params, src->params, eSSParams->n_params*sizeof(double));
+	// memcpy(dest->means, src->means, eSSParams->n_params*sizeof(double));
+	// memcpy(dest->stds, src->stds, eSSParams->n_params*sizeof(double));
 	dest->mean_cost   = src->mean_cost;
 	dest->var_cost    = src->var_cost;
 	dest->cost   = src->cost;
@@ -52,7 +52,7 @@ double max(double* array, int len, int* max_index){
 double euclidean_distance(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
 	double distance = 0;
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		distance += (ind1->params[i] - ind2->params[i]) * (ind1->params[i] - ind2->params[i]);
 	}
@@ -115,7 +115,7 @@ int closest_member(eSSType *eSSParams, Set *set, int set_size, Individual *ind, 
 bool is_equal_dist(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
 	// bool isEqual = false;
-	if ( euclidean_distance(eSSParams, ind1, ind2) < eSSParams->dist_Tol )
+	if ( euclidean_distance(eSSParams, ind1, ind2) < eSSParams->euclidean_dist_tol )
 		// isEqual |= 1;	
 		return true;
 
@@ -131,9 +131,9 @@ bool is_equal_dist(eSSType *eSSParams, Individual *ind1, Individual *ind2){
  */
 bool is_equal_pairwise(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
-		if (fabs(ind1->params[i] - ind2->params[i]) < eSSParams->param_Tol){
+		if (fabs(ind1->params[i] - ind2->params[i]) < eSSParams->param_diff_tol){
 			return true;
 		}
 	}
@@ -182,8 +182,8 @@ bool is_in_flatzone(eSSType *eSSParams, Set *set, Individual *ind){
 	 */
 	for (int i = 0; i < set->size; ++i)
 	{
-		if (ind->cost < set->members[i].cost + ( set->members[i].cost * eSSParams->flatzone_Tol) 
-				&& ind->cost > set->members[i].cost - (set->members[i].cost * eSSParams->flatzone_Tol))
+		if (ind->cost < set->members[i].cost + ( set->members[i].cost * eSSParams->flatzone_coef) 
+				&& ind->cost > set->members[i].cost - (set->members[i].cost * eSSParams->flatzone_coef))
 		{
 			eSSParams->stats->n_flatzone_detected++;
 			// isInFlatzone = true;

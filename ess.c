@@ -82,7 +82,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	 */
 	eSSParams->archiveSet->size = 0;
 
-	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->maxiter; ++eSSParams->iter)
+	for (eSSParams->iter = 1; eSSParams->iter < eSSParams->max_iter; ++eSSParams->iter)
 	{
 		n_currentUpdated = 0;
 		// int i_lCandidate = 0;
@@ -128,7 +128,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * Note that the local search won't apply here if it meant to apply only on best
 				 * sol.
 				 */
-				if ( (eSSParams->perform_LocalSearch && !eSSParams->local_onBest_Only) 
+				if ( (eSSParams->perform_local_search && !eSSParams->local_onBest_Only) 
 					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 == 0 ) ) )
 					{
 						/**
@@ -257,7 +257,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 * the local search algorithm couldn't keep the parameters in boundary so, we have to stop
 		 * over-applying it on solutions before make them really far from defined box constratins.
 		 */
-		if (eSSParams->perform_LocalSearch 
+		if (eSSParams->perform_local_search 
 				&& eSSParams->local_onBest_Only 
 					&& (eSSParams->best->cost < eSSParams->local_minCostCriteria)
 						&& eSSParams->best->n_stuck < eSSParams->max_stuck)		
@@ -266,7 +266,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			eSSParams->stats->n_local_search_performed++;
 		}
 
-		if (eSSParams->iter % eSSParams->inter_save == 0){
+		if (eSSParams->iter % eSSParams->save_freqs == 0){
 			write_Set(eSSParams, eSSParams->refSet, refSet_history_file, eSSParams->iter);
 			write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->iter);
 		}
@@ -277,7 +277,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 * a multi-models problem then it saves a lot of unnecessary iterations.
 		 */
 		if (eSSParams->perform_cost_tol_stopping && 
-			 	fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_Tol ){
+			 	fabs( eSSParams->best->cost - eSSParams->sol ) < eSSParams->cost_tol ){
 			printf("%s\n", KRED);
 			printf("Best Solutions converged after %d iterations\n", eSSParams->iter);
 			printf("%s\n", KNRM);
@@ -289,11 +289,11 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 * refSet. This might not always be the indication of the convergence but it might be 
 		 * the indication of saturated referenceSet.
 		 */
-		if ( eSSParams->perform_refSet_convergence_stopping && 
-				fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < eSSParams->refSet_convergence_Tol ){
-			printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
-			break;
-		}
+		// if ( eSSParams->perform_refSet_convergence_stopping && 
+		// 		fabs( eSSParams->refSet->members[0].cost - fabs(eSSParams->refSet->members[eSSParams->n_refSet - 1].cost)) < eSSParams->refSet_convergence_tol ){
+		// 	printf("Converged or Stuck after %d iteration!\n", eSSParams->iter);
+		// 	break;
+		// }
 
 		/**
 		 * Compute the mean and standard deviation of the set in order to decide if the 
@@ -313,12 +313,12 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			 * set to 0.
 			 */
 			if (eSSParams->perform_refSet_randomization && 
-					eSSParams->refSet->std_cost < eSSParams->set_std_Tol && n_currentUpdated < (eSSParams->n_refSet / 4)){
+					eSSParams->refSet->std_cost < eSSParams->refSet_std_tol && n_currentUpdated < (eSSParams->n_refSet / 4)){
 				/**
-				 * Replace the last n_delete members of the refSet with the newly 
+				 * Replace the last max_delete members of the refSet with the newly 
 				 * randomized solutions in and sort the refSet at the end of the replacement.
 				 */
-				for (int i = eSSParams->refSet->size - 1; i > eSSParams->refSet->size - eSSParams->n_delete; --i)
+				for (int i = eSSParams->refSet->size - 1; i > eSSParams->refSet->size - eSSParams->max_delete; --i)
 				{
 					random_Ind(eSSParams, &(eSSParams->refSet->members[i]), eSSParams->min_real_var, eSSParams->max_real_var);
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
@@ -331,7 +331,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		}	
 
 
-		if (eSSParams->iter % eSSParams->iterprint == 0){
+		if (eSSParams->iter % eSSParams->print_freqs == 0){
 			print_Stats(eSSParams);
 		}
 
@@ -349,7 +349,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	/**
 	 * Performing the local search on the bestSol.
 	 */
-	if (eSSParams->perform_LocalSearch && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
+	if (eSSParams->perform_local_search && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
 	{
 		printf("Perforimg the last local search\n");
 		if (eSSParams->local_SolverMethod == 'n')
@@ -364,7 +364,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	refSet_final_file     = fopen("ref_set_final.csv", "w");
 	write_Set(eSSParams, eSSParams->refSet, refSet_final_file, -1);
 	write_Set(eSSParams, eSSParams->archiveSet, archive_set_file, -1);
-	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->maxiter);	
+	write_Ind(eSSParams, eSSParams->best, best_sols_history_file, eSSParams->max_iter);	
 	printf("ref_set_final.csv, ref_set_history_file.out, best_sols_history_file.out, and stats_file is generated. \n");
 
 

@@ -5,9 +5,9 @@
  */
 void allocate_Ind(eSSType *eSSParams, Individual *ind){
 
-	ind->params = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	// ind->params_means  = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	// ind->params_vars   = (double *)malloc(eSSParams->n_Params * sizeof(double));
+	ind->params = (double *)malloc(eSSParams->n_params * sizeof(double));
+	// ind->params_means  = (double *)malloc(eSSParams->n_params * sizeof(double));
+	// ind->params_vars   = (double *)malloc(eSSParams->n_params * sizeof(double));
 	ind->mean_cost   = 0;
 	ind->var_cost    = 0;
 	ind->cost   = 0;
@@ -37,7 +37,7 @@ void allocate_Set(eSSType *eSSParams, Set *set){
 	for (int i = 0; i < set->size; ++i)
 		allocate_Ind(eSSParams, &(set->members[i]));
 
-	set->params_means = (double *)malloc(eSSParams->n_Params * sizeof(double));
+	set->params_means = (double *)malloc(eSSParams->n_params * sizeof(double));
 }
 
 /**
@@ -80,7 +80,7 @@ void deallocate_eSSParams(eSSType *eSSParams){
 	/**
 	 * Deallocating the stats struct
 	 */
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		free(eSSParams->stats->freqs_matrix[i]);
 		free(eSSParams->stats->probs_matrix[i]);

@@ -15,7 +15,7 @@ void random_Set(eSSType *eSSParams, Set *set, double *low, double *high){
 
 void random_Ind(eSSType *eSSParams, Individual *ind, double *low, double *high){
 
-	for (int i = 0; i < eSSParams->n_Params; ++i){
+	for (int i = 0; i < eSSParams->n_params; ++i){
 		if (!eSSParams->logBound)
 			ind->params[i] = rndreal(low[i], high[i]);
 		else{

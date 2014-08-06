@@ -29,7 +29,7 @@ int recombine(eSSType *eSSParams, Individual *ind, int ind_index,/* Individual *
 			alpha = ( ind_index < j ) ? 1 : -1;
 			beta = abs(j - ind_index);
 
-			for (int k = 0; k < eSSParams->n_Params; ++k)
+			for (int k = 0; k < eSSParams->n_params; ++k)
 			{
 				d = eSSParams->refSet->members[j].params[k] - eSSParams->refSet->members[ind_index].params[k];
 				c1 = eSSParams->refSet->members[ind_index].params[k] - d * ( 1 + alpha * beta);

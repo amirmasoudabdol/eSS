@@ -9,7 +9,7 @@ int levmer_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void *out
 	int status;
 	unsigned int /*i,*/ iter = 0;
 	const size_t n = 40;
-	const size_t p = eSSParams->n_Params;
+	const size_t p = eSSParams->n_params;
 
 
 	// gsl_matrix *covar = gsl_matrix_alloc (p, p);
@@ -99,7 +99,7 @@ int neldermead_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void 
 	gsl_multimin_fminimizer *s;
 	int status;
 	unsigned int iter = 0;
-	const size_t p = eSSParams->n_Params;
+	const size_t p = eSSParams->n_params;
 
 
 	gsl_multimin_function f;
@@ -150,7 +150,7 @@ int neldermead_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void 
 			break;
 
 		size = gsl_multimin_fminimizer_size(s);
-		status = gsl_multimin_test_size( size, eSSParams->local_Tol);
+		status = gsl_multimin_test_size( size, eSSParams->local_tol);
 	}
 	while (status == GSL_CONTINUE && iter < eSSParams->local_maxIter);
 

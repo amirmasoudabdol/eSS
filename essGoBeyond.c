@@ -23,7 +23,7 @@ void goBeyond(eSSType *eSSParams, int parent_index,
 	improved = false;
 	for(;;) {
 
-		for (int k = 0; k < eSSParams->n_Params; ++k){
+		for (int k = 0; k < eSSParams->n_params; ++k){
 
 			c1 = child.params[k] - (parent.params[k] - child.params[k]) / gamma;
 			c2 = child.params[k];

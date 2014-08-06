@@ -68,7 +68,7 @@ void init_sampleParams(eSSType *eSSParams){
 
 
 #ifdef TEST_PROBLEM
-	eSSParams->n_Params = N;
+	eSSParams->n_params = N;
 	eSSParams->sol = (double)SOL;
 	printf("%s", KCYN);
 	printf("\n---------------------------------");
@@ -82,15 +82,15 @@ void init_sampleParams(eSSType *eSSParams){
 	 * User Options
 	 */
 	eSSParams->logBound = 0;
-	// eSSParams->maxeval;
-	// eSSParams->maxtime;
-	eSSParams->iterprint = 500;
+	// eSSParams->max_eval;
+	// eSSParams->max_time;
+	eSSParams->print_freqs = 500;
 	// eSSParams->plot;
 	// eSSParams->weight;
 	// eSSParams->tolc;
 	// eSSParams->prob_bound;
 	// eSSParams->strategy;
-	eSSParams->inter_save = 1;
+	eSSParams->save_freqs = 1;
 	// eSSParams->perform_warm_start = 0;
 	eSSParams->perform_refSet_randomization = 1;
 	eSSParams->n_randomization_Freqs = 1;
@@ -99,7 +99,7 @@ void init_sampleParams(eSSType *eSSParams){
 
 	eSSParams->n_archiveSet = 100;
 
-	eSSParams->set_std_Tol = 1e-3;
+	eSSParams->refSet_std_tol = 1e-3;
 
 	eSSParams->equality_type = 1;
 	// eSSParams->init_with_user_guesses = 1;
@@ -107,19 +107,19 @@ void init_sampleParams(eSSType *eSSParams){
 	/**
 	 * Global Options
 	 */
-	// eSSParams->n_Params = 2;
+	// eSSParams->n_params = 2;
 
-	if (eSSParams->maxiter == 0)
-		eSSParams->maxiter = 200;
+	if (eSSParams->max_iter == 0)
+		eSSParams->max_iter = 200;
 	
 	eSSParams->max_stuck = 20;
 
 	eSSParams->perform_flatzone_check = 0;
-	eSSParams->flatzone_Tol = 0.0001; 
+	eSSParams->flatzone_coef = 0.0001; 
 
-	eSSParams->min_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	eSSParams->max_real_var = (double *)malloc(eSSParams->n_Params * sizeof(double));
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	eSSParams->min_real_var = (double *)malloc(eSSParams->n_params * sizeof(double));
+	eSSParams->max_real_var = (double *)malloc(eSSParams->n_params * sizeof(double));
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		eSSParams->min_real_var[i] = 0;
 		eSSParams->max_real_var[i] = 0;
@@ -129,14 +129,14 @@ void init_sampleParams(eSSType *eSSParams){
 	bounds(eSSParams->min_real_var, eSSParams->max_real_var);
 #endif
 	
-	eSSParams->n_refSet = ceil(1.0 + sqrt(1.0 + 40.0 * eSSParams->n_Params) / 2.0);
+	eSSParams->n_refSet = ceil(1.0 + sqrt(1.0 + 40.0 * eSSParams->n_params) / 2.0);
 	if (eSSParams->n_refSet %2 != 0)
 		eSSParams->n_refSet++;
 	eSSParams->n_refSet = MAX(eSSParams->n_refSet, 20);
 
-	eSSParams->n_sub_regions = MIN(4, eSSParams->n_Params);
+	eSSParams->n_sub_regions = MIN(4, eSSParams->n_params);
 
-	eSSParams->n_scatterSet = MAX(10 * eSSParams->n_Params, 40);
+	eSSParams->n_scatterSet = MAX(10 * eSSParams->n_params, 40);
 
 	eSSParams->n_childsSet = eSSParams->n_refSet;
 
@@ -145,28 +145,28 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->init_RefSet_Type;
 	// eSSParams->combination_Type;
 	// eSSParams->regeneration_Type;
-	eSSParams->n_delete = eSSParams->n_refSet / 4;
+	eSSParams->max_delete = eSSParams->n_refSet / 4;
 	// eSSParams->intensification_Freqs;
 	// eSSParams->diversification_Type;
-	eSSParams->perform_cost_tol_stopping = 0;
-	eSSParams->cost_Tol = 1e-3;
-	eSSParams->dist_Tol= 1e-3;
-	eSSParams->param_Tol = 5e-4;
-	// eSSParams->stuck_Tol;
-	eSSParams->perform_refSet_convergence_stopping = 0;
-	eSSParams->refSet_convergence_Tol = 1e-4;
+	eSSParams->perform_cost_tol_stopping = 1;
+	eSSParams->cost_tol = 1e-3;
+	eSSParams->euclidean_dist_tol= 1e-3;
+	eSSParams->param_diff_tol = 5e-4;
+	// eSSParams->stuck_tol;
+	// eSSParams->perform_refSet_convergence_stopping = 0;
+	// eSSParams->refSet_convergence_tol = 1e-4;
 
 	/**
 	 * Local Search Options
 	 */
-	// eSSParams->perform_LocalSearch = 1;
+	// eSSParams->perform_local_search = 1;
 	if (eSSParams->local_SolverMethod == '0') eSSParams->local_SolverMethod = 'n';
 	// eSSParams->local_minCostCriteria = ((double)SOL + 1) ;
 	eSSParams->local_minCostCriteria = 30 ;
 	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
 	// eSSParams->local_SolverMethod;
-	eSSParams->local_Tol = 1e-3;
+	eSSParams->local_tol = 1e-3;
 	// eSSParams->local_IterPrint;
 	eSSParams->local_N1 = 50;
 	eSSParams->local_N2 = 25;
@@ -197,7 +197,7 @@ double objectiveFunction(eSSType *eSSParams, Individual *ind, void *inp, void *o
 
 	// #ifdef GSL_TESTFUNCTION
 	// 	#ifdef LEVMER
-	if (eSSParams->perform_LocalSearch){
+	if (eSSParams->perform_local_search){
 		if (eSSParams->local_SolverMethod == 'l'){
 				gsl_vector *ff = gsl_vector_alloc(40);
 				gsl_vector_view x = gsl_vector_view_array(ind->params, 3);

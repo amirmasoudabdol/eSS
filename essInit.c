@@ -10,10 +10,10 @@ void init_defaultSettings(eSSType *eSSParams){
 	eSSParams->init_with_user_guesses        = 0;
 	eSSParams->collect_stats        = 0;
 	eSSParams->save_output          = 1;
-	eSSParams->perform_LocalSearch = 0;
-	eSSParams->maxiter             = 0;
-	eSSParams->maxeval             = 0;
-	eSSParams->maxtime             = 0;
+	eSSParams->perform_local_search = 0;
+	eSSParams->max_iter             = 0;
+	eSSParams->max_eval             = 0;
+	eSSParams->max_time             = 0;
 	
 	eSSParams->local_SolverMethod        = '0';
 }
@@ -67,14 +67,14 @@ void init_essParams(eSSType *eSSParams){
 
 	eSSParams->best = (Individual*)malloc(sizeof(Individual));
 
-	eSSParams->stats->freqs_matrix = (int **)malloc(eSSParams->n_Params * sizeof(int *));
-	eSSParams->stats->probs_matrix = (double **)malloc(eSSParams->n_Params * sizeof(double *));
+	eSSParams->stats->freqs_matrix = (int **)malloc(eSSParams->n_params * sizeof(int *));
+	eSSParams->stats->probs_matrix = (double **)malloc(eSSParams->n_params * sizeof(double *));
 	
 	// Generating the sub regions matrices
-	eSSParams->min_boundary_matrix = (double **)malloc( eSSParams->n_Params * sizeof(double *));
-	eSSParams->max_boundary_matrix = (double **)malloc( eSSParams->n_Params * sizeof(double *));
+	eSSParams->min_boundary_matrix = (double **)malloc( eSSParams->n_params * sizeof(double *));
+	eSSParams->max_boundary_matrix = (double **)malloc( eSSParams->n_params * sizeof(double *));
 
-	for (int i = 0; i < eSSParams->n_Params; ++i)
+	for (int i = 0; i < eSSParams->n_params; ++i)
 	{
 		eSSParams->min_boundary_matrix[i] = (double *)malloc((eSSParams->n_sub_regions) * sizeof(double));
 		eSSParams->max_boundary_matrix[i] = (double *)malloc((eSSParams->n_sub_regions) * sizeof(double));
@@ -127,7 +127,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 	// Generating Scatter Set with the size of p
 	// The first `p` members are uniformly selected from all subRegions
 	for (int k = 0; k < eSSParams->n_sub_regions; ++k)
-		for (int i = 0; i < eSSParams->n_Params; ++i)
+		for (int i = 0; i < eSSParams->n_params; ++i)
 			eSSParams->scatterSet->members[k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][k], eSSParams->max_boundary_matrix[i][k]);
 
 	// `a` indicates the index of selected subRegions that the new value should be generated from.
@@ -139,7 +139,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 	   eSSParams->scatterSet->members[eSSParams->p + k] is going to be generated */
 	for (int k = 0; k < eSSParams->scatterSet->size - eSSParams->n_sub_regions; ++k)
 	{		
-		for (int i = 0; i < eSSParams->n_Params; ++i)
+		for (int i = 0; i < eSSParams->n_params; ++i)
 		{	
 			rnd = rndreal(0, 1);
 			for (int j = 0; j < eSSParams->n_sub_regions; ++j)
@@ -259,10 +259,10 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 		 */
 	    while (fgets(line, 4098, user_initial_guesses_file) && (i < eSSParams->n_refSet))
 	    {
-	    	double row[eSSParams->n_Params];
+	    	double row[eSSParams->n_params];
 	        char* tmp = strdup(line);
 	        parse_double_row(eSSParams, tmp, row);
-	        for (int j = 0; j < eSSParams->n_Params; ++j){
+	        for (int j = 0; j < eSSParams->n_params; ++j){
 	        	eSSParams->refSet->members[i].params[j] = row[j];
 	        }
 	        evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
@@ -293,13 +293,13 @@ void init_perform_warm_start(eSSType *eSSParams){
     FILE* refSetStream = fopen("ref_set_final.csv", "r");
     while (fgets(line, 4098, refSetStream) && (i < eSSParams->n_refSet))
     {
-    	double row[eSSParams->n_Params + 1];
+    	double row[eSSParams->n_params + 1];
         char* tmp = strdup(line);
         parse_double_row(eSSParams, tmp, row);
-        for (int j = 0; j < eSSParams->n_Params; ++j){
+        for (int j = 0; j < eSSParams->n_params; ++j){
         	eSSParams->refSet->members[i].params[j] = row[j];
         }
-        eSSParams->refSet->members[i].cost = row[eSSParams->n_Params];
+        eSSParams->refSet->members[i].cost = row[eSSParams->n_params];
         free(tmp);
         i++;
     }
@@ -311,7 +311,7 @@ void init_perform_warm_start(eSSType *eSSParams){
 	// Read freqMat
  //    i = 0;
  //    FILE* freqMatStream = fopen("freq_mat_final.csv", "r");
- //    while (fgets(line, 4098, freqMatStream) && (i < eSSParams->n_Params ))
+ //    while (fgets(line, 4098, freqMatStream) && (i < eSSParams->n_params ))
  //    {
  //    	int row[eSSParams->p];
  //        char* tmp = strdup(line);
@@ -320,7 +320,7 @@ void init_perform_warm_start(eSSType *eSSParams){
  //        free(tmp);
  //        i++;
  //    }
- //    // print_int_matrix(eSSParams, eSSParams->freqs_matrix, eSSParams->n_Params, eSSParams->p);
+ //    // print_int_matrix(eSSParams, eSSParams->freqs_matrix, eSSParams->n_params, eSSParams->p);
 
 	// // Read probMat
  //    i = 0;
@@ -334,7 +334,7 @@ void init_perform_warm_start(eSSType *eSSParams){
  //        free(tmp);
  //        i++;
  //    }
-    // print_double_matrix(eSSParams, eSSParams->probs_matrix, eSSParams->n_Params, eSSParams->p);
+    // print_double_matrix(eSSParams, eSSParams->probs_matrix, eSSParams->n_params, eSSParams->p);
 
 
 }

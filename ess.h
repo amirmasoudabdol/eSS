@@ -75,46 +75,51 @@ typedef struct Stats{
 
 typedef struct eSSType{
 
-	int logBound;
-	int maxeval;						/*!< Maximum number of function evaluation before stop */
-	int maxtime;						/*!< Maximum CPU time before stop */
-	int maxiter;						/*!< Maximum iteration before stop */
-	int iterprint;						/*!< Frequency of printing the output including the stats, refSet, and bestSol. */
-	bool plot;							/*!< Indicates if the result should be plotted or not. */
-	double *weight;						/*!< Parameters importance weights to be used by Levenberg method. */
-	double tolc;						
-	double prob_bound;
-	int strategy;
-	int inter_save;
-	int perform_warm_start;						/*!< Indicates if the algorithm should start with a stored refSet. If it's `true`, program will look for `ref_set_final.csv` and initializes refSet with that. */
-	int n_sub_regions;					/*!< Number of sub-regions which will be used during initialization of scatterSet */
-	int debug;
-	int log;
-	// double sol;
-	int collect_stats;
-	int save_output;
-
-	bool init_with_user_guesses;	/*!< Indicates if the refSet should fill with user initial guesses or not */
-
-	int goBeyond_freqs;				/*!< Frequency of performing goBeyond procedure */
-
-	int iter;						/*!< Store the generation number */
-
-	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the necessary information for this operation. */
-	int n_randomization_Freqs;			/*!< The frequency of randomizing stuck refSet members, this somehow increase the max_stuck value and give some solution some extra chance to escape the local minimum. */
-	
-	/********************************************************************************
+	/********************************************************************************************
 	 * Global Options
 	 */
-	int n_Params;
-	int n_DataPoints;					/*!< Stores the number of datapoints for performing the efficient least-square optimizations. */
+	int n_params;
+	int n_datapoints;					/*!< Stores the number of datapoints for performing the efficient least-square optimizations. */
+	
+	int max_stuck;						/*!< Maximum number allowed for an individual to be stuck; if ind->n_stuck exceed this value, individual will be randomized. */
+	int max_eval;						/*!< Maximum number of function evaluation before stop */
+	int max_time;						/*!< Maximum CPU time before stop */
+	int max_iter;						/*!< Maximum iteration before stop */
+	int iter;							/*!< Store the generation number */
+
+	int max_delete;						/*!< Specify the number of Individual that should be deleted during the randomization of the refSet. */
+
 	double *min_real_var;				/*!< Stores `lowerbound` of parameters */
 	double *max_real_var;				/*!< Stores `upperbound` of parameters */
+
+	int n_sub_regions;					/*!< Number of sub-regions which will be used during initialization of scatterSet */
 	double **min_boundary_matrix;		/*!< Stores `lowerbound` of sub-regions for each parameter, only uses for creating `scatterSet` */
 	double **max_boundary_matrix;		/*!< Stores `upperbound` of sub-regions for each parameter, only uses for creating `scatterSet` */
 	
+	double sol;							/*!< Stores possible minimum cost for performing convergence test. */
+	
+	bool logBound;
+	double prob_bound;
 
-	/********************************************************************************
+	int goBeyond_freqs;					/*!< Frequency of performing goBeyond procedure */
+
+	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the necessary information for this operation. */
+	int n_randomization_Freqs;			/*!< The frequency of randomizing stuck refSet members, this somehow increase the max_stuck value and give some solution some extra chance to escape the local minimum. */
+
+	/********************************************************************************************
+	 * IO, Reports Parameters
+	 */
+	bool debug;
+	bool log;
+	bool init_with_user_guesses;	/*!< Indicates if the refSet should fill with user initial guesses or not */
+	int print_freqs;						/*!< Frequency of printing the output including the stats, refSet, and bestSol. */
+	bool save_output;					/*!< Indicates if the program should save outputs to file or not. */
+	int save_freqs;
+	bool perform_warm_start;						/*!< Indicates if the algorithm should start with a stored refSet. If it's `true`, program will look for `ref_set_final.csv` and initializes refSet with that. */
+	bool plot;							/*!< Indicates if the result should be plotted or not. */
+	
+	
+	/********************************************************************************************
 	 * Sets
 	 */
 	int n_refSet;						/*!< Reference Set size, can be set or computed automacitally. */
@@ -137,39 +142,38 @@ typedef struct eSSType{
 
 	Individual *best;					/*!< Pointer to the first member of refSet which is always the best sol */
 
-	int RefSet_Initialization_Method;		/*!< */
-	int combination_Method;					/*!< */
-	int regeneration_Method;				/*!< */
-	int n_delete;						/*!< Specify the number of Individual that should be deleted during the randomization of the refSet. */
-	int diversification_Type;
-	int perform_cost_tol_stopping;
-	int perform_flatzone_check;
-	int equality_type;				/*!< Specify how the equality of two Individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two Individuals (0) */
+	// int diversification_Type;
 
 
-	/************
+	/********************************************************************************************
 	 * Tolerances
 	 */
-	double cost_Tol;				/*!< Cost Tolerance for stopping */
-	double flatzone_Tol;
-	double dist_Tol;
-	double param_Tol;
-	double set_std_Tol;					/*!< Tolerance value for the standard deviation of a set to perform the randomization */
+	int perform_cost_tol_stopping;
+	double cost_tol;				/*!< Cost Tolerance for stopping */
 
-	int max_stuck;
+	int perform_flatzone_check;
+	double flatzone_coef;			/*!< flatzone_coef uses to compute the flatzone interval */
 
-	int perform_refSet_convergence_stopping;
-	double refSet_convergence_Tol;
+	int equality_type;				/*!< Specify how the equality of two Individuals should be computed, either by the closeness of its parameters (1) or by euclidean distance between two Individuals (0) */
+	double euclidean_dist_tol;		/*!< Minimum euclidean distance of two individuals to be considered the same. */		
+	double param_diff_tol;			/*!< Minimum difference between two parameters of an individual to be consider the same. */
 
-	/******************************************************************************************
+	double refSet_std_tol;					/*!< Tolerance value for the standard deviation of a set to perform the randomization; randomize the set if the standard_deviation of refSet is below this value. By randomization, we mean deleting `max_delete` worst results in the refSet and replace them with new individuals. */
+
+	// int perform_refSet_convergence_stopping;	/*!< Experimental flag to check the convergence of refSet by comparing the bestSol->cost and worstSol->cost */
+	// double refSet_convergence_tol;		
+	
+	/********************************************************************************************
 	 * Local Search Options
 	 */
 	
-	bool perform_LocalSearch;
-	char local_SolverMethod;		/*!< Local search method, `l`: Levenberg-Marquardt, 'n': Nelder-Mead */
+	bool perform_local_search;
+	char local_SolverMethod;		/*!< Local search method, `l`: Levenberg-Marquardt, 'n': Nelder-Mead (Intensification Method) */
+	double *weight;						/*!< Parameters importance weights to be used by Levenberg method. */
+
 	double local_minCostCriteria;	/*!< Indicates minimum cost criteria to perform local search */
 	int local_maxIter;				/*!< Maximum iterations of the local search algorithm in each run */
-	double local_Tol;				/*!< Local search convergence tolerance */
+	double local_tol;				/*!< Local search convergence tolerance */
 	int local_N1;					/*!< Starting the local search after local_N1 iterations */
 	int local_N2;					/*!< Frequency of local search after first local_N1 iterations --> Intensification Frequency */ 
 	bool local_atEnd;				/*!< Indicates if the local_search should only be applied at the end of the search */
@@ -183,17 +187,21 @@ typedef struct eSSType{
 	// int local_wait_maxDist_limit;
 	// int local_wait_th_limit;
 
-	/************
+	/********************************************************************************************
 	 * Statistics
 	 */
 	Stats *stats;					/*!< Storing different statistics durig the running, check `struct Stats` */
+	bool collect_stats;					/*!< Indicates if the algorithm should compute statistics or not. */
 	bool compute_Ind_Stats;			/*!< Flag that indicates if Individuals should compute and store their statistics */ 
 	bool compute_Set_Stats;			/*!< Flag that indicates if a set should computes and stores its statistics */
 
 
-	/**
+	/********************************************************************************************
 	 * Not implemented parameters
 	 */
+	int refSet_init_method;					/*!< */
+	int combination_method;					/*!< */
+	int regeneration_method;				/*!< */
 	
 
 } eSSType;
