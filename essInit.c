@@ -8,8 +8,8 @@ void init_defaultSettings(eSSType *eSSParams){
 	eSSParams->debug               = 0;
 	eSSParams->perform_warm_start           = 0;
 	eSSParams->init_with_user_guesses        = 0;
-	eSSParams->collectStats        = 0;
-	eSSParams->saveOutput          = 1;
+	eSSParams->collect_stats        = 0;
+	eSSParams->save_output          = 1;
 	eSSParams->perform_LocalSearch = 0;
 	eSSParams->maxiter             = 0;
 	eSSParams->maxeval             = 0;

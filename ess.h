@@ -90,9 +90,9 @@ typedef struct eSSType{
 	int n_sub_regions;					/*!< Number of sub-regions which will be used during initialization of scatterSet */
 	int debug;
 	int log;
-	double sol;
-	int collectStats;
-	int saveOutput;
+	// double sol;
+	int collect_stats;
+	int save_output;
 
 	bool init_with_user_guesses;	/*!< Indicates if the refSet should fill with user initial guesses or not */
 
@@ -100,14 +100,14 @@ typedef struct eSSType{
 
 	int iter;						/*!< Store the generation number */
 
-	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the neccessary information for this operation. */
-	int n_randomization_Freqs;			/*!< The frequency of randomzing stuck refSet memebers, this somehow increase the max_stuck value and give some solution some extra chance to escape the local minima. */
+	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the necessary information for this operation. */
+	int n_randomization_Freqs;			/*!< The frequency of randomizing stuck refSet members, this somehow increase the max_stuck value and give some solution some extra chance to escape the local minimum. */
 	
 	/********************************************************************************
 	 * Global Options
 	 */
 	int n_Params;
-	int n_DataPoints;					/*!< Stores the number of datapoints for perfoming the efficient least-square optimizations. */
+	int n_DataPoints;					/*!< Stores the number of datapoints for performing the efficient least-square optimizations. */
 	double *min_real_var;				/*!< Stores `lowerbound` of parameters */
 	double *max_real_var;				/*!< Stores `upperbound` of parameters */
 	double **min_boundary_matrix;		/*!< Stores `lowerbound` of sub-regions for each parameter, only uses for creating `scatterSet` */

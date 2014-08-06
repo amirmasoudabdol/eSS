@@ -24,10 +24,10 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 		       eSSParams->perform_warm_start = 1;
 		       break;
 	       case 's':
-		       eSSParams->collectStats = 1;
+		       eSSParams->collect_stats = 1;
 		       break;
 	       case 'r':
-		       eSSParams->saveOutput = 1;
+		       eSSParams->save_output = 1;
 		       break;
 	       case 'l':
 		       eSSParams->perform_LocalSearch = 1;
