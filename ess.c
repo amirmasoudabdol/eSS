@@ -214,12 +214,14 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			}else{
 				/**
 				 * Otherwise, the Individual randomzies and all of it's stats and counters set
-				 * to 0.
+				 * to 0. If the flag `perform_elite_presevation` is set true then the first `mac_preserve_elite` will
+				 * be preserved in the refSet.
 				 */
 				eSSParams->refSet->members[i].n_stuck++;
 				if (eSSParams->refSet->members[i].n_stuck > eSSParams->max_stuck
-						&& (eSSParams->iter % eSSParams->n_randomization_Freqs == 0 )
-							&& (i > 3) ){	// I decided to keep 3 best sols in the refSet.
+						&& (eSSParams->iter % eSSParams->n_randomization_Freqs == 0 ) 
+							&& !( eSSParams->perform_elite_preservation && !(i > eSSParams->max_preserve_elite)) )
+					{
 
 					/* Add the stuck Individual to the archiveSet */
 					if (archive_index == eSSParams->n_archiveSet)
@@ -244,8 +246,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 					eSSParams->stats->n_total_stuck++;
 					eSSParams->refSet->members[i].n_not_randomized = 0;
 					eSSParams->refSet->members[i].n_stuck = 0;
-					label[i] = 0;
 				}
+				label[i] = 0;
 			}
 		}
 
@@ -260,7 +262,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		if (eSSParams->perform_local_search 
 				&& eSSParams->local_onBest_Only 
 					&& (eSSParams->best->cost < eSSParams->local_minCostCriteria)
-						&& eSSParams->best->n_stuck < eSSParams->max_stuck)		
+						&& eSSParams->best->n_stuck < eSSParams->max_stuck)		// avoid performing local search on the best solution which is stuck for a long time
 		{
 			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
 			eSSParams->stats->n_local_search_performed++;
@@ -327,8 +329,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				eSSParams->stats->n_refSet_randomized++;
 			}
 			
-			update_SetStats(eSSParams, eSSParams->refSet);
+			// update_IndsStats(eSSParams, eSSParams->refSet);
+          // todo: i can remove this, i dont do anything with it.
 		}	
+      
 
 
 		if (eSSParams->iter % eSSParams->print_freqs == 0){

@@ -85,6 +85,11 @@ typedef struct eSSType{
 	int max_eval;						/*!< Maximum number of function evaluation before stop */
 	int max_time;						/*!< Maximum CPU time before stop */
 	int max_iter;						/*!< Maximum iteration before stop */
+
+
+	bool perform_elite_preservation; 	/*!< Indicates if the algorithm should preserve some elite in the refSet during the optimization regardless of their n_stuck values. */
+	int max_preserve_elite;				/*!< Indicates how many of the elite memebers should not randomize during the process. */
+
 	int iter;							/*!< Store the generation number */
 
 	int max_delete;						/*!< Specify the number of Individual that should be deleted during the randomization of the refSet. */
@@ -241,7 +246,7 @@ void updateFrequencyMatrix(eSSType*);
 void compute_Mean(eSSType*, Individual*);
 void compute_Std(eSSType*, Individual*);
 void compute_SetStats(eSSType*, Set*);
-void update_SetStats(eSSType *eSSParams, Set *set);
+void update_IndsStats(eSSType *eSSParams, Set *set);
 void update_IndStats(eSSType *, Individual *);
 
 /**

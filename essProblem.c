@@ -6,7 +6,7 @@
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
 // #include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
-#include "benchmarks/Camel6.h"			// Accurate!
+// #include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
 // #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
@@ -15,7 +15,7 @@
 // #include "benchmarks/Expo.h"				// Accurate!
 // #include "benchmarks/GoldPrice.h"			// Accurate!
 // #include "benchmarks/Hartman3.h"			// Accurate!
-// #include "benchmarks/Hartman6.h"			// Accurate!
+#include "benchmarks/Hartman6.h"			// Accurate!
 // #include "benchmarks/Kowalik.h"			// Accurate!
 // #include "benchmarks/LM1.h"					// Accurate!
 // #include "benchmarks/LM2n5.h"				// Accurate!
@@ -102,6 +102,8 @@ void init_sampleParams(eSSType *eSSParams){
 		eSSParams->max_iter = 200;
 	
 	eSSParams->max_stuck = 20;
+	eSSParams->perform_elite_preservation = 1;
+	eSSParams->max_preserve_elite = 3;
 
 	eSSParams->perform_flatzone_check = 0;
 	eSSParams->flatzone_coef = 0.0001; 

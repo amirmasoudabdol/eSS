@@ -3,6 +3,20 @@
 
 void updateFrequencyMatrix(eSSType *eSSParams){
 
+    for (int k = 0; k < eSSParams->refSet->size; ++k)
+    {
+        for (int i = 0; i < eSSParams->n_params; ++i)
+        {
+            for (int j = 0; j < eSSParams->n_sub_regions; ++j)
+            {
+                if (eSSParams->refSet->members[k].params[i] > eSSParams->min_boundary_matrix[i][j] && eSSParams->refSet->members[k].params[i] < eSSParams->max_boundary_matrix[i][j])
+                {
+                    eSSParams->stats->freqs_matrix[i][j]++;
+                    break;
+                }
+            }
+        }
+    }
 	
 }
 
@@ -40,7 +54,7 @@ void compute_Std(eSSType *eSSParams, Individual *ind){
 
 }
 
-void update_SetStats(eSSType *eSSParams, Set *set){
+void update_IndsStats(eSSType *eSSParams, Set *set){
 
 	for (int i = 0; i < set->size; ++i){
 		update_IndStats(eSSParams, &(set->members[i]));
