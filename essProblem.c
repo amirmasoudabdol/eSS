@@ -6,9 +6,9 @@
 // #include "benchmarks/Bohachevsky2.h"		// Accurate!
 // #include "benchmarks/Branin.h"			// Accurate!
 // #include "benchmarks/Camel3.h"			// Accurate!
-// #include "benchmarks/Camel6.h"			// Accurate!
+#include "benchmarks/Camel6.h"			// Accurate!
 // #include "benchmarks/CosMix2.h"			// Accurate!
-#include "benchmarks/CosMix4.h"			// Accurate!
+// #include "benchmarks/CosMix4.h"			// Accurate!
 // #include "benchmarks/DekkersAarts.h"		// Accurate!
 // #include "benchmarks/Easom.h"				// Accurate!
 // #include "benchmarks/EMichalewicz.h"		// Accurate!
@@ -82,32 +82,21 @@ void init_sampleParams(eSSType *eSSParams){
 	 * User Options
 	 */
 	eSSParams->logBound = 0;
-	// eSSParams->max_eval;
-	// eSSParams->max_time;
 	eSSParams->print_freqs = 500;
-	// eSSParams->plot;
-	// eSSParams->weight;
-	// eSSParams->tolc;
-	// eSSParams->prob_bound;
-	// eSSParams->strategy;
 	eSSParams->save_freqs = 1;
 	// eSSParams->perform_warm_start = 0;
 	eSSParams->perform_refSet_randomization = 1;
 	eSSParams->n_randomization_Freqs = 1;
 
 	eSSParams->goBeyond_freqs = 10;
-
 	eSSParams->n_archiveSet = 100;
-
 	eSSParams->refSet_std_tol = 1e-3;
-
 	eSSParams->equality_type = 1;
 	// eSSParams->init_with_user_guesses = 1;
 
 	/**
 	 * Global Options
 	 */
-	// eSSParams->n_params = 2;
 
 	if (eSSParams->max_iter == 0)
 		eSSParams->max_iter = 200;
@@ -142,19 +131,11 @@ void init_sampleParams(eSSType *eSSParams){
 
 	eSSParams->n_candidateSet = eSSParams->n_refSet -1 ;
 
-	// eSSParams->init_RefSet_Type;
-	// eSSParams->combination_Type;
-	// eSSParams->regeneration_Type;
 	eSSParams->max_delete = eSSParams->n_refSet / 4;
-	// eSSParams->intensification_Freqs;
-	// eSSParams->diversification_Type;
 	eSSParams->perform_cost_tol_stopping = 1;
 	eSSParams->cost_tol = 1e-3;
 	eSSParams->euclidean_dist_tol= 1e-3;
 	eSSParams->param_diff_tol = 5e-4;
-	// eSSParams->stuck_tol;
-	// eSSParams->perform_refSet_convergence_stopping = 0;
-	// eSSParams->refSet_convergence_tol = 1e-4;
 
 	/**
 	 * Local Search Options
@@ -162,17 +143,13 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->perform_local_search = 1;
 	if (eSSParams->local_SolverMethod == '0') eSSParams->local_SolverMethod = 'n';
 	// eSSParams->local_minCostCriteria = ((double)SOL + 1) ;
-	eSSParams->local_minCostCriteria = 30 ;
 	eSSParams->local_maxIter = 500; 
-	// eSSParams->local_Freqs;
-	// eSSParams->local_SolverMethod;
 	eSSParams->local_tol = 1e-3;
-	// eSSParams->local_IterPrint;
 	eSSParams->local_N1 = 50;
 	eSSParams->local_N2 = 25;
-	// eSSParams->local_Balance;
 	eSSParams->local_atEnd = 1;
 	eSSParams->local_onBest_Only = 0;
+
 	// eSSParams->local_merit_Filter;
 	// eSSParams->local_distance_Filter;
 	// eSSParams->local_th_merit_Factor;
