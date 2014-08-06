@@ -5,14 +5,14 @@
  * and return the index of the best recombined solution that outperform its parent.
  * `-1` means there was not such a solution exist.
  * @param  eSSParams 
- * @param  ind       parent individual
- * @param  ind_index index of the parent individual
+ * @param  ind       parent Individual
+ * @param  ind_index index of the parent Individual
  * @param  bestInd   
  * @param  inp       
  * @param  out       
  * @return           index of the best candidate that outperform its parent.
  */
-int recombine(eSSType *eSSParams, individual *ind, int ind_index,/* individual *bestInd,*/
+int recombine(eSSType *eSSParams, Individual *ind, int ind_index,/* Individual *bestInd,*/
 					 void *inp, void *out){
 
 	double c1;
@@ -45,7 +45,7 @@ int recombine(eSSType *eSSParams, individual *ind, int ind_index,/* individual *
 			eSSParams->candidateSet->members[p].dist   = 0;
 			eSSParams->candidateSet->members[p].mean_cost   = 0;
 			eSSParams->candidateSet->members[p].var_cost    = 0;
-			eSSParams->candidateSet->members[p].nStuck = 0;
+			eSSParams->candidateSet->members[p].n_stuck = 0;
 
 			if ( eSSParams->candidateSet->members[p].cost < eSSParams->refSet->members[ind_index].cost )
 				best_index = p;

@@ -33,25 +33,25 @@
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #endif
 
-typedef struct individual{
+typedef struct Individual{
 	
 	double *params;						/*!< Stores inidividual's parameters */
-	double mean_cost;					/*!< Stores the mean of current individual's cost until its randomization */
-	double var_cost;					/*!< Stores the variance of current individual's cost until its randomization */
-	double cost;						/*!< Stores the cost of current individual */
-	double dist;						/*!< Stores the distance of current individual to a set of other individuals */
+	double mean_cost;					/*!< Stores the mean of current Individual's cost until its randomization */
+	double var_cost;					/*!< Stores the variance of current Individual's cost until its randomization */
+	double cost;						/*!< Stores the cost of current Individual */
+	double dist;						/*!< Stores the distance of current Individual to a set of other Individuals */
 
-	int n_notRandomized;				/*!< Stores the number of times that the specific individual updates but not randomize. It will be used to update the stats */
-	int nStuck;							/*!< Stores the number of times that the specific individual hasn't updated during the optimization process */
+	int n_not_randomized;				/*!< Stores the number of times that the specific Individual updates but not randomize. It will be used to update the stats */
+	int n_stuck;						/*!< Stores the number of times that the specific Individual hasn't been updated during the optimization process. */
 
-} individual;
+} Individual;
 
 typedef struct Set{
 	
-	individual *members;				/*!< Array of individuals */
-	double mean_cost;					/*!< mean cost of all the individual in the current set */
-	double std_cost;					/*!< standard deviation of cost of all individuals in the current set */
-	double *params_means;				/*!< Stores the mean values of each parameters in the set among all the individuals */
+	Individual *members;				/*!< Array of Individuals */
+	double mean_cost;					/*!< mean cost of all the Individual in the current set */
+	double std_cost;					/*!< standard deviation of cost of all Individuals in the current set. This could be used to stop the algorithm if the refSet is  */
+	double *params_means;				/*!< Stores the mean values of each parameters in the set among all the Individuals */
 	int size;							/*!< Size of the set */
 
 } Set;
@@ -62,7 +62,7 @@ typedef struct Stats{
 	int n_local_search_performed;
 	int n_successful_localSearch;
 	int n_local_search_iterations;
-	int n_Stuck;
+	int n_total_stuck;
 	int n_successful_recombination;
 	int n_refSet_randomized;
 	int n_duplicate_found;
@@ -75,11 +75,8 @@ typedef struct Stats{
 
 typedef struct eSSType{
 
-	/**
-	 * User Options
-	 */
 	int logBound;
-	int maxeval;						/*!< Maxiumum number of function evaluation before stop */
+	int maxeval;						/*!< Maximum number of function evaluation before stop */
 	int maxtime;						/*!< Maximum CPU time before stop */
 	int maxiter;						/*!< Maximum iteration before stop */
 	int iterprint;						/*!< Frequency of printing the output including the stats, refSet, and bestSol. */
@@ -89,100 +86,115 @@ typedef struct eSSType{
 	double prob_bound;
 	int strategy;
 	int inter_save;
-	int warmStart;
-	int n_subRegions;
+	int perform_warm_start;						/*!< Indicates if the algorithm should start with a stored refSet. If it's `true`, program will look for `ref_set_final.csv` and initializes refSet with that. */
+	int n_sub_regions;					/*!< Number of sub-regions which will be used during initialization of scatterSet */
 	int debug;
 	int log;
 	double sol;
 	int collectStats;
 	int saveOutput;
 
-	int user_guesses;
+	bool init_with_user_guesses;	/*!< Indicates if the refSet should fill with user initial guesses or not */
 
-	int goBeyond_Freqs;
+	int goBeyond_freqs;				/*!< Frequency of performing goBeyond procedure */
 
-	int iter;
+	int iter;						/*!< Store the generation number */
 
 	int perform_refSet_randomization;	/*!< Randomize the refSet if the standard deviation of the set's cost is below some threshold. NOTE: The compute_Set_Stats flag should be ON to compute the neccessary information for this operation. */
-	int n_randomization_Freqs;			/*!< The frequency of randomzing stuck refSet memebers, this somehow increase the maxStuck value and give some solution some extra chance to escape the local minima. */
-	double set_std_Tol;					/*!< Tolerance value for the standard deviation of a set to perform the randomization */
-	/**
+	int n_randomization_Freqs;			/*!< The frequency of randomzing stuck refSet memebers, this somehow increase the max_stuck value and give some solution some extra chance to escape the local minima. */
+	
+	/********************************************************************************
 	 * Global Options
 	 */
 	int n_Params;
-	int n_DataPoints;					/* Stores the number of datapoints for perfoming the efficient least-square optimizations. */
-	double *min_real_var;
-	double *max_real_var;
-	double **min_boundary_matrix;
-	double **max_boundary_matrix;
+	int n_DataPoints;					/*!< Stores the number of datapoints for perfoming the efficient least-square optimizations. */
+	double *min_real_var;				/*!< Stores `lowerbound` of parameters */
+	double *max_real_var;				/*!< Stores `upperbound` of parameters */
+	double **min_boundary_matrix;		/*!< Stores `lowerbound` of sub-regions for each parameter, only uses for creating `scatterSet` */
+	double **max_boundary_matrix;		/*!< Stores `upperbound` of sub-regions for each parameter, only uses for creating `scatterSet` */
 	
-	int n_refSet;						/* Reference Set size, can be set or computed automacitally. */
+
+	/********************************************************************************
+	 * Sets
+	 */
+	int n_refSet;						/*!< Reference Set size, can be set or computed automacitally. */
 	Set *refSet;
 	
-	int n_scatterSet;					/* Scatter Set size, computed automaticall. */
+	int n_scatterSet;					/*!< Scatter Set size, computed automaticall. */
 	Set *scatterSet;
 
 	int n_childsSet;
-	Set *childsSet;						/* Stores best members of recombinedSet for each refSet member, size: n_refSet.
-	`label` variable indidcates indices that has a new values during the iterations. */
+	Set *childsSet;						/*!< Stores best members of recombinedSet for each refSet member, size: n_refSet. `label` variable indidcates indices that has a new values during the iterations. */
 
 	int n_candidateSet;
-	Set *candidateSet;					// Stores childs generated from each refSet in each generation, size: n_refSet - 1
+	Set *candidateSet;					/*!< Stores childs generated from each refSet in each generation, size: n_refSet - 1 */
 
 	int n_localSearch_Candidate;
 	Set *localSearchCandidateSet;
 
-	int n_archiveSet;					/*<! Store the size of archiveSet */
-	Set *archiveSet;					/*<! Use for storing the stuck solutions in the refSet. */
+	int n_archiveSet;					/*!< Store the size of archiveSet */
+	Set *archiveSet;					/*!< Use for storing the stuck solutions in the refSet. */
 
-	individual *best;					/*<! Pointer to the first member of refSet which is always the best sol */
+	Individual *best;					/*!< Pointer to the first member of refSet which is always the best sol */
 
-	int RefSet_Initialization_Method;		/*<! */
-	int combination_Method;					/*<! */
-	int regeneration_Method;				/*<! */
-	int n_delete;					/*<! Specify the number of individual that should be deleted during the randomization of the refSet. */
-	int intensification_Freqs;
+	int RefSet_Initialization_Method;		/*!< */
+	int combination_Method;					/*!< */
+	int regeneration_Method;				/*!< */
+	int n_delete;						/*!< Specify the number of Individual that should be deleted during the randomization of the refSet. */
 	int diversification_Type;
 	int perform_cost_tol_stopping;
-	double cost_Tol;
 	int perform_flatzone_check;
-	double flatzone_Tol;
+	int equality_type;				/*!< Specify how the equality of two Individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two Individuals (0) */
 
-	int equality_type;				/*<! Specify how the equality of two individuals should be computed, either by the closness of its parameters (1) or by euclidean distance between two individuals (0) */
+
+	/************
+	 * Tolerances
+	 */
+	double cost_Tol;				/*!< Cost Tolerance for stopping */
+	double flatzone_Tol;
 	double dist_Tol;
 	double param_Tol;
-	int maxStuck;
+	double set_std_Tol;					/*!< Tolerance value for the standard deviation of a set to perform the randomization */
+
+	int max_stuck;
 
 	int perform_refSet_convergence_stopping;
 	double refSet_convergence_Tol;
 
-	/**
+	/******************************************************************************************
 	 * Local Search Options
 	 */
-	int perform_LocalSearch;
-	char local_method;
-	double local_min_criteria;
-	int local_maxIter;				/*<! Maximum iterations of the local search algorithm */
-	// int local_Freqs;
-	int local_SolverMethod;			/*<! Local search method, `l`: Levenberg, 'n': Nelder */
-	double local_Tol;				/*<! Local search convergence tolerance */
-	// int local_IterPrint;
-	int local_N1;					/*<! Starting the local search after local_N1 iterations */
-	int local_N2;					/*<! Frequency of local search after first local_N1 iterations */
-	int local_Balance;				/*<! Balance between the diversity and quality for choosing the initial point for local search, NOTE: It's not implemented yet! */
-	int local_atEnd;				/*<! Indicates if the local_search should only be applied at the end of the search */
-	int local_onBest_Only;			/*<! Indicates if the local search should be only applied on the bestSol during the search */
-	int local_merit_Filter;
-	int local_distance_Filter;
-	double local_th_merit_Factor;
-	double local_max_distance_Factor;
-	int local_wait_maxDist_limit;
-	int local_wait_th_limit;
+	
+	bool perform_LocalSearch;
+	char local_SolverMethod;		/*!< Local search method, `l`: Levenberg-Marquardt, 'n': Nelder-Mead */
+	double local_minCostCriteria;	/*!< Indicates minimum cost criteria to perform local search */
+	int local_maxIter;				/*!< Maximum iterations of the local search algorithm in each run */
+	double local_Tol;				/*!< Local search convergence tolerance */
+	int local_N1;					/*!< Starting the local search after local_N1 iterations */
+	int local_N2;					/*!< Frequency of local search after first local_N1 iterations --> Intensification Frequency */ 
+	bool local_atEnd;				/*!< Indicates if the local_search should only be applied at the end of the search */
+	bool local_onBest_Only;			/*!< Indicates if the local search should be only applied on the bestSol during the search */
+	double local_Balance;			/*!< Balance between the diversity and quality for choosing the initial point for local search, NOTE: It's not implemented yet! */
+	
+	// int local_merit_Filter;
+	// int local_distance_Filter;
+	// double local_th_merit_Factor;
+	// double local_max_distance_Factor;
+	// int local_wait_maxDist_limit;
+	// int local_wait_th_limit;
+
+	/************
+	 * Statistics
+	 */
+	Stats *stats;					/*!< Storing different statistics durig the running, check `struct Stats` */
+	bool compute_Ind_Stats;			/*!< Flag that indicates if Individuals should compute and store their statistics */ 
+	bool compute_Set_Stats;			/*!< Flag that indicates if a set should computes and stores its statistics */
 
 
-	Stats *stats;					/*<! Storing different statistics durig the running, check `struct Stats` */
-	int compute_Ind_Stats;			/*<! Flag that indicates if individuals should compute and store their statistics */ 
-	int compute_Set_Stats;			/*<! Flag that indicates if a set should computes and stores its statistics */
+	/**
+	 * Not implemented parameters
+	 */
+	
 
 } eSSType;
 
@@ -212,17 +224,17 @@ void init_scatterSet(eSSType*, void*, void*);
 void init_refSet(eSSType*, void*, void*);
 void init_report_files(eSSType *);
 void init_stats(eSSType *);
-void init_warmStart(eSSType *);
+void init_perform_warm_start(eSSType *);
 
 /**
  * essStats.c
  */
 void updateFrequencyMatrix(eSSType*);
-void compute_Mean(eSSType*, individual*);
-void compute_Std(eSSType*, individual*);
+void compute_Mean(eSSType*, Individual*);
+void compute_Std(eSSType*, Individual*);
 void compute_SetStats(eSSType*, Set*);
 void update_SetStats(eSSType *eSSParams, Set *set);
-void update_IndStats(eSSType *, individual *);
+void update_IndStats(eSSType *, Individual *);
 
 /**
  * essGoBeyond
@@ -232,14 +244,14 @@ void goBeyond(eSSType*, int, void*, void*);
 /**
  * essLocalSearch.c
  */
-void localSearch(eSSType*, individual*, void*, void*, char method);
-int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out);
-int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out);
+void localSearch(eSSType*, Individual*, void*, void*, char method);
+int levmer_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void *out);
+int neldermead_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void *out);
 
 /**
  * essRecombine.c
  */
-int recombine(eSSType*, individual*, int, void*, void*);
+int recombine(eSSType*, Individual*, int, void*, void*);
 
 /**
  * essSort.c
@@ -251,8 +263,8 @@ void insertionSort(eSSType*, Set*, int, char);
 /**
  * essAllocate.c
  */
-void allocate_Ind(eSSType *, individual *);
-void deallocate_Ind(eSSType *, individual *);
+void allocate_Ind(eSSType *, Individual *);
+void deallocate_Ind(eSSType *, Individual *);
 void allocate_Set(eSSType *, Set *);
 void deallocate_Set(eSSType *, Set *);
 void deallocate_eSSParams(eSSType *);
@@ -261,29 +273,29 @@ void deallocate_eSSParams(eSSType *);
 /**
  * essTools.c
  */
-double euclidean_distance(eSSType*, individual*, individual*);
-void isExist(eSSType*, individual*);
+double euclidean_distance(eSSType*, Individual*, Individual*);
+void isExist(eSSType*, Individual*);
 double min(double*, int, int*);
 double max(double*, int, int*);
-void copy_Ind(eSSType *, individual *, individual *);
+void copy_Ind(eSSType *, Individual *, Individual *);
 void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_delete);
-int closest_member(eSSType *, Set *, int , individual *, int );
-int is_exist(eSSType *eSSParams, Set *set, individual *ind);
-bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2);
-bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2);
-bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind);
+int closest_member(eSSType *, Set *, int , Individual *, int );
+int is_exist(eSSType *eSSParams, Set *set, Individual *ind);
+bool is_equal_dist(eSSType *eSSParams, Individual *ind1, Individual *ind2);
+bool is_equal_pairwise(eSSType *eSSParams, Individual *ind1, Individual *ind2);
+bool is_in_flatzone(eSSType *eSSParams, Set *set, Individual *ind);
 
 /**
  * essRand.c
  */
 double rndreal(double, double);
 void random_Set(eSSType*, Set*, double*, double* );
-void random_Ind(eSSType*, individual*, double*, double* );
+void random_Ind(eSSType*, Individual*, double*, double* );
 
 /**
  * essProblem.c
  */
-double objectiveFunction(eSSType*, individual*, void*, void*);
+double objectiveFunction(eSSType*, Individual*, void*, void*);
 void init_sampleParams(eSSType*);
 
 double objfn(double []);
@@ -305,7 +317,7 @@ double nelder_objfn(const gsl_vector *x, void *data);
 /**
  * essEvaluate.c
  */
-void evaluate_Individual(eSSType*, individual*, void*, void*);
+void evaluate_Individual(eSSType*, Individual*, void*, void*);
 void evaluate_Set(eSSType*, Set*, void*, void*);
 
 /**
@@ -321,9 +333,9 @@ void run_eSS(eSSType*, void*, void*);
 void read_cli_params(eSSType *, int, char **);
 void print_eSSParams(eSSType*);
 void print_Set(eSSType*, Set*);
-void print_Ind(eSSType*, individual*);
+void print_Ind(eSSType*, Individual*);
 void write_Set(eSSType*, Set*, FILE*, int);
-void write_Ind(eSSType*, individual*, FILE*, int);
+void write_Ind(eSSType*, Individual*, FILE*, int);
 void print_Stats(eSSType *);
 void write_Stats(eSSType *, FILE *);
 void parse_double_row(eSSType *eSSParams, char *line, double *row);

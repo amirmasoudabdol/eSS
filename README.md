@@ -1,12 +1,12 @@
 ## Enhanced Scatter Search In C
 
-This repository contains a C implementation of derivation of a Scatter Search algorithm developed by Mario Rodriguez-Fernandez et al. 2006. [1] The first implementation was in matlab in a so called “eSS” package which is not supported anymore; in fact, the improved and parallelise matlab version is now included in the package called AMIGO. The source code for improved eSS implementation is available in form of M-packages. The C version presented here is based on the latest changes to the algorithm in a  publication by Jose a. Egea et al, 2010. [2]
+This repository contains a C implementation of derivation of a Scatter Search algorithm developed by Mario Rodriguez-Fernandez et al. 2006. [1] The first implementation was in Matlab in a so called “eSS” package which is not supported anymore; in fact, the improved and parallelized Matlab version is now included in the package called [AMIGO](http://www.iim.csic.es/~amigo/). The source code for improved eSS implementation is available in form of M-packages. The C version presented here is based on the latest changes to the algorithm in a  publication by Jose a. Egea et al, 2010. [2]
 
 ### Enhanced Scatter Search Algorithm 
 
-Enhanced Scatter search is a meta heuristic population based algorithm with similarities to evolutionary strategies. The eSS is designed specifically for optimizing biological system and it achieved very good results which some of them are listed on ...
+Enhanced Scatter search is a meta heuristic population based algorithm with similarities to evolutionary strategies. The eSS is designed specifically for optimizing biological system and it achieved very good results. [1, 2]
 
-Let's start with pure Scatter Search algorithm. Scatter search is a working with the same population based principle as genetic and evolutionary algorithm with some variants in its selection and combination routine. Basically, what happens is that new children or candidate generates based on the linear combinations of its parents; and parents are selected by considering all the combination of the individual in a population or "Reference Set".
+General idea behind original Scatter Search algorithm is to start with relatively small population of Individuals and evolve from generation to generation by producing new offsprings using linear combination of Individuals in the population. The mentioned population set is called "Reference Set" in Scatter Search.
 
 The pure scatter search algorithm describes below:
 
@@ -46,7 +46,7 @@ The `_ess.o` executable file will be generated after the compilation. To run the
 
 ### Defining the objective function
 
-In order to perform the optimization you need a objective function to compute the cost of each individual during the optimization process. The functions `eval_Ind` and `eval_Set` are defined to call user defined objective function independent from the actual objective function definition. In each run, they call `objectiveFunction`; this function decides how to call the user defined objective function. Since the local search routines are implemented using `gel` library, you need to define special function pointer to pass to the `gsl_` functions.
+In order to perform the optimization you need a objective function to compute the cost of each Individual during the optimization process. The functions `eval_Ind` and `eval_Set` are defined to call user defined objective function independent from the actual objective function definition. In each run, they call `objectiveFunction`; this function decides how to call the user defined objective function. Since the local search routines are implemented using `gel` library, you need to define special function pointer to pass to the `gsl_` functions.
 
 If you look at the code of one of the benchmark functions, you see that there are 3 similar functions are defined. I recommend you define your cost function inside the `objfn` and leave the `nelder_objfn` and `levermed_objfn` function untouched since as you see they are just translating an array to `gsl_vector`. 
 

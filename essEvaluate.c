@@ -1,6 +1,6 @@
 #include "ess.h"
 
-void evaluate_Individual(eSSType *eSSParams, individual *ind, void *inp, void *out){
+void evaluate_Individual(eSSType *eSSParams, Individual *ind, void *inp, void *out){
 
 	ind->cost = objectiveFunction(eSSParams, ind, inp, out);
 	// print_Ind(eSSParams, ind);

@@ -3,7 +3,7 @@
 /**
  * Copy `src` to `dest` using `memcpy`
  */
-void copy_Ind(eSSType *eSSParams, individual *dest, individual *src){
+void copy_Ind(eSSType *eSSParams, Individual *dest, Individual *src){
 	
 	memcpy(dest->params, src->params, eSSParams->n_Params*sizeof(double));
 	// memcpy(dest->means, src->means, eSSParams->n_Params*sizeof(double));
@@ -12,7 +12,7 @@ void copy_Ind(eSSType *eSSParams, individual *dest, individual *src){
 	dest->var_cost    = src->var_cost;
 	dest->cost   = src->cost;
 	dest->dist   = src->dist;
-	dest->nStuck = src->nStuck;
+	dest->n_stuck = src->n_stuck;
 }
 
 
@@ -49,7 +49,7 @@ double max(double* array, int len, int* max_index){
 
 }
 
-double euclidean_distance(eSSType *eSSParams, individual *ind1, individual *ind2){
+double euclidean_distance(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
 	double distance = 0;
 	for (int i = 0; i < eSSParams->n_Params; ++i)
@@ -70,15 +70,15 @@ void delete_and_shift(eSSType *eSSParams, Set *set, int set_size, int index_to_d
 }
 
 /**
- * Find the closest memeber of a set to `ind` and return it's index
+ * Find the closest member of a set to `ind` and return it's index
  * @param  eSSParams 
  * @param  set       Set to look for a closest member in it
- * @param  set_size  Size of the set, it can be smaller than the actuall set size
- * @param  ind       `individual` that we are interested in its closest member to it
+ * @param  set_size  Size of the set, it can be smaller than the actual set size
+ * @param  ind       `Individual` that we are interested in its closest member to it
  * @param  ind_index Index of the `ind` if it is already in the set.
  * @return           index of the closest member of a set to `ind`
  */
-int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, int ind_index){
+int closest_member(eSSType *eSSParams, Set *set, int set_size, Individual *ind, int ind_index){
 	double dist;
 	double min;
 	int min_index;
@@ -112,7 +112,7 @@ int closest_member(eSSType *eSSParams, Set *set, int set_size, individual *ind, 
 }
 
 
-bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2){
+bool is_equal_dist(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
 	// bool isEqual = false;
 	if ( euclidean_distance(eSSParams, ind1, ind2) < eSSParams->dist_Tol )
@@ -123,13 +123,13 @@ bool is_equal_dist(eSSType *eSSParams, individual *ind1, individual *ind2){
 }
 	
 /**
- * It returns `true` if the difference between paired parameters of and individual is less than certain amount
+ * It returns `true` if the difference between paired parameters of and Individual is less than certain amount
  * @param  eSSParams 
  * @param  ind1      
  * @param  ind2      
  * @return           `true` or `false`
  */
-bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2){
+bool is_equal_pairwise(eSSType *eSSParams, Individual *ind1, Individual *ind2){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
@@ -141,9 +141,9 @@ bool is_equal_pairwise(eSSType *eSSParams, individual *ind1, individual *ind2){
 }
 
 /*
-	Check if the individual exist in the set
+	Check if the Individual exist in the set
  */
-int is_exist(eSSType *eSSParams, Set *set, individual *ind){
+int is_exist(eSSType *eSSParams, Set *set, Individual *ind){
 
 	int index = -1;
 	for (int i = 0; i < set->size; ++i)
@@ -166,13 +166,13 @@ int is_exist(eSSType *eSSParams, Set *set, individual *ind){
 }
 
 /**
- * Check to see if the individual is located in the flatzone or not! Is there any individual available in the set with similar cost.
+ * Check to see if the Individual is located in the flatzone or not! Is there any Individual available in the set with similar cost.
  * @param  eSSParams 
  * @param  set       
  * @param  ind       
- * @return           `true` if the individual located in the flatzone
+ * @return           `true` if the Individual located in the flatzone
  */
-bool is_in_flatzone(eSSType *eSSParams, Set *set, individual *ind){
+bool is_in_flatzone(eSSType *eSSParams, Set *set, Individual *ind){
 
 	// bool isInFlatzone = false;
 

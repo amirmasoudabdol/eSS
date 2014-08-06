@@ -1,7 +1,7 @@
 #include "ess.h"
 
 /**
- * Sort the set of individual with respect to their cost (`c`) or dist (`d`).
+ * Sort the set of Individual with respect to their cost (`c`) or dist (`d`).
  */
 void quickSort_Set(eSSType *eSSParams, Set *set, int left, int right, char key){
 
@@ -26,7 +26,7 @@ void quickSort_Set(eSSType *eSSParams, Set *set, int left, int right, char key){
 
 }
 
-individual pivot_ind;								// Might cause problem
+Individual pivot_ind;								// Might cause problem
 /**
  * Perform QuickSort in-place, based on the values array which could be cost or dist.
  */
@@ -94,7 +94,7 @@ void quickSort(eSSType *eSSParams, Set *set, double* values, int left, int right
 	// TODO: Need to be modified
 void insertionSort(eSSType *eSSParams, Set *set, int location, char key){
         
-	individual temp;
+	Individual temp;
     // allocate_ind_memory(eSSParams, &(temp), eSSParams->nreal);
     int j =  location;			// The iteration starts from `set->size - 1` since the last
     								// item should be replaced anyway.

@@ -13,7 +13,7 @@ void random_Set(eSSType *eSSParams, Set *set, double *low, double *high){
 	}
 }
 
-void random_Ind(eSSType *eSSParams, individual *ind, double *low, double *high){
+void random_Ind(eSSType *eSSParams, Individual *ind, double *low, double *high){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i){
 		if (!eSSParams->logBound)
@@ -37,6 +37,6 @@ void random_Ind(eSSType *eSSParams, individual *ind, double *low, double *high){
             }
 		}
 
-		ind->n_notRandomized = 0;
+		ind->n_not_randomized = 0;
 	}
 }

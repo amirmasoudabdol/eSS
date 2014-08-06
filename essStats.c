@@ -7,7 +7,7 @@ void updateFrequencyMatrix(eSSType *eSSParams){
 }
 
 /**
- * Compute the statistics of the set like the mean and standard deviation of individuals cost.
+ * Compute the statistics of the set like the mean and standard deviation of Individuals cost.
  * @param eSSParams 
  * @param set       
  */
@@ -30,12 +30,12 @@ void compute_SetStats(eSSType *eSSParams, Set *set ){
     set->std_cost =  sqrt(variance);
 }
 
-void compute_Mean(eSSType *eSSParams, individual *ind){
+void compute_Mean(eSSType *eSSParams, Individual *ind){
 
 
 }
 
-void compute_Std(eSSType *eSSParams, individual *ind){
+void compute_Std(eSSType *eSSParams, Individual *ind){
 
 
 }
@@ -48,19 +48,19 @@ void update_SetStats(eSSType *eSSParams, Set *set){
 }
 
 /**
- * Update or reset the statistics of an individual consisting its mean and variance.
+ * Update or reset the statistics of an Individual consisting its mean and variance.
  * @param eSSParams 
  * @param ind       
  */
-void update_IndStats(eSSType *eSSParams, individual *ind){
+void update_IndStats(eSSType *eSSParams, Individual *ind){
 	
-	if (ind->n_notRandomized == 0){
+	if (ind->n_not_randomized == 0){
 		ind->mean_cost = 0;
 		ind->var_cost = 0;
 	}else{
     	double prev_mean = ind->mean_cost;
-    	ind->n_notRandomized++;
-	    ind->mean_cost = ind->mean_cost + (ind->cost - ind->mean_cost) / ind->n_notRandomized;
+    	ind->n_not_randomized++;
+	    ind->mean_cost = ind->mean_cost + (ind->cost - ind->mean_cost) / ind->n_not_randomized;
 	    ind->var_cost = ind->var_cost + (ind->cost - ind->mean_cost)*(ind->cost - prev_mean);
 
 

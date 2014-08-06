@@ -6,8 +6,8 @@ void init_defaultSettings(eSSType *eSSParams){
 	eSSParams->iter                = 1;
 	
 	eSSParams->debug               = 0;
-	eSSParams->warmStart           = 0;
-	eSSParams->user_guesses        = 0;
+	eSSParams->perform_warm_start           = 0;
+	eSSParams->init_with_user_guesses        = 0;
 	eSSParams->collectStats        = 0;
 	eSSParams->saveOutput          = 1;
 	eSSParams->perform_LocalSearch = 0;
@@ -15,7 +15,7 @@ void init_defaultSettings(eSSType *eSSParams){
 	eSSParams->maxeval             = 0;
 	eSSParams->maxtime             = 0;
 	
-	eSSParams->local_method        = '0';
+	eSSParams->local_SolverMethod        = '0';
 }
 
 /**
@@ -33,7 +33,7 @@ void init_essParams(eSSType *eSSParams){
 	eSSParams->stats->n_local_search_performed   = 0; 
 	eSSParams->stats->n_successful_localSearch   = 0;
 	eSSParams->stats->n_local_search_iterations  = 0;
-	eSSParams->stats->n_Stuck                    = 0;     
+	eSSParams->stats->n_total_stuck                    = 0;     
 	eSSParams->stats->n_successful_recombination = 0;
 	eSSParams->stats->n_refSet_randomized        = 0;
 	eSSParams->stats->n_duplicate_found          = 0;
@@ -65,7 +65,7 @@ void init_essParams(eSSType *eSSParams){
 
 
 
-	eSSParams->best = (individual*)malloc(sizeof(individual));
+	eSSParams->best = (Individual*)malloc(sizeof(Individual));
 
 	eSSParams->stats->freqs_matrix = (int **)malloc(eSSParams->n_Params * sizeof(int *));
 	eSSParams->stats->probs_matrix = (double **)malloc(eSSParams->n_Params * sizeof(double *));
@@ -76,21 +76,21 @@ void init_essParams(eSSType *eSSParams){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
-		eSSParams->min_boundary_matrix[i] = (double *)malloc((eSSParams->n_subRegions) * sizeof(double));
-		eSSParams->max_boundary_matrix[i] = (double *)malloc((eSSParams->n_subRegions) * sizeof(double));
+		eSSParams->min_boundary_matrix[i] = (double *)malloc((eSSParams->n_sub_regions) * sizeof(double));
+		eSSParams->max_boundary_matrix[i] = (double *)malloc((eSSParams->n_sub_regions) * sizeof(double));
 		
-		eSSParams->stats->freqs_matrix[i] = (int *)malloc(eSSParams->n_subRegions * sizeof(int));
-		eSSParams->stats->probs_matrix[i] = (double *)malloc(eSSParams->n_subRegions * sizeof(double));
+		eSSParams->stats->freqs_matrix[i] = (int *)malloc(eSSParams->n_sub_regions * sizeof(int));
+		eSSParams->stats->probs_matrix[i] = (double *)malloc(eSSParams->n_sub_regions * sizeof(double));
 
-		for (int j = 1; j <= eSSParams->n_subRegions; ++j)
+		for (int j = 1; j <= eSSParams->n_sub_regions; ++j)
 		{
 			/* Building the sub region matrices */	// One matrix would be enough but for clarity I use two.
-			eSSParams->min_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_subRegions) * (j - 1);
-			eSSParams->max_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_subRegions) * j; 
+			eSSParams->min_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_sub_regions) * (j - 1);
+			eSSParams->max_boundary_matrix[i][j - 1] = eSSParams->min_real_var[i] + ((eSSParams->max_real_var[i] - eSSParams->min_real_var[i]) / eSSParams->n_sub_regions) * j; 
 			
 			/* Building the freqs_matrix: frequently_matrix */
 			eSSParams->stats->freqs_matrix[i][j - 1] = 1;
-			eSSParams->stats->probs_matrix[i][j - 1] = 1./(eSSParams->n_subRegions);		// Since all values are 1.
+			eSSParams->stats->probs_matrix[i][j - 1] = 1./(eSSParams->n_sub_regions);		// Since all values are 1.
 		}
 	}
 
@@ -99,7 +99,7 @@ void init_essParams(eSSType *eSSParams){
 
 void init_report_files(eSSType *eSSParams){
 	char mode = 'w';
-	if (eSSParams->warmStart)
+	if (eSSParams->perform_warm_start)
 		mode = 'a';
 	refSet_history_file        = fopen("ref_set_history_file.out", &mode);
 	best_sols_history_file     = fopen("best_sols_history_file.out", &mode);
@@ -126,7 +126,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 
 	// Generating Scatter Set with the size of p
 	// The first `p` members are uniformly selected from all subRegions
-	for (int k = 0; k < eSSParams->n_subRegions; ++k)
+	for (int k = 0; k < eSSParams->n_sub_regions; ++k)
 		for (int i = 0; i < eSSParams->n_Params; ++i)
 			eSSParams->scatterSet->members[k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][k], eSSParams->max_boundary_matrix[i][k]);
 
@@ -137,12 +137,12 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 
 	/* Generate new item to add to scatterSet
 	   eSSParams->scatterSet->members[eSSParams->p + k] is going to be generated */
-	for (int k = 0; k < eSSParams->scatterSet->size - eSSParams->n_subRegions; ++k)
+	for (int k = 0; k < eSSParams->scatterSet->size - eSSParams->n_sub_regions; ++k)
 	{		
 		for (int i = 0; i < eSSParams->n_Params; ++i)
 		{	
 			rnd = rndreal(0, 1);
-			for (int j = 0; j < eSSParams->n_subRegions; ++j)
+			for (int j = 0; j < eSSParams->n_sub_regions; ++j)
 			{	
 				/* Compute `probs` and find the index */
 				probs_sum += eSSParams->stats->probs_matrix[i][j];
@@ -156,7 +156,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 					// Updating the eSSParams->stats->probs_matrix
 					// IMPROVE: This could be rewritten much nicer
 					double f_col_prob = 0;
-					for (int t = 0; t < eSSParams->n_subRegions; ++t){
+					for (int t = 0; t < eSSParams->n_sub_regions; ++t){
 						f_col_prob += (1. / eSSParams->stats->freqs_matrix[i][t]);
 					}
 					eSSParams->stats->probs_matrix[i][a] = (1. / eSSParams->stats->freqs_matrix[i][a] ) / (f_col_prob);
@@ -167,7 +167,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 			}
 
 			// subRegoins index is selected now: `a`
-			eSSParams->scatterSet->members[eSSParams->n_subRegions + k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][a], eSSParams->max_boundary_matrix[i][a] );
+			eSSParams->scatterSet->members[eSSParams->n_sub_regions + k].params[i] = rndreal(eSSParams->min_boundary_matrix[i][a], eSSParams->max_boundary_matrix[i][a] );
 		}
 
 	}	// Scatter Set is now extended...
@@ -175,7 +175,7 @@ void init_scatterSet(eSSType *eSSParams, void* inp, void *out){
 }
 
 /**
- * Initialize the refSet using the diversity selection routine. Note that all the individual 
+ * Initialize the refSet using the diversity selection routine. Note that all the Individual 
  * are selecting from the scatterSet which is already evaluated.
  * @param eSSParams 
  * @param inp       
@@ -250,7 +250,7 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 	 * It checks if the user initial guesses are available, if so, then add them to the
 	 * end of the refSet.
 	 */
-	if (eSSParams->user_guesses){
+	if (eSSParams->init_with_user_guesses){
 		FILE *user_initial_guesses_file = fopen("init_guesses.csv", "r");
 		int i = 15 ;
 		char line[4098];
@@ -281,7 +281,7 @@ void init_refSet(eSSType *eSSParams, void* inp, void *out){
 
 
 
-void init_warmStart(eSSType *eSSParams){
+void init_perform_warm_start(eSSType *eSSParams){
 
 	int i;
     char line[4098];
@@ -303,7 +303,7 @@ void init_warmStart(eSSType *eSSParams){
         free(tmp);
         i++;
     }
-    eSSParams->best = (individual *)malloc(sizeof(individual));
+    eSSParams->best = (Individual *)malloc(sizeof(Individual));
 	eSSParams->best = &(eSSParams->refSet->members[0]);				// The first members of ref_set is always the best
     print_Set(eSSParams, eSSParams->refSet);
     print_Ind(eSSParams, eSSParams->best);

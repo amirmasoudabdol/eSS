@@ -18,10 +18,10 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 		       eSSParams->debug = 1;
 		       break;
 	       case 'u':
-		       eSSParams->user_guesses = 1;
+		       eSSParams->init_with_user_guesses = 1;
 		       break;
 	       case 'w':
-		       eSSParams->warmStart = 1;
+		       eSSParams->perform_warm_start = 1;
 		       break;
 	       case 's':
 		       eSSParams->collectStats = 1;
@@ -33,7 +33,7 @@ void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 		       eSSParams->perform_LocalSearch = 1;
 		       break;
 	       case 'o':
-		       eSSParams->local_method = optarg[0];
+		       eSSParams->local_SolverMethod = optarg[0];
 		       break;
 	       case '?':
 	       	   break;
@@ -54,14 +54,14 @@ void print_Set(eSSType *eSSParams, Set *set){
 
 }
 
-void print_Ind(eSSType *eSSParams, individual *ind){
+void print_Ind(eSSType *eSSParams, Individual *ind){
 
 	for (int i = 0; i < eSSParams->n_Params; ++i)
 	{
 		printf("% 10.5lf, ", ind->params[i]);
 	}	
 	// printf("\t (cost: %lf)\t(dist: %lf)\n", ind->cost, ind->dist);
-	printf("\t (cost: % lf) - %d\n", ind->cost, ind->nStuck);
+	printf("\t (cost: % lf) - %d\n", ind->cost, ind->n_stuck);
 
 }
 
@@ -74,7 +74,7 @@ void write_Set(eSSType *eSSParams, Set *set, FILE *fpt, int iter){
 	}
 }
 
-void write_Ind(eSSType *eSSParams, individual *ind, FILE *fpt, int iter){
+void write_Ind(eSSType *eSSParams, Individual *ind, FILE *fpt, int iter){
 
 	if (iter != -1)
 		fprintf(fpt, "%d\t", iter);
@@ -97,7 +97,7 @@ void print_Stats(eSSType *eSSParams){
 	printf("n_successful_localSearch: %d\n", eSSParams->stats->n_successful_localSearch);
 	printf("n_local_search_iterations: %d \t (avg: %d)\n", eSSParams->stats->n_local_search_iterations, eSSParams->stats->n_local_search_iterations / (eSSParams->stats->n_successful_localSearch + 1));
 	printf("n_refSet_randomized: %d\n", eSSParams->stats->n_refSet_randomized);
-	printf("n_Stuck: %d\n", eSSParams->stats->n_Stuck);
+	printf("n_total_stuck: %d\n", eSSParams->stats->n_total_stuck);
 	printf("n_successful_recombination: %d\n", eSSParams->stats->n_successful_recombination);
 	if (eSSParams->compute_Set_Stats){
 		printf("-------------------\n");
@@ -114,7 +114,7 @@ void write_Stats(eSSType *eSSParams, FILE *fpt){
 	fprintf(fpt, "%d\t", eSSParams->stats->n_local_search_performed);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_localSearch);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_local_search_iterations);
-	fprintf(fpt, "%d\t", eSSParams->stats->n_Stuck);
+	fprintf(fpt, "%d\t", eSSParams->stats->n_total_stuck);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_successful_recombination);
 	fprintf(fpt, "%d\t", eSSParams->stats->n_flatzone_detected);
 	fprintf(fpt, "\n");
@@ -146,15 +146,15 @@ void parse_int_row(eSSType *eSSParams, char *line, int *row){
 void print_Inputs(eSSType *eSSParams){
 		printf("Maximum Iterations: % d\n", eSSParams->maxiter);
 		printf("Debug: % d\n", eSSParams->debug);
-		printf("Warm Start: % d\n", eSSParams->warmStart);
-		printf("# of Sub Regions: % d\n", eSSParams->n_subRegions);
+		printf("Warm Start: % d\n", eSSParams->perform_warm_start);
+		printf("# of Sub Regions: % d\n", eSSParams->n_sub_regions);
 		printf("# of Parameters: % d\n", eSSParams->n_Params);
 		printf("Reference Set Size: % d\n", eSSParams->n_refSet);
 		printf("Candidate Set Size: % d\n", eSSParams->n_candidateSet);
 		printf("Children Set Size: % d\n", eSSParams->n_childsSet);
-		printf("Stuck Tolerance: % d\n", eSSParams->maxStuck);
+		printf("Stuck Tolerance: % d\n", eSSParams->max_stuck);
 		printf("Local Search Activated: %s\n", eSSParams->perform_LocalSearch == 1 ? "Yes" : "NO");
-		printf("Local Search Method: %s\n", eSSParams->local_method == 'l' ? "Levenberg-Marquardt" : "Nelder-Mead");
+		printf("Local Search Method: %s\n", eSSParams->local_SolverMethod == 'l' ? "Levenberg-Marquardt" : "Nelder-Mead");
 		printf("Local Search Tolerance: %e\n", eSSParams->local_Tol);
 		printf("Local Search Max Iters: %d\n", eSSParams->local_maxIter);
 		printf("Local Search only on Best Sol: %s\n", eSSParams->local_onBest_Only == 1 ? "True" : "False");

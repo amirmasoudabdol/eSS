@@ -30,7 +30,7 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 
 	print_Inputs(eSSParams);
 
-	if (!eSSParams->warmStart)
+	if (!eSSParams->perform_warm_start)
 	{
 		init_scatterSet(eSSParams, inp, out);
 
@@ -50,7 +50,7 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 	}else{
 		printf("Perform Warm Start...\n");
 
-		init_warmStart(eSSParams);
+		init_perform_warm_start(eSSParams);
 	}
 
 		// print_Set(eSSParams, eSSParams->refSet);
@@ -67,12 +67,12 @@ void init_eSS(eSSType *eSSParams, void *inp, void *out){
 void run_eSS(eSSType *eSSParams, void *inp, void *out){
 
 
-	int label[eSSParams->n_refSet];				/*<! Uses to store the index of individuals that should be replaced with their children. */
+	int label[eSSParams->n_refSet];				/*!< Uses to store the index of Individuals that should be replaced with their children. */
 	memset(label, 0, eSSParams->n_refSet * sizeof(int));
 	
-	int candidate_index;						/*<! Store the index of candidate for replacement after recombination. */
-	int n_currentUpdated;						/*<! Counter for all updated solutions either from recombination or goBeyond procedure. */
-	int archive_index = 0;						/*<! Track the index of `archiveSet` for storing the best solutions found. */				
+	int candidate_index;						/*!< Store the index of candidate for replacement after recombination. */
+	int n_currentUpdated;						/*!< Counter for all updated solutions either from recombination or goBeyond procedure. */
+	int archive_index = 0;						/*!< Track the index of `archiveSet` for storing the best solutions found. */				
 
 
 
@@ -111,7 +111,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				 * the childsSet too. Note that the goBeyond function works with childsSet so it 
 				 * need the `i` as a index not the `candidate_index`
 				 */
-				if (eSSParams->goBeyond_Freqs != 0 && (eSSParams->iter % eSSParams->goBeyond_Freqs == 0))
+				if (eSSParams->goBeyond_freqs != 0 && (eSSParams->iter % eSSParams->goBeyond_freqs == 0))
 					goBeyond(eSSParams, i, inp, out);
 
 				/**
@@ -132,10 +132,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 					 && ( (eSSParams->iter > eSSParams->local_N1) || ( eSSParams->iter % eSSParams->local_N2 == 0 ) ) )
 					{
 						/**
-						 * This check will prevent the local search operation if the cost of the individual
+						 * This check will prevent the local search operation if the cost of the Individual
 						 * is greater than some value.
 						 */
-						if (eSSParams->childsSet->members[i].cost < eSSParams->local_min_criteria ){
+						if (eSSParams->childsSet->members[i].cost < eSSParams->local_minCostCriteria ){
 							/**
 							 * Check if the selected child is close to the area that already the 
 							 * local search applied on it or not
@@ -150,10 +150,10 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 									local_search:
 										if ( -1 == is_exist(eSSParams, eSSParams->archiveSet, &(eSSParams->childsSet->members[i])) )
 										 {
-											if (eSSParams->local_method == 'n'){
+											if (eSSParams->local_SolverMethod == 'n'){
 												neldermead_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
 												eSSParams->stats->n_local_search_performed++;
-											}else if (eSSParams->local_method == 'l'){
+											}else if (eSSParams->local_SolverMethod == 'l'){
 												levmer_localSearch(eSSParams, &(eSSParams->childsSet->members[i]), inp, out);
 												eSSParams->stats->n_local_search_performed++;
 											}
@@ -171,13 +171,13 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		}
 
 		/**
-		 * Update the refSet individual based on the indexes flagged in `label`, if the nStuck is
-		 * greater than the maxStuck then the individual will add to the archiveSet and then randomizes and n_notRandomized and all it's statistics will set to zero.
+		 * Update the refSet Individual based on the indexes flagged in `label`, if the n_stuck is
+		 * greater than the max_stuck then the Individual will add to the archiveSet and then randomizes and n_not_randomized and all it's statistics will set to zero.
 		 */
 		for (int i = 0; i < eSSParams->n_refSet; ++i)
 		{
 			/**
-			 * If an individual marked, it will replace by its improved child
+			 * If an Individual marked, it will replace by its improved child
 			 */
 			if (label[i] == 1){
 				/**
@@ -202,9 +202,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 						goto replace;
 
 						replace:
-							eSSParams->refSet->members[i].n_notRandomized++;
+							eSSParams->refSet->members[i].n_not_randomized++;
 							copy_Ind(eSSParams, &(eSSParams->refSet->members[i]), &(eSSParams->childsSet->members[i]));
-							eSSParams->refSet->members[i].nStuck = 0;
+							eSSParams->refSet->members[i].n_stuck = 0;
 					}
 				}else{
 					goto replace;
@@ -213,15 +213,15 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 				label[i] = 0;
 			}else{
 				/**
-				 * Otherwise, the individual randomzies and all of it's stats and counters set
+				 * Otherwise, the Individual randomzies and all of it's stats and counters set
 				 * to 0.
 				 */
-				eSSParams->refSet->members[i].nStuck++;
-				if (eSSParams->refSet->members[i].nStuck > eSSParams->maxStuck
+				eSSParams->refSet->members[i].n_stuck++;
+				if (eSSParams->refSet->members[i].n_stuck > eSSParams->max_stuck
 						&& (eSSParams->iter % eSSParams->n_randomization_Freqs == 0 )
 							&& (i > 3) ){	// I decided to keep 3 best sols in the refSet.
 
-					/* Add the stuck individual to the archiveSet */
+					/* Add the stuck Individual to the archiveSet */
 					if (archive_index == eSSParams->n_archiveSet)
 						archive_index = 0;
 
@@ -241,9 +241,9 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 					evaluate_Individual(eSSParams, &(eSSParams->refSet->members[i]), inp, out);
 
 					/* Store number of all the stuck parameters. */
-					eSSParams->stats->n_Stuck++;
-					eSSParams->refSet->members[i].n_notRandomized = 0;
-					eSSParams->refSet->members[i].nStuck = 0;
+					eSSParams->stats->n_total_stuck++;
+					eSSParams->refSet->members[i].n_not_randomized = 0;
+					eSSParams->refSet->members[i].n_stuck = 0;
 					label[i] = 0;
 				}
 			}
@@ -259,8 +259,8 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 		 */
 		if (eSSParams->perform_LocalSearch 
 				&& eSSParams->local_onBest_Only 
-					&& (eSSParams->best->cost < eSSParams->local_min_criteria)
-						&& eSSParams->best->nStuck < eSSParams->maxStuck)		
+					&& (eSSParams->best->cost < eSSParams->local_minCostCriteria)
+						&& eSSParams->best->n_stuck < eSSParams->max_stuck)		
 		{
 			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
 			eSSParams->stats->n_local_search_performed++;
@@ -309,7 +309,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 			/**
 			 * Check if the standard deviation of the set is small and the number of 
 			 * updatedMembers is less than 1/4 of the n_refSet then randomize the refSet.
-			 * After randomization all the n_notRandomized values of refSet individual will
+			 * After randomization all the n_not_randomized values of refSet Individual will
 			 * set to 0.
 			 */
 			if (eSSParams->perform_refSet_randomization && 
@@ -352,7 +352,7 @@ void run_eSS(eSSType *eSSParams, void *inp, void *out){
 	if (eSSParams->perform_LocalSearch && eSSParams->local_atEnd && !eSSParams->local_onBest_Only)
 	{
 		printf("Perforimg the last local search\n");
-		if (eSSParams->local_method == 'n')
+		if (eSSParams->local_SolverMethod == 'n')
 			neldermead_localSearch(eSSParams, eSSParams->best, inp, out);
 		else
 			levmer_localSearch(eSSParams, eSSParams->best, inp, out);

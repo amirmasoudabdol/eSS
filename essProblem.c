@@ -22,7 +22,7 @@
 // #include "benchmarks/LM2n10.h"			// Accurate!
 // #include "benchmarks/MeyerRoth.h"			// Accurate!
 // #include "benchmarks/MieleCantrell.h"		// Accurate!
-// #include "benchmarks/ModRosenbrock.h"		// Accurate!
+#include "benchmarks/ModRosenbrock.h"		// Accurate!
 // #include "benchmarks/MultiGauss.h"		// Accurate!
 // #include "benchmarks/Neumaier2.h"			// Accurate!
 // #include "benchmarks/Neumaier3.h"			// Accurate!
@@ -31,7 +31,7 @@
 // #include "benchmarks/PowellQ.h"			// Accurate!
 // #include "benchmarks/Schaffer1.h"			// Accurate!
 // #include "benchmarks/Schaffer2.h"			// Accurate!
-#include "benchmarks/Schubert.h"			// Accurate!
+// #include "benchmarks/Schubert.h"			// Accurate!
 // #include "benchmarks/Shekel10.h"			// Accurate!
 // #include "benchmarks/Shekel5.h"			// Accurate!
 // #include "benchmarks/Shekel7.h"			// Accurate! More iterations needed
@@ -91,18 +91,18 @@ void init_sampleParams(eSSType *eSSParams){
 	// eSSParams->prob_bound;
 	// eSSParams->strategy;
 	eSSParams->inter_save = 1;
-	// eSSParams->warmStart = 0;
+	// eSSParams->perform_warm_start = 0;
 	eSSParams->perform_refSet_randomization = 1;
 	eSSParams->n_randomization_Freqs = 1;
 
-	eSSParams->goBeyond_Freqs = 10;
+	eSSParams->goBeyond_freqs = 10;
 
 	eSSParams->n_archiveSet = 100;
 
 	eSSParams->set_std_Tol = 1e-3;
 
 	eSSParams->equality_type = 1;
-	// eSSParams->user_guesses = 1;
+	// eSSParams->init_with_user_guesses = 1;
 
 	/**
 	 * Global Options
@@ -112,7 +112,7 @@ void init_sampleParams(eSSType *eSSParams){
 	if (eSSParams->maxiter == 0)
 		eSSParams->maxiter = 200;
 	
-	eSSParams->maxStuck = 20;
+	eSSParams->max_stuck = 20;
 
 	eSSParams->perform_flatzone_check = 0;
 	eSSParams->flatzone_Tol = 0.0001; 
@@ -134,7 +134,7 @@ void init_sampleParams(eSSType *eSSParams){
 		eSSParams->n_refSet++;
 	eSSParams->n_refSet = MAX(eSSParams->n_refSet, 20);
 
-	eSSParams->n_subRegions = MIN(4, eSSParams->n_Params);
+	eSSParams->n_sub_regions = MIN(4, eSSParams->n_Params);
 
 	eSSParams->n_scatterSet = MAX(10 * eSSParams->n_Params, 40);
 
@@ -160,9 +160,9 @@ void init_sampleParams(eSSType *eSSParams){
 	 * Local Search Options
 	 */
 	// eSSParams->perform_LocalSearch = 1;
-	if (eSSParams->local_method == '0') eSSParams->local_method = 'n';
-	// eSSParams->local_min_criteria = ((double)SOL + 1) ;
-	eSSParams->local_min_criteria = 30 ;
+	if (eSSParams->local_SolverMethod == '0') eSSParams->local_SolverMethod = 'n';
+	// eSSParams->local_minCostCriteria = ((double)SOL + 1) ;
+	eSSParams->local_minCostCriteria = 30 ;
 	eSSParams->local_maxIter = 500; 
 	// eSSParams->local_Freqs;
 	// eSSParams->local_SolverMethod;
@@ -186,11 +186,11 @@ void init_sampleParams(eSSType *eSSParams){
 }
 
 /**
- * This will call the problem simulator to the cost function for the individual.
+ * This will call the problem simulator to the cost function for the Individual.
  * The function should first copy ind->params to the inp->params and call the 
  * simulator like `simulator(inp, out)`, and finally write the `out` to `ind->cost`
  */
-double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *out){
+double objectiveFunction(eSSType *eSSParams, Individual *ind, void *inp, void *out){
 
 	double cost    = 0;
 	double penalty = 0;
@@ -198,7 +198,7 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 	// #ifdef GSL_TESTFUNCTION
 	// 	#ifdef LEVMER
 	if (eSSParams->perform_LocalSearch){
-		if (eSSParams->local_method == 'l'){
+		if (eSSParams->local_SolverMethod == 'l'){
 				gsl_vector *ff = gsl_vector_alloc(40);
 				gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
 				levermed_objfn(&x.vector, inp, ff);
@@ -206,7 +206,7 @@ double objectiveFunction(eSSType *eSSParams, individual *ind, void *inp, void *o
 				gsl_vector_free(ff);
 				return cost;
 			}
-		if (eSSParams->local_method == 'n'){
+		if (eSSParams->local_SolverMethod == 'n'){
 			// #elif defined NELDER
 				gsl_vector_view x = gsl_vector_view_array(ind->params, 3);
 				return nelder_objfn(&x.vector, inp);

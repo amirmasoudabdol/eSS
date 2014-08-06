@@ -11,8 +11,8 @@ void goBeyond(eSSType *eSSParams, int parent_index,
 
 	// parent = eSSParams->refSet->members[parent_index];
 	// child = eSSParams->childsSet->members[parent_index];
-	individual parent;
-	individual child;
+	Individual parent;
+	Individual child;
 	allocate_Ind(eSSParams, &parent);
 	allocate_Ind(eSSParams, &child);
 	copy_Ind(eSSParams, &parent, &(eSSParams->refSet->members[parent_index]));

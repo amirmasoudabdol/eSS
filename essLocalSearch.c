@@ -2,7 +2,7 @@
 
 // #ifdef GSL_TESTFUNCTION
 // #ifdef LEVMER
-int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out){
+int levmer_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void *out){
 
 	const gsl_multifit_fdfsolver_type *T;
 	gsl_multifit_fdfsolver *s;
@@ -93,7 +93,7 @@ int levmer_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out
 // #endif
 // #elif defined NELDER
 
-int neldermead_localSearch(eSSType *eSSParams, individual *ind, void *inp, void *out){
+int neldermead_localSearch(eSSType *eSSParams, Individual *ind, void *inp, void *out){
 
 	const gsl_multimin_fminimizer_type *T;
 	gsl_multimin_fminimizer *s;

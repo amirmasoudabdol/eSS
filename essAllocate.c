@@ -1,9 +1,9 @@
 #include "ess.h"
 
 /**
- * Allocate memory for an individual
+ * Allocate memory for an Individual
  */
-void allocate_Ind(eSSType *eSSParams, individual *ind){
+void allocate_Ind(eSSType *eSSParams, Individual *ind){
 
 	ind->params = (double *)malloc(eSSParams->n_Params * sizeof(double));
 	// ind->params_means  = (double *)malloc(eSSParams->n_Params * sizeof(double));
@@ -13,14 +13,14 @@ void allocate_Ind(eSSType *eSSParams, individual *ind){
 	ind->cost   = 0;
 	ind->dist   = 0;
 
-	ind->n_notRandomized = 0;
-	ind->nStuck = 0;
+	ind->n_not_randomized = 0;
+	ind->n_stuck = 0;
 }
 
 /**
- * Deallocate memory for an individual
+ * Deallocate memory for an Individual
  */
-void deallocate_Ind(eSSType *eSSParams, individual *ind){
+void deallocate_Ind(eSSType *eSSParams, Individual *ind){
 
 	free(ind->params);
 	// free(ind->means);
@@ -33,7 +33,7 @@ void deallocate_Ind(eSSType *eSSParams, individual *ind){
  */
 void allocate_Set(eSSType *eSSParams, Set *set){
 
-	set->members = (individual *)malloc(set->size * sizeof(individual));
+	set->members = (Individual *)malloc(set->size * sizeof(Individual));
 	for (int i = 0; i < set->size; ++i)
 		allocate_Ind(eSSParams, &(set->members[i]));
 
