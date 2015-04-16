@@ -2,6 +2,11 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#ifndef __MACH__
+#include <getopt.h>
+extern char *optarg;
+#endif
+
 void read_cli_params(eSSType *eSSParams, int argc, char **argv){
 
    // char *cvalue = NULL;
